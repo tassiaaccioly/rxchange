@@ -1,39 +1,39 @@
+# Source helper functions:
+source("helper_functions.R")
+
 # Define dates for creating the API url:
 
 euroCode <- "EUR"
 dollarCode <- "USD"
 
-# Today's date
+# Getting final historical series date:
+
 todaysDate <- now()
+yesterdaysDate <- todaysDate - days(1)
+
+# Getting initial historical series date:
 
 oneYearBeforeDate <- todaysDate - years(1) 
 
-getReversedDate <- function(date) {
-  
-  day <- ""
-  month <- ""
-  
-  if(day(date) <= 9) {
-    day <- stringr::str_interp("0${day(date)}")
-  } else {
-    day <- day(date)
-  }
-  
-  if(month(date) <= 9) {
-    month <- stringr::str_interp("0${day(date)}")
-  } else {
-    month <- month(date)
-  }
-  
-  finalDate <- stringr::str_interp("${day}-${month}-${year(date)}")
-  
-  return(finalDate)
-}
+# Normalize dates to fit API style 
 
 normalizedLastYear <- getReversedDate(oneYearBeforeDate)
-                                          
-normalizedToday <- getReversedDate(todaysDate)
+normalizedYesterday <- getReversedDate(yesterdaysDate)
 
-# Get infos from Banco do Brasil API
+# Get infos from Banco do Brasil API for dollar
 
-dollar_series <- 
+series_name <- stringr::str_interp("${tolower(dollarCode)}_series")
+
+assign(series_name, getHistoricalSeries(dollarCode, normalizedLastYear, normalizedYesterday))
+
+# Get infos from Banco do Brasil API for euro
+
+series_name <- stringr::str_interp("${tolower(euroCode)}_series")
+
+assign(series_name, getHistoricalSeries(euroCode, normalizedLastYear, normalizedYesterday))
+
+
+
+
+
+
