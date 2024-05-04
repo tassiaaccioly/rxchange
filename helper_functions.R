@@ -25,8 +25,6 @@ getHistoricalSeries <- function(currency, initialDate, finalDate) {
   
   res <- GET(url)
   
-  resContent <- c()
-  
   if(res$status_code == 200) {
     return(fromJSON(rawToChar(res$content))$value)
   } else {
