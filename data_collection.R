@@ -55,7 +55,50 @@ clean_eur_series$priceType <- typeFactor
 
 clean_eur_series$date <- clean_eur_series$date %>% as.Date(clean_eur_series$date)
 
+# Generate more data from the data set
 
+## 1. Get buy and sell price average and mean for each day
+
+getAverageByDay <- function(dataSet, columnNumber) {
+
+  temporarySum <- 0
+  average <- c()
+  dataSetRows <- nrow(dataSet)
+  print(dataSetRows)
+  averageList <- rep(0,dataSetRows)
+  print(averageList)
+
+  # taking in account that each day has 5 quotations, we'll run through these
+  # values, sum them, get the average and also save them in a temporary list to
+  # get the mean value. We will then save these values in new columns on the
+  # dataSet called average and mean
+
+  for (i in 1:dataSetRows) {
+    if (i %% 5 == 0) {
+      print(dataSet[[i,columnNumber]])
+      temporarySum <- temporarySum + dataSet[[i,columnNumber]]
+
+      print(temporarySum)
+
+      average <- temporarySum / 5
+
+      print(average)
+
+      averageList[(i-4):i] <- rep(average,5)
+
+      temporarySum <- 0
+      average <- 0
+
+    } else {
+      print(dataSet[[i,columnNumber]])
+      temporarySum <- temporarySum + dataSet[[i,columnNumber]]
+    }
+  }
+
+  return(averageList)
+}
+
+getAverageAndMeanByDay(clean_eur_series, 1)
 
 
 
