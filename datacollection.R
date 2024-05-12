@@ -17,20 +17,46 @@ oneYearBeforeDate <- todaysDate - years(1)
 
 # Normalize dates to fit API style 
 
-normalizedLastYear <- getReversedDate(oneYearBeforeDate)
-normalizedYesterday <- getReversedDate(yesterdaysDate)
+normalizedLastYear <- getNormalizedDate(oneYearBeforeDate)
+normalizedYesterday <- getNormalizedDate(yesterdaysDate)
 
-# Get infos from Banco do Brasil API for dollar
+# Get historical series from Banco do Brasil API for dollar
 
-series_name <- stringr::str_interp("${tolower(dollarCode)}_series")
+# series_name <- stringr::str_interp("${tolower(dollarCode)}_series")
 
-assign(series_name, getHistoricalSeries(dollarCode, normalizedLastYear, normalizedYesterday))
+# assign(series_name, getHistoricalSeries(dollarCode, normalizedLastYear, normalizedYesterday))
 
-# Get infos from Banco do Brasil API for euro
+# Get historical series from Banco do Brasil API for euro
 
 series_name <- stringr::str_interp("${tolower(euroCode)}_series")
 
 assign(series_name, getHistoricalSeries(euroCode, normalizedLastYear, normalizedYesterday))
+
+# Cleaning the data sets
+
+## 1. Turn the data_frame into a tibble and remove the "paridade" columns
+
+clean_eur_series <- tibble::as_tibble(eur_series[,3:6])
+
+### 1a. Rename columns
+
+columnNames <- c("buyPrice", "sellPrice", "date", "priceType")
+
+names(clean_eur_series) <- columnNames
+
+## 2. Transforming priceType into a factor and adding a new levels columns
+
+typeFactor <- as.factor(clean_eur_series$priceType)
+
+clean_eur_series$typeLevels <- as.numeric(typeFactor)
+clean_eur_series$priceType <- typeFactor
+
+## 3. Cleaning date values
+
+clean_eur_series$date <- clean_eur_series$date %>% as.Date(clean_eur_series$date)
+
+
+
 
 
 
