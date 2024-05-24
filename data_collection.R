@@ -57,6 +57,20 @@ clean_eur_series$date <- clean_eur_series$date %>% as.Date(clean_eur_series$date
 
 # Generate more data from the data set
 
+clean_eur_series["buyPrice"][1]
+
+print(clean_eur_series[(i-4):i,"buyPrice"])
+
+buyPrice <- c(1:10)
+sellPrice <- c(11:20)
+
+exchange <- tibble(buyPrice, sellPrice)
+
+exchange
+
+exchange$averageBuy <- 0
+exchange$averageSell <- 0
+
 ## 1. Get buy and sell price average and mean for each day
 
 getAverageByDay <- function(dataSet, columnNumber) {
