@@ -15,18 +15,23 @@ driver.get("https://wise.com/tools/exchange-rate-alerts/?fromCurrency=BRL&toCurr
 # wait for backend to answer and load infos
 time.sleep(3)
 
-if res.status_code == 200:
+if driver.page_source:
   data = bs4.BeautifulSoup(driver.page_source)
   
   driver.close()
 else:
-    print(f"Error: {res.status_code}")
+  # TODO: fix this error status
+  print(f"Error: {res.status_code }")
 
 wiseScrape = data.select('span.text-success')
 
-valueRegex = re.compile(r'>(\d.+)<')
+valueRegex = re.compile(r'>(\d.+)(A-Z)<')
 
-for i in wiseScrape:
-  value[i] = valueRegex.search(str(wiseScrape[i]))
+value = []
+
+for i in range(len(wiseScrape)):
+  wiseScrape[i] = str(wiseScrape[i])
+  tempValue = re.search(valueRegex, wiseScrape[i])
+  print(tempValue.groups())
 
 
