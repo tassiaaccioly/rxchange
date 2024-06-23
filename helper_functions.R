@@ -2,7 +2,7 @@
 # Turns dates in any format into DD-MM-YYYY dates #
 # # # # # # # # # # # # # # # # # # # # # # # # # #
 
-getNormalizedDate <- function(date) {
+getNormalizedDate <- function(date, style) {
   
   day <- ""
   month <- ""
@@ -19,9 +19,11 @@ getNormalizedDate <- function(date) {
     month <- month(date)
   }
   
-  finalDate <- stringr::str_interp("${day}-${month}-${year(date)}")
-  
-  return(finalDate)
+  if(style == "us") {
+    return(stringr::str_interp("${month}-${day}-${year(date)}"))
+  } else {
+    return(stringr::str_interp("${day}-${month}-${year(date)}"))
+  }
 }
 
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #

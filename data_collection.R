@@ -13,12 +13,12 @@ yesterdaysDate <- todaysDate - days(1)
 
 # Getting initial historical series date:
 
-oneYearBeforeDate <- todaysDate - years(1) 
+oneYearBeforeDate <- todaysDate - years(1)
 
-# Normalize dates to fit API style 
+# Normalize dates to fit API style
 
-normalizedLastYear <- getNormalizedDate(oneYearBeforeDate)
-normalizedYesterday <- getNormalizedDate(yesterdaysDate)
+normalizedLastYear <- getNormalizedDate(oneYearBeforeDate, "us")
+normalizedYesterday <- getNormalizedDate(yesterdaysDate, "us")
 
 # Get historical series from Banco do Brasil API for dollar
 
