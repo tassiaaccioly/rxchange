@@ -59,64 +59,13 @@ clean_eur_series$date <- clean_eur_series$date %>% as.Date(clean_eur_series$date
 
 clean_eur_series["buyPrice"][1]
 
-print(clean_eur_series[(i-4):i,"buyPrice"])
-
-buyPrice <- c(1:10)
-sellPrice <- c(11:20)
-
-exchange <- tibble(buyPrice, sellPrice)
-
-exchange
-
-exchange$averageBuy <- 0
-exchange$averageSell <- 0
-
 ## 1. Get buy and sell price average and mean for each day
 
-getAverageByDay <- function(dataSet, columnNumber) {
-
-  temporarySum <- 0
-  average <- c()
-  dataSetRows <- nrow(dataSet)
-  print(dataSetRows)
-  averageList <- rep(0,dataSetRows)
-  print(averageList)
-
-  # taking in account that each day has 5 quotations, we'll run through these
-  # values, sum them, get the average and also save them in a temporary list to
-  # get the mean value. We will then save these values in new columns on the
-  # dataSet called average and mean
-
-  for (i in 1:dataSetRows) {
-    if (i %% 5 == 0) {
-      print(dataSet[[i,columnNumber]])
-      temporarySum <- temporarySum + dataSet[[i,columnNumber]]
-
-      print(temporarySum)
-
-      average <- temporarySum / 5
-
-      print(average)
-
-      averageList[(i-4):i] <- rep(average,5)
-
-      temporarySum <- 0
-      average <- 0
-
-    } else {
-      print(dataSet[[i,columnNumber]])
-      temporarySum <- temporarySum + dataSet[[i,columnNumber]]
-    }
-  }
-
-  return(averageList)
-}
-
-getAverageAndMeanByDay(clean_eur_series, 1)
-
-
-
-
-
+clean_eur_series <- clean_eur_series %>% mutate(
+  group = cumsum(row_number() %% 5 == 1)) %>% mutate(
+    dailyAverageBuy = mean(buyPrice),
+    dailyAverageSell = mean(sellPrice),
+    .by = group
+    )
 
 
