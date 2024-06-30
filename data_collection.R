@@ -1,11 +1,15 @@
 # Source helper functions:
 source("helper_functions.R")
 
-# Define dates for creating the API url:
+# Gets the exchange values
+# TODO get the coin/exchange name from user input
 
 euroCode <- "EUR"
 dollarCode <- "USD"
 
+currentExchange <- "EUR"
+
+# Define dates for creating the API url:
 # Getting final historical series date:
 
 todaysDate <- now()
@@ -28,9 +32,9 @@ normalizedYesterday <- getNormalizedDate(yesterdaysDate, "us")
 
 # Get historical series from Banco do Brasil API for euro
 
-series_name <- stringr::str_interp("${tolower(euroCode)}_series")
+series_name <- stringr::str_interp("${tolower(currentExchange)}_series")
 
-assign(series_name, getHistoricalSeries(euroCode, normalizedLastYear, normalizedYesterday))
+assign(series_name, getHistoricalSeries(currentExchange, normalizedLastYear, normalizedYesterday))
 
 # Cleaning the data sets
 
