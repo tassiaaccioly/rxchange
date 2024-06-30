@@ -53,19 +53,65 @@ clean_eur_series$priceType <- typeFactor
 
 ## 3. Cleaning date values
 
-clean_eur_series$date <- clean_eur_series$date %>% as.Date(clean_eur_series$date)
+clean_eur_series$date <- clean_eur_series$date %>% date()
 
 # Generate more data from the data set
 
-clean_eur_series["buyPrice"][1]
-
-## 1. Get buy and sell price average and mean for each day
+## 1. Get buy and sell price mean for each day
 
 clean_eur_series <- clean_eur_series %>% mutate(
   group = cumsum(row_number() %% 5 == 1)) %>% mutate(
     dailyAverageBuy = mean(buyPrice),
     dailyAverageSell = mean(sellPrice),
     .by = group
-    )
+  )
 
+## 2. Get general mean for the whole dataset:
 
+### 2a. Buy price
+
+historicalAverageBuy <- mean(clean_eur_series$buyPrice)
+
+historicalAverageSell <- mean(clean_eur_series$sellPrice)
+
+### 2b. Sell price
+
+## 1. Plot the line graph of the database
+
+# buyPrice:
+
+ggplot(clean_eur_series) +
+  aes(x = date, y = dailyAverageBuy) +
+  geom_line(linewidth = 1L, colour = "#0D3053") +
+  labs(
+    x = "",
+    y = "Média diária real/euro (compra)",
+    title = "Série histórica de taxa de câmbio",
+    subtitle = stringr::str_interp("${currentExchange} (compra)"),
+    caption = stringr::str_interp("${normalizedLastYear} - ${normalizedYesterday}")
+  ) +
+  geom_line(aes(y = mean(buyPrice)), colour = "red", linewidth = 0.8, linetype = "dashed") +
+  theme_bw() +
+  theme(
+    axis.text.y = element_text(size = 11L),
+    axis.text.x = element_text(size = 11L)
+  )
+
+# sellPrice
+
+ggplot(clean_eur_series) +
+  aes(x = date, y = dailyAverageSell) +
+  geom_line(linewidth = 1L, colour = "#0D3053") +
+  labs(
+    x = "",
+    y = "Média diária real/euro (venda)",
+    title = "Série histórica de taxa de câmbio",
+    subtitle = stringr::str_interp("${currentExchange} (venda)"),
+    caption = stringr::str_interp("${normalizedLastYear} - ${normalizedYesterday}")
+  ) +
+  geom_line(aes(y = mean(sellPrice)), colour = "red", linewidth = 0.8, linetype = "dashed") +
+  theme_bw() +
+  theme(
+    axis.text.y = element_text(size = 11L),
+    axis.text.x = element_text(size = 11L)
+  )
