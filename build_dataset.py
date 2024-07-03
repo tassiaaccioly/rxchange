@@ -23,6 +23,11 @@ driver.get("https://wise.com/tools/exchange-rate-alerts/?fromCurrency=BRL&toCurr
 # the link for getting the USD value
 # driver.get("https://wise.com/tools/exchange-rate-alerts/?fromCurrency=BRL&toCurrency=USD")
 
+# other places to scrape:
+# Melhor câmbio: https://www.melhorcambio.com/conversor-de-moeda/dolar/real
+# Nomad: https://www.nomadglobal.com/cotacoes/dolar
+# C6 Bank: https://www.c6bank.com.br/conta-internacional-c6-conta-global
+
 # wait for backend to answer and load infos
 time.sleep(3)
 
