@@ -26,10 +26,10 @@ getNormalizedDate <- function(date, style) {
   }
 }
 
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
-# Calls the Olinda (BACEN) API with arguments and returns the one year  #
-#             historical series for the specified currency              #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+#  Calls the Olinda (BACEN) API with arguments and returns  #
+#     the historical series for the specified currency      #
+# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 
 getHistoricalSeries <- function(currency, initialDate, finalDate) {
   url <- stringr::str_interp(
@@ -63,4 +63,14 @@ fromCodeToCoin <- function(code) {
 fromCoinToCode <- function(coin) {
   index <- match(coin, exchangeMatch$coin)
   return(exchangeMatch$code[index])
+}
+
+# # # # # # # # # # # # # # # # # # # # # # # # # #
+# Returns the mode for a specified numeric vector #
+# # # # # # # # # # # # # # # # # # # # # # # # # #
+
+getMode <- function(x) {
+  u <- unique(x)
+  tab <- tabulate(match(x, u))
+  u[tab == max(tab)]
 }
