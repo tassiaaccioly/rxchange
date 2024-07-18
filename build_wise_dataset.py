@@ -1,4 +1,6 @@
 from selenium import webdriver
+from selenium.webdriver.common.keys import Keys
+from selenium.webdriver.common.by import By
 from __future__ import print_function, unicode_literals
 from pprint import pprint
 from PyInquirer import prompt, Separator
@@ -32,37 +34,76 @@ driver.get("https://wise.com/tools/exchange-rate-alerts/?fromCurrency=BRL&toCurr
 time.sleep(3)
 
 if driver.page_source:
-  data = bs4.BeautifulSoup(driver.page_source, features="html.parser")
+  buttons = driver.find_elements(By.CLASS_NAME, "np-dropdown-toggle")
+
+  buttons[0].click()
+
+  filter = driver.find_element(By.CLASS_NAME, 'np-select-filter')
+
+  filter.send_keys('brl')
+
+  filter.send_keys(Keys.RETURN)
+
+  buttons[1].click()
+
+  filter = driver.find_element(By.CLASS_NAME, 'np-select-filter')
+
+  filter.send_keys('eur')
+
+  filter.send_keys(Keys.RETURN)
+
+  dataEur = bs4.BeautifulSoup(driver.page_source, features="html.parser")
+  
+  buttons[1].click()
+
+  filter = driver.find_element(By.CLASS_NAME, 'np-select-filter')
+  
+  filter.clear()
+
+  filter.send_keys('usd')
+
+  filter.send_keys(Keys.RETURN)
+  
+  dataUsd = bs4.BeautifulSoup(driver.page_source, features="html.parser")
   
   driver.close()
+  
 else:
   # TODO: fix this error status
   print(f"Error: {res.status_code }")
 
-wiseScrape = data.select('span.text-success')
+wiseEurScrape = dataEur.select('span.text-success')
 # this line returns something like: 
 # [<span class="text-success">0.172162 EUR</span>, <span class="text-success">5.80848 BRL</span>]
 
+wiseUsdScrape = dataUsd.select('span.text-success')
+
 currencyRegex = r'EUR' if currency == 'EUR' else r'USD'
 
-wiseQuotas = []
 
-wiseQuotas.append(todaysDate)
 
-for i in range(len(wiseScrape)):
-  wiseScrape[i] = str(wiseScrape[i])
-  # this part saves the currency from the first element on the list (X.XXX EUR/USD)
-  tempCurrency = re.search(currencyRegex, wiseScrape[i])
-  if (tempCurrency):
-    tempCurrency = tempCurrency.group()
-    print(tempCurrency)
-    wiseQuotas.append(tempCurrency)
-  # this part saves the value from the second element of the list (X.XXX BRL)
-  tempValue = re.search(r'\d+\.\d+ BRL', wiseScrape[i])
-  if (tempValue):
-    tempValue = tempValue.group().split()[0]
-    print(tempValue)
-    wiseQuotas.append(tempValue)
+def cleanValues(wiseScrape, currencyRegex):
+  wiseQuotas = []
+
+  wiseQuotas.append(todaysDate)
+  
+  for i in range(len(wiseScrape)):
+    wiseScrape[i] = str(wiseScrape[i])
+    # this part saves the currency from the first element on the list (X.XXX EUR/USD)
+    tempCurrency = re.search(currencyRegex, wiseScrape[i])
+    if (tempCurrency):
+      tempCurrency = tempCurrency.group()
+      print(tempCurrency)
+      wiseQuotas.append(tempCurrency)
+    # this part saves the value from the second element of the list (X.XXX BRL)
+    tempValue = re.search(r'\d+\.\d+ BRL', wiseScrape[i])
+    if (tempValue):
+      tempValue = tempValue.group().split()[0]
+      print(tempValue)
+      wiseQuotas.append(tempValue)
+  
+  return wiseQuotas
+
 
 # Adds data to the exchange_historic_series excel spreadsheet
 
