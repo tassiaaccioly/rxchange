@@ -36,6 +36,8 @@ time.sleep(3)
 if driver.page_source:
   buttons = driver.find_elements(By.CLASS_NAME, "np-dropdown-toggle")
 
+  ## selecting BRL for the first selector
+
   buttons[0].click()
 
   filter = driver.find_element(By.CLASS_NAME, 'np-select-filter')
@@ -43,6 +45,8 @@ if driver.page_source:
   filter.send_keys('brl')
 
   filter.send_keys(Keys.RETURN)
+
+  ## selecting EUR for the second selector and saving the page code
 
   buttons[1].click()
 
@@ -52,22 +56,24 @@ if driver.page_source:
 
   filter.send_keys(Keys.RETURN)
 
-  dataEur = bs4.BeautifulSoup(driver.page_source, features="html.parser")
-  
+  dataEurWise = bs4.BeautifulSoup(driver.page_source, features="html.parser")
+
+  ## selecting EUR for the second selector and saving the page code
+
   buttons[1].click()
 
   filter = driver.find_element(By.CLASS_NAME, 'np-select-filter')
-  
+
   filter.clear()
 
   filter.send_keys('usd')
 
   filter.send_keys(Keys.RETURN)
-  
-  dataUsd = bs4.BeautifulSoup(driver.page_source, features="html.parser")
-  
+
+  dataUsdWise = bs4.BeautifulSoup(driver.page_source, features="html.parser")
+
   driver.close()
-  
+
 else:
   # TODO: fix this error status
   print(f"Error: {res.status_code }")
@@ -95,6 +101,7 @@ def cleanValues(wiseScrape, currencyRegex):
       tempCurrency = tempCurrency.group()
       print(tempCurrency)
       wiseQuotas.append(tempCurrency)
+
     # this part saves the value from the second element of the list (X.XXX BRL)
     tempValue = re.search(r'\d+\.\d+ BRL', wiseScrape[i])
     if (tempValue):
@@ -116,14 +123,14 @@ try:
 except:
   print(f'Worksheet {thisYear} does not exist')
   print(f'Creating worksheet {thisYear}...')
-  
+
   print('Determining the sheet index...')
   sheetToUse = histSeries.sheetnames
   sheetToUse = sheetToUse[len(sheetToUse) - 1]
   sheet = histSeries[sheetToUse]
-  
+
   histSeries.create_sheet(index=len(sheetToUse)-1, title=thisYear)
-  
+
   sheet = histSeries[thisYear]
 
 sheet.get_highest_column()
