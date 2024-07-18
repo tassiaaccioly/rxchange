@@ -75,7 +75,7 @@ clean_usd_series$date <- clean_usd_series$date %>% date()
 
 # Generate more data from the data set
 
-## 1. Get buy and sell price mean for each day
+## 1. Get buy price mean for each day
 
 clean_eur_series <- clean_eur_series %>% mutate(
   day = cumsum(row_number() %% 5 == 1)) %>% mutate(
@@ -147,6 +147,8 @@ eur_plot + lims(y = c(4.7, 6))
 
 usd_plot + lims(y = c(4.7, 6))
 
+## 3. Get descriptives for the databases
+
 descritivasEuro <- describe(clean_eur_series$dailyAverageBuy)
 
 descritivasEuro2 <- clean_eur_series %>% summarise(
@@ -159,6 +161,10 @@ descritivasEuro2 <- clean_eur_series %>% summarise(
   mínimo = min(dailyAverageBuy),
   elementsUnderMean = length(which(dailyAverageBuy < mean(dailyAverageBuy)))
   )
+
+length(which(clean_eur_series$dailyAverageBuy < 5.402)) #valores abaixo da média
+length(which(clean_eur_series$dailyAverageBuy < 5.362)) #valores abaixo da mediana
+length(which(clean_eur_series$dailyAverageBuy < 5.456)) #valores abaixo do terceiro quartil
 
 descritivasDolar <- describe(clean_usd_series$dailyAverageBuy)
 
@@ -173,13 +179,12 @@ descritivasDolar2 <- clean_usd_series %>% summarise(
   elementsUnderMean = length(which(dailyAverageBuy < mean(dailyAverageBuy)))
 )
 
-length(which(clean_eur_series$dailyAverageBuy < 5.402)) #valores abaixo da média
-length(which(clean_eur_series$dailyAverageBuy < 5.362)) #valores abaixo da mediana
-length(which(clean_eur_series$dailyAverageBuy < 5.456)) #valores abaixo do terceiro quartil
-
 length(which(clean_usd_series$dailyAverageBuy < 4.989)) #valores abaixo da média
 length(which(clean_usd_series$dailyAverageBuy < 4.960)) #valores abaixo da mediana
 length(which(clean_usd_series$dailyAverageBuy < 5.053)) #valores abaixo do terceiro quartil
+
+# Calculating the risk
+
 
 
  res <- GET("https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaPeriodo(moeda=@moeda,dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@moeda='USD'&@dataInicial='01-01-2023'&@dataFinalCotacao='12-31-2023'&$top=9999&$filter=tipoBoletim%20eq%20'Fechamento'&$orderby=cotacaoCompra%20desc&$format=json&$select=cotacaoCompra")
