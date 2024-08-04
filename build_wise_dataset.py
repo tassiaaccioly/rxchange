@@ -3,11 +3,11 @@ from selenium.webdriver.common.keys import Keys
 from selenium.webdriver.common.by import By
 from __future__ import print_function, unicode_literals
 from pprint import pprint
-from PyInquirer import prompt, Separator
 import bs4
 import time
 import re
 import openpyxl
+from openpyxl import Workbook
 
 driver = webdriver.Chrome()
 
@@ -82,60 +82,71 @@ else:
   # TODO: fix this error status
   print(f"Error: {res.status_code }")
 
-wiseEurScrape = dataEur.select('span.text-success')
-# this line returns something like: 
-# [<span class="text-success">0.172162 EUR</span>, <span class="text-success">5.80848 BRL</span>]
+# wiseEurScrape = dataEur.select('span.text-success')
+# # this line returns something like: 
+# # [<span class="text-success">0.172162 EUR</span>, <span class="text-success">5.80848 BRL</span>]
+#
+# wiseUsdScrape = dataUsd.select('span.text-success')
+#
+# currencyRegex = r'EUR' if currency == 'EUR' else r'USD'
+#
+#
+#
+# def cleanValues(wiseScrape, currencyRegex):
+#   wiseQuotas = []
+#
+#   wiseQuotas.append(todaysDate)
+#
+#   for i in range(len(wiseScrape)):
+#     wiseScrape[i] = str(wiseScrape[i])
+#     # this part saves the currency from the first element on the list (X.XXX EUR/USD)
+#     tempCurrency = re.search(currencyRegex, wiseScrape[i])
+#     if (tempCurrency):
+#       tempCurrency = tempCurrency.group()
+#       print(tempCurrency)
+#       wiseQuotas.append(tempCurrency)
+#
+#     # this part saves the value from the second element of the list (X.XXX BRL)
+#     tempValue = re.search(r'\d+\.\d+ BRL', wiseScrape[i])
+#     if (tempValue):
+#       tempValue = tempValue.group().split()[0]
+#       print(tempValue)
+#       wiseQuotas.append(tempValue)
+#
+#   return wiseQuotas
 
-wiseUsdScrape = dataUsd.select('span.text-success')
+wiseQuotas = []
 
-currencyRegex = r'EUR' if currency == 'EUR' else r'USD'
+regexFind = r'\d+\.\d+'
 
+wiseEURValue = float(re.match(r'\d+\,\d+', wiseEURValue).group().replace(",", "."))
 
-
-def cleanValues(wiseScrape, currencyRegex):
-  wiseQuotas = []
-
-  wiseQuotas.append(todaysDate)
-  
-  for i in range(len(wiseScrape)):
-    wiseScrape[i] = str(wiseScrape[i])
-    # this part saves the currency from the first element on the list (X.XXX EUR/USD)
-    tempCurrency = re.search(currencyRegex, wiseScrape[i])
-    if (tempCurrency):
-      tempCurrency = tempCurrency.group()
-      print(tempCurrency)
-      wiseQuotas.append(tempCurrency)
-
-    # this part saves the value from the second element of the list (X.XXX BRL)
-    tempValue = re.search(r'\d+\.\d+ BRL', wiseScrape[i])
-    if (tempValue):
-      tempValue = tempValue.group().split()[0]
-      print(tempValue)
-      wiseQuotas.append(tempValue)
-  
-  return wiseQuotas
-
+wiseUSDValue = float(re.match(r'\d+\,\d+', wiseUSDValue).group().replace(",", "."))
 
 # Adds data to the exchange_historic_series excel spreadsheet
 
-histSeries = openpyxl.load_workbook('exchanges_historic_series.xlsx')
+wb = openpyxl.load_workbook('./excel/exchanges_historic_series.xlsx')
 
 # defines the sheet that should be used based on the year.
 
 try:
-  sheet = histSeries[thisYear]
+  ws = wb[thisYear]
 except:
-  print(f'Worksheet {thisYear} does not exist')
-  print(f'Creating worksheet {thisYear}...')
+  # print(f'Worksheet {thisYear} does not exist')
+  # print(f'Creating worksheet {thisYear}...')
+  #
+  # print('Determining the sheet index...')
+  # sheetToUse = histSeries.sheetnames
+  # sheetToUse = sheetToUse[len(sheetToUse) - 1]
+  # sheet = histSeries[sheetToUse]
+  #
+  # histSeries.create_sheet(index=len(sheetToUse)-1, title=thisYear)
+  #
+  # sheet = histSeries[thisYear]
 
-  print('Determining the sheet index...')
-  sheetToUse = histSeries.sheetnames
-  sheetToUse = sheetToUse[len(sheetToUse) - 1]
-  sheet = histSeries[sheetToUse]
+ws['D1'].value
 
-  histSeries.create_sheet(index=len(sheetToUse)-1, title=thisYear)
+ws.append([todaysDate, wiseEURValue, wiseUSDValue])
 
-  sheet = histSeries[thisYear]
+wb.save('./excel/exchanges_historic_series.xlsx')
 
-sheet.get_highest_column()
-sheet['A1'].value
