@@ -13,7 +13,7 @@ driver = webdriver.Chrome()
 
 todaysDate = str(r.todaysDate).split()[0]
 
-driver.get("https://www.c6bank.com.br/conta-internacional-c6-conta-global")
+driver.get("https://www.c6bank.com.br/cotacao-dolar-euro")
 
 time.sleep(3)
 
@@ -39,6 +39,16 @@ if driver.page_source:
   buttonEur = driver.find_element(By.ID, 'simulator-tabs-tab-1')
 
   buttonEur.send_keys(Keys.RETURN)
+  
+  inputBRL = driver.find_element(By.ID, "simulator-usd-debit-brl")
+    
+  driver.execute_script("arguments[0].clear()", inputBRL)
+
+  inputBRL.send_keys('10000')
+  
+  inputEur = driver.find_element(By.ID, "simulator-usd-credit-usd")
+  
+  inputEur.get_attribute("value")
 
   time.sleep(2)
 
@@ -49,4 +59,4 @@ else:
   # TODO: fix this error status
   print(f"Error: {res.status_code }")
 
-# wiseScrape = data.select('span.text-success')
+c6EurScrape = dataUsdC6.select('input#simulator-usd-credit-usd')

@@ -57,6 +57,8 @@ if driver.page_source:
   filter.send_keys(Keys.RETURN)
 
   dataEurWise = bs4.BeautifulSoup(driver.page_source, features="html.parser")
+  
+  wiseEURValue = driver.find_elements(By.CLASS_NAME, "text-success")[1].text
 
   ## selecting EUR for the second selector and saving the page code
 
@@ -71,6 +73,8 @@ if driver.page_source:
   filter.send_keys(Keys.RETURN)
 
   dataUsdWise = bs4.BeautifulSoup(driver.page_source, features="html.parser")
+  
+  wiseUSDValue = driver.find_elements(By.CLASS_NAME, "text-success")[1].text
 
   driver.close()
 
