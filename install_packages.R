@@ -9,6 +9,7 @@ install.packages("data.table")
 install.packages("esquisse")
 install.packages("fable")
 install.packages("Hmisc")
+install.packages("zoo")
 
 
 length(installed.packages())
@@ -22,3 +23,4 @@ library("fable")
 library("tsibble")
 library("esquisse")
 library("Hmisc")
+library("zoo")

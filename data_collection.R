@@ -183,6 +183,31 @@ length(which(clean_usd_series$dailyAverageBuy < 4.989)) #valores abaixo da médi
 length(which(clean_usd_series$dailyAverageBuy < 4.960)) #valores abaixo da mediana
 length(which(clean_usd_series$dailyAverageBuy < 5.053)) #valores abaixo do terceiro quartil
 
+# Calculating rolling means (5-5 days/Weekly)
+
+## For Euro
+
+### Select only the closing values
+better_eur_statistics <- clean_eur_series[clean_eur_series$priceType == "Fechamento",]
+
+### calculate rolling mean of the closing values
+eurRollMeanAvg <- rollmean(better_eur_statistics$dailyAverageBuy, 5, fill=NA, align="right")
+
+eurRollMean <- rollmean(better_eur_statistics$buyPrice, 5, fill=NA, align="right")
+
+### adds the rolling mean back into the new dataset
+better_eur_statistics <- better_eur_statistics %>% mutate(rollMean = eurRollMean, rollMeanAvg = eurRollMeanAvg)
+
+## For Dollar
+
+better_usd_statistics <- clean_usd_series[clean_usd_series$priceType == "Fechamento",]
+
+usdRollMeanAvg <- rollmean(better_usd_statistics$dailyAverageBuy, 5, fill=NA, align="right")
+
+usdRollMean <- rollmean(better_usd_statistics$buyPrice, 5, fill=NA, align="right")
+
+better_usd_statistics <- better_usd_statistics %>% mutate(rollMean = usdRollMean, rollMeanAvg = usdRollMeanAvg)
+
 # Calculating the risk
 
 
