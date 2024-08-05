@@ -15,12 +15,12 @@ currentExchange <- "USD"
 todaysDate <- now()
 # yesterdaysDate <- todaysDate - days(1)
 
-todaysDate <- date("2024-04-05")
+initialDate <- date("2024-04-05")
 
 
 # Getting initial historical series date:
 
-oneYearBeforeDate <- todaysDate - years(1)
+oneYearBeforeDate <- initialDate - years(1)
 
 # Normalize dates to fit API style
 
