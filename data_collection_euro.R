@@ -81,30 +81,41 @@ clean_eur_series_open <- left_join(clean_eur_series_open, clean_eur_series_close
 # 1g. Reorganizing the columns
 clean_eur_series_open <- clean_eur_series_open %>% select(id, date, openingPrice, closingPrice)
 
-# 1h. Organizing the intermediate values:
+# 1h. Get dailyAveragePrice
 
-## get only the intermediate values
-clean_eur_series_inter <- clean_eur_series[clean_eur_series$priceType == "Intermediário", ]
+## make a database with all base values and correct ids
+clean_eur_series_with_id <- left_join(clean_eur_series, clean_eur_series_open, by = "date") %>% select(id, date, buyPrice)
 
 ## adds ids to the database
-clean_eur_series_inter <- left_join(clean_eur_series_inter, eur_series_dates, by = "date")
-
-## get intermediary value average for each day, remove unnecessary columns and reorganize
-clean_eur_series_inter <- clean_eur_series_inter %>%
-  mutate(intermediaryPrice = mean(buyPrice), .by = "id") %>%
+clean_eur_series_avg <- clean_eur_series_with_id %>%
+  mutate(dailyAvgPrice = mean(buyPrice), .by = "id") %>%
   mutate(buyPrice = NULL,
          priceType = NULL,
          id = NULL) %>%
-  select(date, intermediaryPrice)
+  select(date, dailyAvgPrice)
 
 ## remove duplicate rows
-clean_eur_series_inter <- clean_eur_series_inter[!duplicated(clean_eur_series_inter), ]
+clean_eur_series_avg <- clean_eur_series_avg[!duplicated(clean_eur_series_avg), ]
 
 ## Join intermediary prices in clean_eur_series_open
-clean_eur_series_open <- left_join(clean_eur_series_open, clean_eur_series_inter, by = "date")
+clean_eur_series_open <- left_join(clean_eur_series_open, clean_eur_series_avg, by = "date")
 
-# 1i. Save everything back into clean_eur_series
-clean_eur_series <- na.omit(clean_eur_series_open)
+# 1i. Get high and low prices by day
+
+## select the correct columns, create a high and low columns with values measured by id and remove the `buyPrice` column
+clean_eur_series_high_low <- clean_eur_series_with_id %>%
+  select(id, date, buyPrice) %>%
+  mutate(high = max(buyPrice), low = min(buyPrice), .by = id) %>%
+  select(id, date, high, low)
+
+## remove duplicates
+clean_eur_series_high_low <- clean_eur_series_high_low[!duplicated(clean_eur_series_high_low),] %>% select(date, high, low)
+
+## add high/low columns to clean_eur_series_open
+clean_eur_series_open <- left_join(clean_eur_series_open, clean_eur_series_high_low, by = "date")
+
+# 1j. Save everything into final_eur_series
+final_eur_series <- clean_eur_series_open %>% select(day = id, date, open = openingPrice, close = closingPrice, high, low, dailyAvg = dailyAvgPrice)
 
 # # # # # # # # # # # # # # # # # # # # #
 # 2. Generate statistics for the values #
