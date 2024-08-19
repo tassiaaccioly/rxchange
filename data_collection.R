@@ -195,7 +195,7 @@ eurRollMeanAvg <- rollmean(better_eur_statistics$dailyAverageBuy, 5, fill=NA, al
 
 eurRollMean <- rollmean(better_eur_statistics$buyPrice, 5, fill=NA, align="right")
 
-### adds the rolling mean back into the new dataset
+### adds the moving averages back into the new dataset
 better_eur_statistics <- better_eur_statistics %>% mutate(rollMean = eurRollMean, rollMeanAvg = eurRollMeanAvg)
 
 ## For Dollar
@@ -210,11 +210,55 @@ better_usd_statistics <- better_usd_statistics %>% mutate(rollMean = usdRollMean
 
 # Calculating the risk
 
+# Fixing the eur_series dataframe
+
+test_eur_series <- eur_series[,c(3,5,6)]
+
+names(test_eur_series) <- columnNames
+
+test_eur_series$date <- test_eur_series$date %>% date() 
+
+# make a separate date tibble to add proper id
+eur_series_dates <- test_eur_series$date
+
+eur_series_dates <- eur_series_dates[!duplicated(eur_series_dates)]
+
+eur_series_dates <- tibble(eur_series_dates) %>% mutate(id = row_number()) %>% rename(date = eur_series_dates)
+
+## get only the opening rows
+test_eur_series_trans <- test_eur_series[test_eur_series$priceType == "Abertura",]
+
+## rename column and remove priceType Column
+test_eur_series_trans <- test_eur_series_trans %>% rename(openingPrice = buyPrice) %>% mutate(priceType = NULL)
+
+## left join ids to database
+test_eur_series_trans <- left_join(test_eur_series_trans, eur_series_dates, by = "date")
+
+## get only the closing rows, rename price column and delete other columns
+test_eur_closing_rows <- test_eur_series[test_eur_series$priceType == 'Fechamento',] %>% rename(closingPrice = buyPrice) %>% mutate(priceType = NULL)
+
+## join closing prices in test_eur_series_trans
+test_eur_series_trans <- left_join(test_eur_series_trans, test_eur_closing_rows, by = "date")
+
+## reorganizing the columns
+test_eur_series_trans <- test_eur_series_trans %>% select(id, date, openingPrice, closingPrice)
+
+## Organizing the intermediate values:
+
+### get only the intermediate values
+test_eur_series_inter <- test_eur_series[test_eur_series$priceType == "Intermediário",]
+
+### adds ids to the database
+test_eur_series_inter <- left_join(test_eur_series_inter, eur_series_dates, by = "date")
+
+### get intermediary value average for each day, remove unnecessary columns and reorganize
+test_eur_series_inter <- test_eur_series_inter %>% mutate(intermediaryPrice = mean(buyPrice), .by = "id") %>% mutate(buyPrice = NULL, priceType = NULL, id = NULL) %>% select(date, intermediaryPrice)
+
+### remove duplicate rows
+test_eur_series_inter <- test_eur_series_inter[!duplicated(test_eur_series_inter),]
+
+## join intermediary prices in test_eur_series_trans
+test_eur_series_trans <- left_join(test_eur_series_trans, test_eur_series_inter, by = "date")
 
 
- res <- GET("https://olinda.bcb.gov.br/olinda/servico/PTAX/versao/v1/odata/CotacaoMoedaPeriodo(moeda=@moeda,dataInicial=@dataInicial,dataFinalCotacao=@dataFinalCotacao)?@moeda='USD'&@dataInicial='01-01-2023'&@dataFinalCotacao='12-31-2023'&$top=9999&$filter=tipoBoletim%20eq%20'Fechamento'&$orderby=cotacaoCompra%20desc&$format=json&$select=cotacaoCompra")
 
-
- fechamento_2023_usd <- fromJSON(rawToChar(res$content))$value
-
- fechamentoUSDAverage <- mean(fechamento_2023_usd$cotacaoCompra)
