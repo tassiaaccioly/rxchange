@@ -1,4 +1,4 @@
-packages <- c("tidyverse", "httr","jsonlite", "rvest", "stringr", "data.table", "esquisse", "TTR")
+packages <- c("tidyverse", "httr","jsonlite", "rvest", "stringr", "data.table", "esquisse", "Hmisc", "TTR")
 
 install.packages("tidyverse")
 install.packages("httr")
