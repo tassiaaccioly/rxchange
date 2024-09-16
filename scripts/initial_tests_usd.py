@@ -2,9 +2,11 @@
 
 # In[0.1]: Importação dos pacotes
 
-import numpy as np
+# import numpy as np
 import pandas as pd
+import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller
+from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 
 # In[0.2]: Importação dos dataframes
 
@@ -25,7 +27,7 @@ df_wg_usd.info()
 # In[1.1]: Teste de Dickey-Fuller Aumentado para df_wg_eur
 
 eur_adf = adfuller(df_wg_eur["eur"], maxlag=None, autolag="AIC")
-eur_adf # não é estacionária, p-value = 0,083 
+eur_adf # não é estacionária, p-value = 0.083 (passa no de 10%)
 
 # (-2.645994127964288,
 # 0.0838588367217662,
@@ -67,8 +69,8 @@ eur_adf_ols
 
 # In[1.2]: Teste de Dickey-Fuller Aumentado para df_wg_usd
 
-usd_adf = adfuller(df_wg_usd["usd"], maxlag=None, autolag="AIC")
-usd_adf # não é estacionária, p-value = 0,083 
+usd_adf = adfuller(df_wg_usd["usd"], maxlag=13, autolag="AIC")
+usd_adf # não é estacionária, p-value = 0.161
 
 # (-2.3340152630375437,
 # 0.1612318910518078,
@@ -107,3 +109,23 @@ usd_adf_ols
 
 #Notes:
 #[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+# In[1.3]: Plotting ACF and PACF to determine correct number of lags for eur
+
+plt.figure(figsize=(12,6))
+plot_acf(df_wg_eur['eur'], lags=13)
+plt.show()
+
+plt.figure(figsize=(12,6))
+plot_pacf(df_wg_eur['eur'], lags=13)
+plt.show()
+
+# In[1.4]: Plotting ACF and PACF to determine correct number of lags for eur
+
+plt.figure(figsize=(12,6))
+plot_acf(df_wg_usd['usd'], lags=13)
+plt.show()
+
+plt.figure(figsize=(12,6))
+plot_pacf(df_wg_usd['usd'], lags=13)
+plt.show()
