@@ -7,6 +7,7 @@ xl_historical_series = pd.ExcelFile('./excel/exchanges_historic_series.xlsx')
 df_wiseUSD = pd.read_excel(xl_historical_series, '2024_wise_usd')
 df_wiseUSD.head()
 df_wiseUSD.info()
+df_wiseUSD.describe()
 
 df_wiseEUR = pd.read_excel(xl_historical_series, '2024_wise_eur')
 df_wiseEUR.head()
@@ -23,8 +24,8 @@ usd_candlestick = go.Figure(data=[go.Candlestick(x=df_wiseUSD['date'],
                             close=df_wiseUSD['close'])])
 
 usd_candlestick.update_layout(
-  title='Wise USD - Time series',
-  yaxis_title='Câmbio - USD/Real',
+  title='Wise USD - Série Histórica',
+  yaxis_title='Cambio - USD/Real',
   shapes = [dict(x0='2024-07-17', x1='2024-09-07', y0=df_wiseUSD['dailyAvg'], y1=df_wiseUSD['dailyAvg'], xref='x', yref='paper', line_width=2
   )]
 )
