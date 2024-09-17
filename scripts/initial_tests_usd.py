@@ -1,18 +1,23 @@
 # -*- coding: utf-8 -*-
 
-# In[0.1]: Importação dos pacotes
+# In[0]: Importação dos pacotes
 
 # import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
+from statsmodels.tsa.stattools import kpss
+
+# In[0.1]: Import other files/sources
+
+import stationarity_tests
 
 # In[0.2]: Importação dos dataframes
 
-df_wg_eur = pd.read_csv("./scripts/datasets/wrangled/df_eur.csv", float_precision="high", parse_dates=([1]))
+df_wg_eur = pd.read_csv("./datasets/wrangled/df_eur.csv", float_precision="high", parse_dates=([1]))
 
-df_wg_usd = pd.read_csv("./scripts/datasets/wrangled/df_usd.csv", float_precision="high", parse_dates=([1]))
+df_wg_usd = pd.read_csv("./datasets/wrangled/df_usd.csv", float_precision="high", parse_dates=([1]))
 
 df_wg_eur = df_wg_eur.loc[:, ~df_wg_eur.columns.str.contains('^Unnamed')]
 
@@ -110,6 +115,7 @@ usd_adf_ols
 #Notes:
 #[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
+
 # In[1.3]: Plotting ACF and PACF to determine correct number of lags for eur
 
 plt.figure(figsize=(12,6))
@@ -120,7 +126,7 @@ plt.figure(figsize=(12,6))
 plot_pacf(df_wg_eur['eur'], lags=13)
 plt.show()
 
-# In[1.4]: Plotting ACF and PACF to determine correct number of lags for eur
+# In[1.4]: Plotting ACF and PACF to determine correct number of lags for usd
 
 plt.figure(figsize=(12,6))
 plot_acf(df_wg_usd['usd'], lags=13)
@@ -129,3 +135,23 @@ plt.show()
 plt.figure(figsize=(12,6))
 plot_pacf(df_wg_usd['usd'], lags=13)
 plt.show()
+
+# In[1.5]: Running KPSS test to determine stationarity for eur
+
+eur_kpss = kpss(df_wg_eur['eur'], regression="c", nlags="auto")
+eur_kpss
+
+#(0.5346460747318406,
+# 0.03386349668201789,
+# 9,
+# {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739})
+
+# In[1.6]: Running KPSS test to determine stationarity for usd
+
+usd_kpss = kpss(df_wg_usd['usd'], regression="c", nlags="auto")
+usd_kpss
+
+#(0.26288427948301424,
+# 0.1,
+# 9,
+# {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739})
