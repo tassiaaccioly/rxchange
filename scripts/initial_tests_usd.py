@@ -2,7 +2,7 @@
 
 # In[0]: Importação dos pacotes
 
-# import numpy as np
+import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
 from statsmodels.tsa.stattools import adfuller
@@ -15,67 +15,27 @@ import stationarity_tests
 
 # In[0.2]: Importação dos dataframes
 
-df_wg_eur = pd.read_csv("./datasets/wrangled/df_eur.csv", float_precision="high", parse_dates=([1]))
-
 df_wg_usd = pd.read_csv("./datasets/wrangled/df_usd.csv", float_precision="high", parse_dates=([1]))
-
-df_wg_eur = df_wg_eur.loc[:, ~df_wg_eur.columns.str.contains('^Unnamed')]
 
 df_wg_usd = df_wg_usd.loc[:, ~df_wg_usd.columns.str.contains('^Unnamed')]
 
-df_wg_eur.info()
-
 df_wg_usd.info()
 
-# In[1.0]: Definindo se as séries são estacionárias ou não
+# In[0.3]: Calculate Statistics for dataset
 
-# In[1.1]: Teste de Dickey-Fuller Aumentado para df_wg_eur
+var_usd = np.var(df_wg_usd['usd'])
+# 0.006558319695589602
 
-eur_adf = adfuller(df_wg_eur["eur"], maxlag=None, autolag="AIC")
-eur_adf # não é estacionária, p-value = 0.083 (passa no de 10%)
 
-# (-2.645994127964288,
-# 0.0838588367217662,
-# 0,
-# 179,
-# {'1%': -3.4674201432469816,
-#  '5%': -2.877826051844538,
-#  '10%': -2.575452082332012},
-# -723.2729790069569)
+# In[1.0]: Defining Stationarity
 
-eur_adf_ols = adfuller(df_wg_eur['eur'], maxlag=None, autolag="AIC", store=True, regresults=True)[-1].resols.summary()
-eur_adf_ols
-
-#                            OLS Regression Results                            
-#==============================================================================
-#Dep. Variable:                      y   R-squared:                       0.038
-#Model:                            OLS   Adj. R-squared:                  0.033
-#Method:                 Least Squares   F-statistic:                     7.001
-#Date:                Sun, 15 Sep 2024   Prob (F-statistic):            0.00888
-#Time:                        21:37:59   Log-Likelihood:                 391.66
-#No. Observations:                 179   AIC:                            -779.3
-#Df Residuals:                     177   BIC:                            -772.9
-#Df Model:                           1                                         
-#Covariance Type:            nonrobust                                         
-#==============================================================================
-#                 coef    std err          t      P>|t|      [0.025      0.975]
-#------------------------------------------------------------------------------
-#x1            -0.0645      0.024     -2.646      0.009      -0.113      -0.016
-#const          0.3967      0.150      2.653      0.009       0.102       0.692
-#==============================================================================
-#Omnibus:                       39.197   Durbin-Watson:                   2.122
-#Prob(Omnibus):                  0.000   Jarque-Bera (JB):              117.546
-#Skew:                           0.854   Prob(JB):                     2.99e-26
-#Kurtosis:                       6.583   Cond. No.                         462.
-#==============================================================================
-
-#Notes:
-#[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
-
-# In[1.2]: Teste de Dickey-Fuller Aumentado para df_wg_usd
+# In[1.1]: Augmented Dickey-Fuller Test
 
 usd_adf = adfuller(df_wg_usd["usd"], maxlag=13, autolag="AIC")
-usd_adf # não é estacionária, p-value = 0.161
+usd_adf
+
+# p-value is > 0.05 (0.16), DO NOT REJECT the null hypothesis and suggests the presence of a unit root (non-stationary)
+# adf stats > 10%, DO NOT REJECT the null hypothesis and suggests the presence of a unit root (non-stationary)
 
 # (-2.3340152630375437,
 # 0.1612318910518078,
@@ -116,17 +76,7 @@ usd_adf_ols
 #[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 
 
-# In[1.3]: Plotting ACF and PACF to determine correct number of lags for eur
-
-plt.figure(figsize=(12,6))
-plot_acf(df_wg_eur['eur'], lags=13)
-plt.show()
-
-plt.figure(figsize=(12,6))
-plot_pacf(df_wg_eur['eur'], lags=13)
-plt.show()
-
-# In[1.4]: Plotting ACF and PACF to determine correct number of lags for usd
+# In[1.2]: Plotting ACF and PACF to determine correct number of lags for usd
 
 plt.figure(figsize=(12,6))
 plot_acf(df_wg_usd['usd'], lags=13)
@@ -136,22 +86,81 @@ plt.figure(figsize=(12,6))
 plot_pacf(df_wg_usd['usd'], lags=13)
 plt.show()
 
-# In[1.5]: Running KPSS test to determine stationarity for eur
-
-eur_kpss = kpss(df_wg_eur['eur'], regression="c", nlags="auto")
-eur_kpss
-
-#(0.5346460747318406,
-# 0.03386349668201789,
-# 9,
-# {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739})
-
-# In[1.6]: Running KPSS test to determine stationarity for usd
+# In[1.3]: Running KPSS test to determine stationarity for usd
 
 usd_kpss = kpss(df_wg_usd['usd'], regression="c", nlags="auto")
 usd_kpss
 
+# p-value > 0.05 (0.1) DO NOT REJECT the null hypothesis, suggesting data is stationary
+# adf stat of 0.262 is < than 0.463 (5%), DO NOT REJECT the null hypothesis, suggesting data is stationary
+
 #(0.26288427948301424,
 # 0.1,
 # 9,
+# {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739})
+
+
+# In[1.4]: Applying differencing to make series stationary for usd
+
+df_wg_usd['diffUSD'] = df_wg_usd['usd'].diff()
+
+df_wg_usd
+
+# In[1.5]: Running ADF again to see if series is stationary for eur
+
+usd_adf_diff = adfuller(df_wg_usd["diffUSD"].dropna(), maxlag=13, autolag="AIC")
+usd_adf_diff
+
+# now it is stationary, p-value = 2.410672989858822e-25, and significant at 99%
+# test stat at -13 is also greater than 1%, we do reject the null hypothesis, data is stationary
+
+#(-13.550891814937843,
+# 2.410672989858822e-25,
+# 0,
+# 181,
+# {'1%': -3.467004502498507,
+#  '5%': -2.8776444997243558,
+#  '10%': -2.575355189707274},
+# -778.0804205067669)
+
+usd_adf_diff_ols = adfuller(df_wg_usd['diffUSD'].dropna(), maxlag=None, autolag="AIC", store=True, regresults=True)[-1].resols.summary()
+usd_adf_diff_ols
+
+#                            OLS Regression Results                            
+#==============================================================================
+#Dep. Variable:                      y   R-squared:                       0.506
+#Model:                            OLS   Adj. R-squared:                  0.504
+#Method:                 Least Squares   F-statistic:                     183.6
+#Date:                Fri, 20 Sep 2024   Prob (F-statistic):           3.01e-29
+#Time:                        02:07:20   Log-Likelihood:                 414.04
+#No. Observations:                 181   AIC:                            -824.1
+#Df Residuals:                     179   BIC:                            -817.7
+#Df Model:                           1                                         
+#Covariance Type:            nonrobust                                         
+#==============================================================================
+#                 coef    std err          t      P>|t|      [0.025      0.975]
+#------------------------------------------------------------------------------
+#x1            -1.0094      0.074    -13.551      0.000      -1.156      -0.862
+#const          0.0004      0.002      0.239      0.812      -0.003       0.004
+#==============================================================================
+#Omnibus:                       27.384   Durbin-Watson:                   2.003
+#Prob(Omnibus):                  0.000   Jarque-Bera (JB):               78.141
+#Skew:                           0.576   Prob(JB):                     1.08e-17
+#Kurtosis:                       6.006   Cond. No.                         40.6
+#==============================================================================
+
+#Notes:
+#[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+
+# In[1.6]: Running KPSS again for diffUSD
+
+usd_diff_kpss = kpss(df_wg_usd['diffUSD'].dropna(), regression="c", nlags="auto")
+usd_diff_kpss
+
+# p-value > 0.05 (0.1) suggests we should not reject the null hypothesis, thus the series is stationary
+# adf stat of 0.1 is = to 10%, we do not reject the null hypothesis at 95%, also suggesting a stationary dataset
+
+#(0.11666625140669976,
+# 0.1,
+# 0,
 # {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739})
