@@ -1,0 +1,1682 @@
+[
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.26298,
+    "time": 1695340800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.25681,
+    "time": 1695427200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.25681,
+    "time": 1695513600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.25521,
+    "time": 1695600000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.2647,
+    "time": 1695686400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.27102,
+    "time": 1695772800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.29944,
+    "time": 1695859200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31754,
+    "time": 1695945600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.32372,
+    "time": 1696032000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.32372,
+    "time": 1696118400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31583,
+    "time": 1696204800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.30676,
+    "time": 1696291200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.41007,
+    "time": 1696377600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.41688,
+    "time": 1696464000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.44891,
+    "time": 1696550400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.44671,
+    "time": 1696636800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.44671,
+    "time": 1696723200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.43905,
+    "time": 1696809600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.43417,
+    "time": 1696896000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35698,
+    "time": 1696982400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36523,
+    "time": 1697068800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31805,
+    "time": 1697155200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33695,
+    "time": 1697241600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33695,
+    "time": 1697328000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3464,
+    "time": 1697414400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31841,
+    "time": 1697500800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.32736,
+    "time": 1697587200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33202,
+    "time": 1697673600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36165,
+    "time": 1697760000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3335,
+    "time": 1697846400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3335,
+    "time": 1697932800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.32974,
+    "time": 1698019200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3502,
+    "time": 1698105600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.28992,
+    "time": 1698192000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.27948,
+    "time": 1698278400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.268,
+    "time": 1698364800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.2988,
+    "time": 1698451200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.2988,
+    "time": 1698537600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.29711,
+    "time": 1698624000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35742,
+    "time": 1698710400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.32651,
+    "time": 1698796800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.24467,
+    "time": 1698883200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.25929,
+    "time": 1698969600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.26054,
+    "time": 1699056000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.26054,
+    "time": 1699142400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.25997,
+    "time": 1699228800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.23704,
+    "time": 1699315200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.21205,
+    "time": 1699401600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.25947,
+    "time": 1699488000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.26358,
+    "time": 1699574400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.23703,
+    "time": 1699660800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.23703,
+    "time": 1699747200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.24046,
+    "time": 1699833600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.25249,
+    "time": 1699920000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.29361,
+    "time": 1700006400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.27738,
+    "time": 1700092800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.27871,
+    "time": 1700179200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35435,
+    "time": 1700265600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35435,
+    "time": 1700352000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35141,
+    "time": 1700438400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31358,
+    "time": 1700524800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35053,
+    "time": 1700611200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34296,
+    "time": 1700697600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.348,
+    "time": 1700784000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36492,
+    "time": 1700870400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36492,
+    "time": 1700956800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36443,
+    "time": 1701043200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36602,
+    "time": 1701129600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35991,
+    "time": 1701216000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3836,
+    "time": 1701302400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35995,
+    "time": 1701388800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31188,
+    "time": 1701475200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31188,
+    "time": 1701561600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31286,
+    "time": 1701648000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35879,
+    "time": 1701734400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31979,
+    "time": 1701820800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.27863,
+    "time": 1701907200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.29975,
+    "time": 1701993600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.30853,
+    "time": 1702080000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.30853,
+    "time": 1702166400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3037,
+    "time": 1702252800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31694,
+    "time": 1702339200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36311,
+    "time": 1702425600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35438,
+    "time": 1702512000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.40465,
+    "time": 1702598400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37984,
+    "time": 1702684800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37984,
+    "time": 1702771200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.38412,
+    "time": 1702857600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34989,
+    "time": 1702944000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34399,
+    "time": 1703030400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37824,
+    "time": 1703116800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37249,
+    "time": 1703203200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35342,
+    "time": 1703289600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35342,
+    "time": 1703376000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35512,
+    "time": 1703462400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35658,
+    "time": 1703548800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.32422,
+    "time": 1703635200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3685,
+    "time": 1703721600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37576,
+    "time": 1703808000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36095,
+    "time": 1703894400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36095,
+    "time": 1703980800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36168,
+    "time": 1704067200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36095,
+    "time": 1704153600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.38002,
+    "time": 1704240000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37431,
+    "time": 1704326400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36529,
+    "time": 1704412800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33521,
+    "time": 1704499200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33521,
+    "time": 1704585600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33497,
+    "time": 1704672000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33679,
+    "time": 1704758400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36431,
+    "time": 1704844800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36977,
+    "time": 1704931200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34925,
+    "time": 1705017600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31581,
+    "time": 1705104000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.31581,
+    "time": 1705190400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3129,
+    "time": 1705276800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.32334,
+    "time": 1705363200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35929,
+    "time": 1705449600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37254,
+    "time": 1705536000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36199,
+    "time": 1705622400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3741,
+    "time": 1705708800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3741,
+    "time": 1705795200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36921,
+    "time": 1705881600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.42782,
+    "time": 1705968000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37886,
+    "time": 1706054400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36893,
+    "time": 1706140800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33309,
+    "time": 1706227200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33634,
+    "time": 1706313600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33634,
+    "time": 1706400000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33039,
+    "time": 1706486400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36464,
+    "time": 1706572800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36948,
+    "time": 1706659200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35151,
+    "time": 1706745600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34634,
+    "time": 1706832000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36106,
+    "time": 1706918400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36106,
+    "time": 1707004800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35014,
+    "time": 1707091200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34884,
+    "time": 1707177600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33963,
+    "time": 1707264000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35672,
+    "time": 1707350400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.3811,
+    "time": 1707436800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34081,
+    "time": 1707523200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34081,
+    "time": 1707609600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34725,
+    "time": 1707696000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33462,
+    "time": 1707782400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.30317,
+    "time": 1707868800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.33457,
+    "time": 1707955200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35803,
+    "time": 1708041600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35294,
+    "time": 1708128000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35294,
+    "time": 1708214400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.35733,
+    "time": 1708300800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34185,
+    "time": 1708387200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.32731,
+    "time": 1708473600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34165,
+    "time": 1708560000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37389,
+    "time": 1708646400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.40574,
+    "time": 1708732800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.40574,
+    "time": 1708819200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.40407,
+    "time": 1708905600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.40382,
+    "time": 1708992000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.34909,
+    "time": 1709078400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.385,
+    "time": 1709164800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37174,
+    "time": 1709251200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37076,
+    "time": 1709337600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37076,
+    "time": 1709424000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.37142,
+    "time": 1709510400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.36896,
+    "time": 1709596800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.38306,
+    "time": 1709683200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.38931,
+    "time": 1709769600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.40429,
+    "time": 1709856000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.4485,
+    "time": 1709942400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.4485,
+    "time": 1710028800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.45175,
+    "time": 1710115200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.44251,
+    "time": 1710201600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.43083,
+    "time": 1710288000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.44474,
+    "time": 1710374400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.43551,
+    "time": 1710460800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.43918,
+    "time": 1710547200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.43918,
+    "time": 1710633600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.43468,
+    "time": 1710720000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.47019,
+    "time": 1710806400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.46522,
+    "time": 1710892800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.43282,
+    "time": 1710979200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.40482,
+    "time": 1711065600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.40532,
+    "time": 1711152000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.40532,
+    "time": 1711238400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.40604,
+    "time": 1711324800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.39,
+    "time": 1711411200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.39155,
+    "time": 1711497600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.39798,
+    "time": 1711584000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.41221,
+    "time": 1711670400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.41221,
+    "time": 1711756800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.41221,
+    "time": 1711843200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.41238,
+    "time": 1711929600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.42766,
+    "time": 1712016000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.45539,
+    "time": 1712102400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.463,
+    "time": 1712188800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.48166,
+    "time": 1712275200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.49051,
+    "time": 1712361600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.49051,
+    "time": 1712448000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.47583,
+    "time": 1712534400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.45859,
+    "time": 1712620800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.43913,
+    "time": 1712707200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.44315,
+    "time": 1712793600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.46188,
+    "time": 1712880000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.44628,
+    "time": 1712966400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.44628,
+    "time": 1713052800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.44918,
+    "time": 1713139200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.50896,
+    "time": 1713225600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.61495,
+    "time": 1713312000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.58336,
+    "time": 1713398400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.57965,
+    "time": 1713484800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54356,
+    "time": 1713571200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54356,
+    "time": 1713657600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54472,
+    "time": 1713744000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.50445,
+    "time": 1713830400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.49268,
+    "time": 1713916800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.50714,
+    "time": 1714003200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.53455,
+    "time": 1714089600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.47118,
+    "time": 1714176000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.47118,
+    "time": 1714262400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.4784,
+    "time": 1714348800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.48447,
+    "time": 1714435200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54109,
+    "time": 1714521600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.56759,
+    "time": 1714608000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.48485,
+    "time": 1714694400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.45928,
+    "time": 1714780800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.45928,
+    "time": 1714867200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.47301,
+    "time": 1714953600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.46601,
+    "time": 1715040000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.45541,
+    "time": 1715126400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.46975,
+    "time": 1715212800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54422,
+    "time": 1715299200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.55548,
+    "time": 1715385600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.55548,
+    "time": 1715472000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54966,
+    "time": 1715558400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.56403,
+    "time": 1715644800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54693,
+    "time": 1715731200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.59232,
+    "time": 1715817600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.57486,
+    "time": 1715904000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54828,
+    "time": 1715990400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54828,
+    "time": 1716076800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54796,
+    "time": 1716163200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.54385,
+    "time": 1716249600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.56076,
+    "time": 1716336000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.57795,
+    "time": 1716422400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.56265,
+    "time": 1716508800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.60599,
+    "time": 1716595200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.60599,
+    "time": 1716681600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.59163,
+    "time": 1716768000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.61887,
+    "time": 1716854400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.60182,
+    "time": 1716940800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.62106,
+    "time": 1717027200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.63667,
+    "time": 1717113600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.69176,
+    "time": 1717200000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.69176,
+    "time": 1717286400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.69333,
+    "time": 1717372800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.72661,
+    "time": 1717459200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.75588,
+    "time": 1717545600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.76555,
+    "time": 1717632000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.72713,
+    "time": 1717718400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.77399,
+    "time": 1717804800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.77399,
+    "time": 1717891200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.73826,
+    "time": 1717977600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.76359,
+    "time": 1718064000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.76351,
+    "time": 1718150400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.84124,
+    "time": 1718236800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.75863,
+    "time": 1718323200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.75468,
+    "time": 1718409600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.75468,
+    "time": 1718496000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.73488,
+    "time": 1718582400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.8272,
+    "time": 1718668800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.84411,
+    "time": 1718755200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.82923,
+    "time": 1718841600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.83911,
+    "time": 1718928000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.80849,
+    "time": 1719014400000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.80849,
+    "time": 1719100800000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.81352,
+    "time": 1719187200000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.78557,
+    "time": 1719273600000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.83903,
+    "time": 1719360000000
+  },
+  {
+    "source": "EUR",
+    "target": "BRL",
+    "value": 5.89995,
+    "time": 1719446400000
+  }
+]
