@@ -348,7 +348,7 @@ logeur_1year_diff_kpss
 # with less lags. The lags in this tests are added to help the test adjust for residual autocorrelation
 # and serial autocorrelation. It's not related to remainind autocorrelation in the dataset.
 
-# In[1.4]: Plotting ACF and PACF to determine correct number of lags for eur
+# In[2.3]: Plotting ACF and PACF to determine correct number of lags for eur
 
 plt.figure(figsize=(12,6))
 plot_acf(df_wg_eur_1year['diffLogEUR'].dropna(), lags=13)
