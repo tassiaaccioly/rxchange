@@ -14,6 +14,8 @@ import matplotlib.dates as mdates
 from statsmodels.tsa.stattools import adfuller
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.tsa.stattools import kpss
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.tools.tools import add_constant
 
 
 # In[0.2]: Import dataframes
@@ -335,7 +337,49 @@ strong multicollinearity or other numerical problems.
 # This run also shows no statistical improvement  in AIC and BIC from the last OLS
 # Regression, and it actually shows the Loglike is slighly lower in this one.
 
-# In[2.2]: Set a finite amount of lags to account for the second note on the OLS Regression:
+# In[2.2]: Testing the lagged data for multicolinearity:
+
+# Creating a new DataFrame with the lagged values:
+
+usd_1year_lagged = pd.DataFrame({"diffLogUSD": df_wg_usd_1year["diffLogUSD"]})
+
+usd_1year_lagged['lag 1'] = usd_1year_lagged["diffLogUSD"].shift(1)
+usd_1year_lagged['lag 2'] = usd_1year_lagged["diffLogUSD"].shift(2)
+usd_1year_lagged['lag 3'] = usd_1year_lagged["diffLogUSD"].shift(3)
+usd_1year_lagged['lag 4'] = usd_1year_lagged["diffLogUSD"].shift(4)
+usd_1year_lagged['lag 5'] = usd_1year_lagged["diffLogUSD"].shift(5)
+usd_1year_lagged['lag 6'] = usd_1year_lagged["diffLogUSD"].shift(6)
+
+usd_1year_lagged
+
+usd_constants = add_constant(usd_1year_lagged.dropna())
+
+usd_vif = pd.DataFrame()
+
+usd_vif['vif'] = [variance_inflation_factor(usd_constants.values, i) for i in range(usd_constants.shape[1])]
+
+usd_vif['variable'] = usd_constants.columns
+
+usd_vif
+
+"""
+        vif    variable
+0  1.039356       const
+1  1.045368  diffLogUSD
+2  1.040596       lag 1
+3  1.067633       lag 2
+4  1.058610       lag 3
+5  1.057849       lag 4
+6  1.038389       lag 5
+7  1.038986       lag 6
+"""
+
+# We can see here there are no high VIFs, which means this is not necessarily a problem
+# with multicolinearity between lags. Which could implicate we're using a high amount
+# of lags, meaning we need to run the model again but limiting the amount of lags to less
+# than the specified in the last model (which was 6)
+
+# In[2.3]: Set a finite amount of lags to account for the second note on the OLS Regression:
 
 logusd_1year_diff_adf = adfuller(df_wg_usd_1year["diffLogUSD"].dropna(), maxlag=5, autolag="AIC")
 logusd_1year_diff_adf
@@ -390,7 +434,7 @@ Notes:
 # This time it gave us a better result for the OLS, it also gave better results for the
 # AIC, BIC and Loglike stats, making this a better model than before.
 
-# In[2.3]: Kwiatkowski-Phillips-Schmidt-Shin (KPSS) test post differencing
+# In[2.4]: Kwiatkowski-Phillips-Schmidt-Shin (KPSS) test post differencing
 
 logusd_1year_diff_kpss = kpss(df_wg_usd_1year['diffLogUSD'].dropna(), regression="c", nlags="auto")
 logusd_1year_diff_kpss
@@ -411,7 +455,7 @@ logusd_1year_diff_kpss
 # although it's veeery close to not being stationary as both the p-value and kpss stats are
 # very close to the limit. This also has a high number of lags, but it's ok.
 
-# In[2.4]: Plotting ACF and PACF to determine correct number of lags for usd
+# In[2.5]: Plotting ACF and PACF to determine correct number of lags for usd
 
 plt.figure(figsize=(12,6))
 plot_acf(df_wg_usd_1year['diffLogUSD'].dropna(), lags=13)
