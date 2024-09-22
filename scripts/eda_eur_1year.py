@@ -456,7 +456,37 @@ df_wg_usd_1year['diffLogUSD'] = df_wg_usd_1year['logUSD'].diff()
 
 df_eur_usd = pd.DataFrame({"eur": df_wg_eur_1year['diffLogEUR'], "usd": df_wg_usd_1year["diffLogUSD"]})
 
-eur_usd_granger = grangercausalitytests(df_eur_usd[['usd','eur']].dropna(), maxlag=40)
+eur_usd_granger = grangercausalitytests(df_eur_usd[['eur', 'usd']].dropna(), maxlag=40)
+
+"""
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=1.1155  , p=0.2918  , df_denom=275, df_num=1
+ssr based chi2 test:   chi2=1.1277  , p=0.2883  , df=1
+likelihood ratio test: chi2=1.1254  , p=0.2888  , df=1
+parameter F test:         F=1.1155  , p=0.2918  , df_denom=275, df_num=1
+
+Granger Causality
+number of lags (no zero) 2
+ssr based F test:         F=0.5894  , p=0.5554  , df_denom=272, df_num=2
+ssr based chi2 test:   chi2=1.2005  , p=0.5487  , df=2
+likelihood ratio test: chi2=1.1979  , p=0.5494  , df=2
+parameter F test:         F=0.5894  , p=0.5554  , df_denom=272, df_num=2
+
+Granger Causality
+number of lags (no zero) 3
+ssr based F test:         F=0.4765  , p=0.6989  , df_denom=269, df_num=3
+ssr based chi2 test:   chi2=1.4667  , p=0.6900  , df=3
+likelihood ratio test: chi2=1.4628  , p=0.6909  , df=3
+parameter F test:         F=0.4765  , p=0.6989  , df_denom=269, df_num=3
+
+Granger Causality
+number of lags (no zero) 4
+ssr based F test:         F=0.9612  , p=0.4293  , df_denom=266, df_num=4
+ssr based chi2 test:   chi2=3.9748  , p=0.4094  , df=4
+likelihood ratio test: chi2=3.9463  , p=0.4133  , df=4
+parameter F test:         F=0.9612  , p=0.4293  , df_denom=266, df_num=4
+"""
 
 """
 Granger Causality
@@ -526,6 +556,8 @@ parameter F test:         F=1.1499  , p=0.2799  , df_denom=71, df_num=69
 # we're trying to predict values to a max of 2 weeks ahead, and the granger test
 # shows us that the prediction power of the usd time series will work best in the
 # long range and not in the short one, like we intend.
+# The first lags in these case are very high for all tests, ranging from 0.08 on
+# lag 14 for likelihood to 0.7 on lag 3 for the f-test
 
 # In[3.5]: Testing VIF for EUR and USD:
 
@@ -548,7 +580,7 @@ eur_usd_vif
 
 # The low VIFs (< 10) indicate no multicolinearity between these two time series
 
-# In[4.0]: Cross-testing the series to make sure they have causality between them
+# In[3.6]: Cross-testing the series to make sure they have causality between them
 
 tscv = TimeSeriesSplit(n_splits=5)
 
