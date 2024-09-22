@@ -93,7 +93,7 @@ usd_kpss = kpss(df_wg_usd['usd'], regression="c", nlags="auto")
 usd_kpss
 
 # p-value > 0.05 (0.1) DO NOT REJECT the null hypothesis, suggesting data is stationary
-# adf stat of 0.262 is < than 0.463 (5%), DO NOT REJECT the null hypothesis, suggesting data is stationary
+# kpss stat of 0.262 is < than 0.463 (5%), DO NOT REJECT the null hypothesis, suggesting data is stationary
 
 """
 (0.26288427948301424,
@@ -209,7 +209,7 @@ usd_det_kpss = kpss(df_wg_usd['detrendUSD'], regression="c", nlags="auto")
 usd_det_kpss
 
 # p-value > 0.05 (0.1) suggests we should not reject the null hypothesis, thus suggesting the series is stationary
-# adf stat of 0.21 is > 10%, we do not reject the null hypothesis at 95%, also suggesting a stationary dataset
+# kpss stat of 0.21 is > 10%, we do not reject the null hypothesis at 95%, also suggesting a stationary dataset
 
 """
 (0.21554541234506638,

@@ -45,7 +45,7 @@ eur_adf_ols = adfuller(df_wg_eur['eur'], maxlag=None, autolag="AIC", store=True,
 eur_adf_ols
 
 """
-                            OLS Regression Results                            
+                            OLS Regression Results
 ==============================================================================
 Dep. Variable:                      y   R-squared:                       0.038
 Model:                            OLS   Adj. R-squared:                  0.033
@@ -54,8 +54,8 @@ Date:                Fri, 20 Sep 2024   Prob (F-statistic):            0.00888
 Time:                        20:32:01   Log-Likelihood:                 391.66
 No. Observations:                 179   AIC:                            -779.3
 Df Residuals:                     177   BIC:                            -772.9
-Df Model:                           1                                         
-Covariance Type:            nonrobust                                         
+Df Model:                           1
+Covariance Type:            nonrobust
 ==============================================================================
                  coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
@@ -90,7 +90,7 @@ eur_kpss = kpss(df_wg_eur['eur'], regression="c", nlags="auto")
 eur_kpss
 
 # p-value < 0.05 (0.033) REJECTS the null hypothesis, suggesting data is NON-STATIONARY
-# adf stat of 0.534 is > than 0.463 (5%), REJECTS the null hypothesis, suggesting data is NON-STATIONARY
+# kpss stat of 0.534 is > than 0.463 (5%), REJECTS the null hypothesis, suggesting data is NON-STATIONARY
 
 """
 (0.5346460747318406,
@@ -99,13 +99,13 @@ eur_kpss
  {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739})
 """
 
-# In[1.4]: Applying differencing to make series stationary for eur
+# In[2.0]: Applying differencing to make series stationary for eur
 
 df_wg_eur['diffEUR'] = df_wg_eur['eur'].diff()
 
 df_wg_eur
 
-# In[1.5]: Running ADF again to see if series is stationary for eur
+# In[2.1]: Running ADF again to see if series is stationary for eur
 
 eur_adf_diff = adfuller(df_wg_eur["diffEUR"].dropna(), maxlag=None, autolag="AIC")
 eur_adf_diff
@@ -128,7 +128,7 @@ eur_adf_diff_ols = adfuller(df_wg_eur['diffEUR'].dropna(), maxlag=None, autolag=
 eur_adf_diff_ols
 
 """
-                            OLS Regression Results                            
+                            OLS Regression Results
 ==============================================================================
 Dep. Variable:                      y   R-squared:                       0.546
 Model:                            OLS   Adj. R-squared:                  0.544
@@ -137,8 +137,8 @@ Date:                Fri, 20 Sep 2024   Prob (F-statistic):           5.07e-32
 Time:                        20:35:22   Log-Likelihood:                 386.59
 No. Observations:                 178   AIC:                            -769.2
 Df Residuals:                     176   BIC:                            -762.8
-Df Model:                           1                                         
-Covariance Type:            nonrobust                                         
+Df Model:                           1
+Covariance Type:            nonrobust
 ==============================================================================
                  coef    std err          t      P>|t|      [0.025      0.975]
 ------------------------------------------------------------------------------
@@ -155,13 +155,13 @@ Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 """
 
-# In[1.6]: Running KPSS again for diffEUR
+# In[2.2]: Running KPSS again for diffEUR
 
 eur_diff_kpss = kpss(df_wg_eur['diffEUR'].dropna(), regression="c", nlags="auto")
 eur_diff_kpss
 
 # p-value > 0.05 (0.1) DO NOT REJECT the null hypothesis, suggesting the data is STATIONARY
-# adf stat < 10% (0.08), DO NOT REJECT the null hypothesis, suggesting the data is STATIONARY
+# kpss stat < 10% (0.08), DO NOT REJECT the null hypothesis, suggesting the data is STATIONARY
 
 """
 (0.08982787925254508,
@@ -169,4 +169,14 @@ eur_diff_kpss
  4,
  {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739})
 """
+
+# In[3]: Plotting ACF and PACF to determine ppp and qqq for ARIMA
+
+plt.figure(figsize=(12,6))
+plot_acf(df_wg_eur['diffEUR'], lags=13)
+plt.show()
+
+plt.figure(figsize=(12,6))
+plot_pacf(df_wg_eur['diffEUR'], lags=13)
+plt.show()
 
