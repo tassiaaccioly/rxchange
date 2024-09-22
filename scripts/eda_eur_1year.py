@@ -31,19 +31,19 @@ dt_format = "%d/%m/%Y"
 # Plot the 5 year dataset
 
 plt.figure(figsize=(15, 10))
-sns.lineplot(x=df_wg_eur_5year["dateTime"], y=df_wg_eur_5year["eur"], color="limegreen", label="EUR (€)")
-plt.axhline(y=np.mean(df_wg_eur_5year["eur"]), color="black", linestyle="--", label="Média") # mean for euro 
-plt.axhline(y=np.max(df_wg_eur_5year["eur"]), color="magenta", label="Máxima") # máxima for euro 
-plt.axhline(y=np.min(df_wg_eur_5year["eur"]), color="magenta", linestyle="--", label="Mínima") # máxima for euro 
+sns.lineplot(x=df_wg_eur_5year["dateTime"], y=df_wg_eur_5year["eur"], color="limegreen", label="Câmbio EUR")
+plt.axhline(y=np.mean(df_wg_eur_5year["eur"]), color="black", linestyle="--", label="Média") # mean for euro
+plt.axhline(y=np.max(df_wg_eur_5year["eur"]), color="magenta", label="Máxima") # máxima for euro
+plt.axhline(y=np.min(df_wg_eur_5year["eur"]), color="magenta", linestyle="--", label="Mínima") # máxima for euro
 plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_5year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_5year["dateTime"][1740].strftime(dt_format)})', fontsize="18")
 plt.yticks(np.arange(round(df_wg_eur_5year["eur"].min(), 1), round(df_wg_eur_5year["eur"].max() + 0.1, 1), 0.1), fontsize="14")
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y')) 
-plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=90)) 
-plt.gca().xaxis.set_tick_params(rotation = -30) 
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
+plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=90))
+plt.gca().xaxis.set_tick_params(rotation = -30)
 plt.xticks(fontsize="14")
 plt.xlabel("Data", fontsize="18")
-plt.ylabel("Câmbio EUR → BRL", fontsize="18")
-plt.legend(fontsize=18, loc="upper left", bbox_to_anchor=(0.02, 0, 0, 0.93))
+plt.ylabel("Câmbio EUR ↔ BRL", fontsize="18")
+plt.legend(fontsize=18, loc="upper right", bbox_to_anchor=(0.98, 0, 0, 0.93))
 plt.show()
 
 # In[0.3]: Calculate Statistics for datasets
@@ -58,39 +58,46 @@ varlog_eur_1year
 
 #0.0006763790454904603
 
+optimal_lags_eur_1year = 12*(len(df_wg_eur_1year['eur'])/100)**(1/4)
+optimal_lags_eur_1year
+
+# 15.522824731401618
+
+# So optimal lags for this dataset = 15 or 16
+
 # In[0.5]: Plot the original dataset for visual assessment
 
 plt.figure(figsize=(15, 10))
-sns.lineplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["eur"], color="limegreen", label="EUR (€)")
-plt.axhline(y=np.mean(df_wg_eur_1year["eur"]), color="black", linestyle="--", label="Média") # mean for euro 
-plt.axhline(y=np.max(df_wg_eur_1year["eur"]), color="magenta", label="Máxima") # máxima for euro 
-plt.axhline(y=np.min(df_wg_eur_1year["eur"]), color="magenta", linestyle="--", label="Mínima") # máxima for euro 
+sns.lineplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["eur"], color="limegreen", label="Câmbio EUR")
+plt.axhline(y=np.mean(df_wg_eur_1year["eur"]), color="black", linestyle="--", label="Média") # mean for euro
+plt.axhline(y=np.max(df_wg_eur_1year["eur"]), color="magenta", label="Máxima") # máxima for euro
+plt.axhline(y=np.min(df_wg_eur_1year["eur"]), color="magenta", linestyle="--", label="Mínima") # máxima for euro
 plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_1year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_1year["dateTime"][279].strftime(dt_format)})', fontsize="18")
 plt.yticks(np.arange(round(df_wg_eur_1year["eur"].min(), 1), round(df_wg_eur_1year["eur"].max() + 0.1, 1), 0.1), fontsize="14")
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y')) 
-plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29)) 
-plt.gca().xaxis.set_tick_params(rotation = -30) 
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
+plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29))
+plt.gca().xaxis.set_tick_params(rotation = -30)
 plt.xticks(fontsize="14")
 plt.xlabel("Data", fontsize="18")
-plt.ylabel("Câmbio EUR → BRL", fontsize="18")
+plt.ylabel("Câmbio EUR ↔ BRL", fontsize="18")
 plt.legend(fontsize=18, loc="upper left", bbox_to_anchor=(0.02, 0, 0, 0.93))
 plt.show()
 
 # In[0.5]: Plot the log dataset for visual assessment
 
 plt.figure(figsize=(15, 10))
-sns.lineplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["logEUR"], color="limegreen", label="EUR → BRL")
-plt.axhline(y=np.mean(df_wg_eur_1year["logEUR"]), color="black", linestyle="--", label="Média") # mean for euro 
-plt.axhline(y=np.max(df_wg_eur_1year["logEUR"]), color="magenta", label="Máxima") # máxima for euro 
-plt.axhline(y=np.min(df_wg_eur_1year["logEUR"]), color="magenta", linestyle="--", label="Mínima") # máxima for euro 
+sns.lineplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["logEUR"], color="limegreen", label="log(Câmbio EUR)")
+plt.axhline(y=np.mean(df_wg_eur_1year["logEUR"]), color="black", linestyle="--", label="Média") # mean for euro
+plt.axhline(y=np.max(df_wg_eur_1year["logEUR"]), color="magenta", label="Máxima") # máxima for euro
+plt.axhline(y=np.min(df_wg_eur_1year["logEUR"]), color="magenta", linestyle="--", label="Mínima") # máxima for euro
 plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_1year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_1year["dateTime"][279].strftime(dt_format)})', fontsize="18")
 plt.yticks(np.arange(round(df_wg_eur_1year["logEUR"].min(), 2), round(df_wg_eur_1year["logEUR"].max() + 0.01, 2), 0.01), fontsize="14")
-plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y')) 
-plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29)) 
-plt.gca().xaxis.set_tick_params(rotation = -30) 
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
+plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29))
+plt.gca().xaxis.set_tick_params(rotation = -30)
 plt.xticks(fontsize="14")
 plt.xlabel("Data", fontsize="18")
-plt.ylabel("Câmbio log(EUR → BRL)", fontsize="18")
+plt.ylabel("Câmbio log(EUR ↔ BRL)", fontsize="18")
 plt.legend(fontsize=18, loc="upper left", bbox_to_anchor=(0.02, 0, 0, 0.93))
 plt.show()
 
@@ -179,17 +186,18 @@ Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 """
 
-# We can notice that in the second model, both AIC and BIC are lower than the first one 
-# and also that the loglike is higher on the second model than the first one.
+# We can notice that in the second model, both AIC and BIC are lower than the first one
+# and also that the loglike is higher on the second model than the first one, proving
+# that a logarthmic version of the data is a better fit for the model so far.
 
 # Getting values from the second model:
-    
+
 logeur_1year_adf = adfuller(df_wg_eur_1year["logEUR"], maxlag=None, autolag="AIC")
 logeur_1year_adf
 
 # p-value is > 0.05 (0.99), DO NOT REJECT the null hypothesis and suggests the presence of a unit root (NON-STATIONARY)
 # adf stats > 10% (1.20), DO NOT REJECT the null hypothesis and suggests the presence of a unit root (NON-STATIONARY)
-# lags = 7
+# lags = 7 good amount of lags
 
 """
 (1.207357376225017,
@@ -209,7 +217,7 @@ logeur_1year_kpss
 
 # p-value < 0.05 (0.01) REJECTS the null hypothesis, suggesting data is NON-STATIONARY
 # kpss stat of 2.00 is > than 1% (0.739), REJECTS the null hypothesis, suggesting data is NON-STATIONARY
-# lags = 10
+# lags = 10 good amount of lags
 
 """
 (2.004541680328264,
@@ -218,18 +226,58 @@ logeur_1year_kpss
  {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739})
 """
 
-# In[1.3]: Differencing the data to achieve stationarity
+# In[1.3]: Plotting ACF and PACF to examine autocorrelations in data:
+
+plt.figure(figsize=(12,6))
+plot_acf(df_wg_eur_1year['logEUR'].dropna(), lags=13)
+plt.show()
+
+plt.figure(figsize=(12,6))
+plot_pacf(df_wg_eur_1year['logEUR'].dropna(), lags=13)
+plt.show()
+
+# PACF plot shows an AR(2) order for the dataset showing a high statistical significance spike 
+# at the first lag in PACF. ACF shows slow decay towards 0 -> exponentially decaying or sinusoidal
+ 
+# In[1.4]: Differencing the data to achieve stationarity
 
 df_wg_eur_1year['diffLogEUR'] = df_wg_eur_1year['logEUR'].diff()
 
 df_wg_eur_1year
 
+# In[1.5]: Plotting the differenced data for visual assessment:
+
+plt.figure(figsize=(15, 10))
+sns.lineplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["diffLogEUR"], color="limegreen", label="Log(EUR) - Diff")
+plt.axhline(y=np.mean(df_wg_eur_1year["diffLogEUR"]), color="black", linestyle="--", label="Média") # mean for eur
+plt.title(f'Log do Euro Diferenciado - Série histórica ({df_wg_eur_1year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_1year["dateTime"][279].strftime(dt_format)})', fontsize="18")
+plt.yticks(np.arange(round(df_wg_eur_1year["diffLogEUR"].min(), 3), round(df_wg_eur_1year["diffLogEUR"].max() + 0.002, 3), 0.002), fontsize="14")
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
+plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29))
+plt.gca().xaxis.set_tick_params(rotation = -30)
+plt.xticks(fontsize="14")
+plt.xlabel("Data", fontsize="18")
+plt.ylabel("Log(Câmbio EUR ↔ BRL) Diferenciado ", fontsize="18")
+plt.legend(fontsize=18, loc="upper center")
+plt.show()
+
 # In[2.0]: Defining Stationarity again
+
+optimal_lags_eur_1year_diff = 12*(len(df_wg_eur_1year['diffLogEUR'].dropna())/100)**(1/4)
+optimal_lags_eur_1year_diff
+
+# 15.508946465645465
+
+# So optimal lags for this dataset = 15 or 16
 
 # In[2.1]: Augmented Dickey-Fuller Test with diffLogEUR
 
 logeur_1year_diff_adf = adfuller(df_wg_eur_1year["diffLogEUR"].dropna(), maxlag=None, autolag="AIC")
 logeur_1year_diff_adf
+
+# p-value is <<<< 0.05 (5.94330005090518e-25), REJECTS the null hypothesis and suggests the absence of a unit root (STATIONARY)
+# adf stats <<<< 1% (-13), REJECTS the null hypothesis and suggests the absence of a unit root (STATIONARY)
+# lags = 1 good amount of lags
 
 """
 (-13.340116766071626,
@@ -242,16 +290,74 @@ logeur_1year_diff_adf
  -2040.329889589716)
 """
 
-eur_1year_diff_adf_ols = adfuller(df_wg_eur_1year['diffEUR'].dropna(), maxlag=None, autolag="AIC", store=True, regresults=True)[-1].resols.summary()
-eur_1year_diff_adf_ols
+logeur_1year_diff_adf_ols = adfuller(df_wg_eur_1year['diffLogEUR'].dropna(), maxlag=None, autolag="AIC", store=True, regresults=True)[-1].resols.summary()
+logeur_1year_diff_adf_ols
+
+"""
+                            OLS Regression Results
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.536
+Model:                            OLS   Adj. R-squared:                  0.533
+Method:                 Least Squares   F-statistic:                     158.3
+Date:                Sun, 22 Sep 2024   Prob (F-statistic):           2.04e-46
+Time:                        12:15:14   Log-Likelihood:                 1079.4
+No. Observations:                 277   AIC:                            -2153.
+Df Residuals:                     274   BIC:                            -2142.
+Df Model:                           2
+Covariance Type:            nonrobust
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1            -1.1908      0.089    -13.340      0.000      -1.367      -1.015
+x2             0.1141      0.061      1.874      0.062      -0.006       0.234
+const          0.0005      0.000      1.623      0.106      -0.000       0.001
+==============================================================================
+Omnibus:                       25.480   Durbin-Watson:                   2.001
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               64.763
+Skew:                           0.397   Prob(JB):                     8.65e-15
+Kurtosis:                       5.232   Cond. No.                         343.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+"""
+
+# AIC, BIC and Loglike prove this model is even better than the second one.
+
+# In[2.2]: Kwiatkowski-Phillips-Schmidt-Shin (KPSS) test post differencing
+
+logeur_1year_diff_kpss = kpss(df_wg_eur_1year['diffLogEUR'].dropna(), regression="c", nlags="auto")
+logeur_1year_diff_kpss
+
+# p-value > 0.05 (0.1) DO NOT REJECT the null hypothesis, suggesting data is STATIONARY
+# kpss stat of 0.28 is < 10% (0.347), DO NOT REJECT the null hypothesis, suggesting data is STATIONARY
+# lags = 10 ok amount of lags for this point in time
+
+"""
+(0.2825087625709679,
+ 0.1,
+ 10,
+ {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739})
+"""
+
+# The adf test scares me a little bit as this could potentially mean I transformed the data
+# into white noise, over-differencing it. In the other hand, the kpss test seems perfectly normal
+# with a p-value far from 1, which could mean there is no over-differencing in this data.
+# Understanding the number of lags that remained the same:
+# The high number of lags here might indicate that there's still autocorrelation in the residuals
+# with less lags. The lags in this tests are added to help the test adjust for residual autocorrelation
+# and serial autocorrelation. It's not related to remainind autocorrelation in the dataset.
 
 # In[1.4]: Plotting ACF and PACF to determine correct number of lags for eur
 
 plt.figure(figsize=(12,6))
-plot_acf(df_wg_eur_1year['logEUR'], lags=50)
+plot_acf(df_wg_eur_1year['diffLogEUR'].dropna(), lags=13)
 plt.show()
 
 plt.figure(figsize=(12,6))
-plot_pacf(df_wg_eur_1year['logEUR'], lags=16)
+plot_pacf(df_wg_eur_1year['diffLogEUR'].dropna(), lags=13)
 plt.show()
+
+# Both tests seem to show normal stationary plots with no significant lags after zero.
+# Also, no significant negative first lag;
 
