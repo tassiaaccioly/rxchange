@@ -518,9 +518,14 @@ likelihood ratio test: chi2=157.5477, p=0.0000  , df=69
 parameter F test:         F=1.1499  , p=0.2799  , df_denom=71, df_num=69
 """
 
-# We can see here that some of the tests, specially the ones based in chi2 have
+# We can see here that some of the tests, specially the ones based on chi2 have
 # very low p-values, but our F-tests never get below 0,13, which strongly indicates
-# there's no addition of predictive power when adding the usd time series.
+# there's no addition of predictive power when adding the usd time series. Although
+# we could make a case for the low p-values of the likelihood tests, specially
+# at higher lags. For the purpose of this work it doesn't matter though because
+# we're trying to predict values to a max of 2 weeks ahead, and the granger test
+# shows us that the prediction power of the usd time series will work best in the
+# long range and not in the short one, like we intend.
 
 # In[3.5]: Testing VIF for EUR and USD:
 
