@@ -11,9 +11,11 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.stattools import adfuller, kpss, grangercausalitytests
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-from statsmodels.tsa.stattools import kpss
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+from statsmodels.tools.tools import add_constant
+from sklearn.model_selection import TimeSeriesSplit
 
 
 # In[0.2]: Import dataframes
@@ -361,3 +363,235 @@ plt.show()
 # Both tests seem to show normal stationary plots with no significant lags after zero.
 # Also, no significant negative first lag;
 
+# In[3.0]: Running Granger Causality tests to analyse the lags
+
+# In[3.1]: Create the the lagged dataframe:
+
+eur_1year_lagged = pd.DataFrame({"diffLogEUR": df_wg_eur_1year["diffLogEUR"]})
+
+eur_1year_lagged['lag 1'] = eur_1year_lagged["diffLogEUR"].shift(1)
+eur_1year_lagged['lag 2'] = eur_1year_lagged["diffLogEUR"].shift(2)
+eur_1year_lagged['lag 3'] = eur_1year_lagged["diffLogEUR"].shift(3)
+eur_1year_lagged['lag 4'] = eur_1year_lagged["diffLogEUR"].shift(4)
+eur_1year_lagged['lag 5'] = eur_1year_lagged["diffLogEUR"].shift(5)
+eur_1year_lagged['lag 6'] = eur_1year_lagged["diffLogEUR"].shift(6)
+
+eur_1year_lagged
+
+# Running only one lag as this was what adf showed was optimal
+
+# In[3.2]: Running Multicolinearity tests just in case:
+
+eur_constants = add_constant(eur_1year_lagged.dropna())
+
+eur_vif = pd.DataFrame()
+
+eur_vif['vif'] = [variance_inflation_factor(eur_constants.values, i) for i in range(eur_constants.shape[1])]
+
+eur_vif['variable'] = eur_constants.columns
+
+eur_vif
+
+"""
+        vif    variable
+0  1.013739       const
+1  1.004497  diffLogEUR
+2  1.004497       lag 1
+"""
+
+# We can see the low VIFs indicate no multicolinearity for this dataframe
+
+# In[3.3]: Runnning the actual Causality test
+
+eur_granger = grangercausalitytests(eur_1year_lagged[["diffLogEUR", "lag 1"]].dropna(), maxlag=4)
+
+eur_granger
+
+"""
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=3.5121  , p=0.0620  , df_denom=274, df_num=1
+ssr based chi2 test:   chi2=3.5505  , p=0.0595  , df=1
+likelihood ratio test: chi2=3.5279  , p=0.0603  , df=1
+parameter F test:         F=3.5121  , p=0.0620  , df_denom=274, df_num=1
+
+Granger Causality
+number of lags (no zero) 2
+ssr based F test:         F=0.7026  , p=0.4962  , df_denom=272, df_num=2
+ssr based chi2 test:   chi2=1.4258  , p=0.4902  , df=2
+likelihood ratio test: chi2=1.4221  , p=0.4911  , df=2
+parameter F test:         F=2.4611  , p=0.0872  , df_denom=272, df_num=2
+
+Granger Causality
+number of lags (no zero) 3
+ssr based F test:         F=0.4023  , p=0.7515  , df_denom=270, df_num=3
+ssr based chi2 test:   chi2=1.2292  , p=0.7460  , df=3
+likelihood ratio test: chi2=1.2264  , p=0.7467  , df=3
+parameter F test:         F=2.0329  , p=0.1096  , df_denom=270, df_num=3
+
+Granger Causality
+number of lags (no zero) 4
+ssr based F test:         F=0.0096  , p=0.9998  , df_denom=268, df_num=4
+ssr based chi2 test:   chi2=0.0393  , p=0.9998  , df=4
+likelihood ratio test: chi2=0.0393  , p=0.9998  , df=4
+parameter F test:         F=1.5203  , p=0.1965  , df_denom=268, df_num=4
+"""
+
+# I also ran the diffLogEUR against other lags in the dataframe and they all had
+# high p-values ranging from 0,2 - 1, so, not statistically meaningful.
+# This is almost an inconclusive result. Although p-values for the first lag are 
+# noticeably lower than the other lags and very close to 0.05, they don't trully
+# reach 0.05 or surpass it, meaning I cannot reject the null hypothesis, which in
+# turn means, "lag 1" doesn't have significant predictive power over "diffLogEUR".
+# Considering the f-test get's to a maximum of 0.06, there's a chance that "lag 1"
+# could help improve the predictive power, but that improvement could be insignificant
+# I think the way here would be to test both models, with and without "lag 1" by
+# running a VARIMA or ARIMAX model and comparing the statistics against a normal ARIMA.
+
+# In[3.4]: As an experiment, running the EUR against USD:
+
+df_wg_usd_1year = pd.read_csv("./datasets/wrangled/df_usd_1year.csv", float_precision="high", parse_dates=([0]))
+
+df_wg_usd_1year['diffLogUSD'] = df_wg_usd_1year['logUSD'].diff()
+
+df_eur_usd = pd.DataFrame({"eur": df_wg_eur_1year['diffLogEUR'], "usd": df_wg_usd_1year["diffLogUSD"]})
+
+eur_usd_granger = grangercausalitytests(df_eur_usd[['usd','eur']].dropna(), maxlag=40)
+
+"""
+Granger Causality
+number of lags (no zero) 29
+ssr based F test:         F=1.3245  , p=0.1362  , df_denom=191, df_num=29
+ssr based chi2 test:   chi2=50.2767 , p=0.0084  , df=29
+likelihood ratio test: chi2=45.8109 , p=0.0245  , df=29
+parameter F test:         F=1.3245  , p=0.1362  , df_denom=191, df_num=29
+
+Granger Causality
+number of lags (no zero) 30
+ssr based F test:         F=1.2946  , p=0.1534  , df_denom=188, df_num=30
+ssr based chi2 test:   chi2=51.4411 , p=0.0087  , df=30
+likelihood ratio test: chi2=46.7619 , p=0.0262  , df=30
+parameter F test:         F=1.2946  , p=0.1534  , df_denom=188, df_num=30
+
+Granger Causality
+number of lags (no zero) 31
+ssr based F test:         F=1.2480  , p=0.1864  , df_denom=185, df_num=31
+ssr based chi2 test:   chi2=51.8631 , p=0.0108  , df=31
+likelihood ratio test: chi2=47.0945 , p=0.0321  , df=31
+parameter F test:         F=1.2480  , p=0.1864  , df_denom=185, df_num=31
+
+Granger Causality
+number of lags (no zero) 32
+ssr based F test:         F=1.2467  , p=0.1853  , df_denom=182, df_num=32
+ssr based chi2 test:   chi2=54.1439 , p=0.0085  , df=32
+likelihood ratio test: chi2=48.9554 , p=0.0280  , df=32
+parameter F test:         F=1.2467  , p=0.1853  , df_denom=182, df_num=32
+
+Granger Causality
+number of lags (no zero) 33
+ssr based F test:         F=1.2354  , p=0.1929  , df_denom=179, df_num=33
+ssr based chi2 test:   chi2=56.0272 , p=0.0074  , df=33
+likelihood ratio test: chi2=50.4757 , p=0.0264  , df=33
+parameter F test:         F=1.2354  , p=0.1929  , df_denom=179, df_num=33
+
+Granger Causality
+number of lags (no zero) 34
+ssr based F test:         F=1.1933  , p=0.2303  , df_denom=176, df_num=34
+ssr based chi2 test:   chi2=56.4770 , p=0.0091  , df=34
+likelihood ratio test: chi2=50.8217 , p=0.0318  , df=34
+parameter F test:         F=1.1933  , p=0.2303  , df_denom=176, df_num=34
+"""
+
+"""
+Granger Causality
+number of lags (no zero) 68
+ssr based F test:         F=1.1837  , p=0.2385  , df_denom=74, df_num=68
+ssr based chi2 test:   chi2=229.5071, p=0.0000  , df=68
+likelihood ratio test: chi2=155.3104, p=0.0000  , df=68
+parameter F test:         F=1.1837  , p=0.2385  , df_denom=74, df_num=68
+
+Granger Causality
+number of lags (no zero) 69
+ssr based F test:         F=1.1499  , p=0.2799  , df_denom=71, df_num=69
+ssr based chi2 test:   chi2=234.6711, p=0.0000  , df=69
+likelihood ratio test: chi2=157.5477, p=0.0000  , df=69
+parameter F test:         F=1.1499  , p=0.2799  , df_denom=71, df_num=69
+"""
+
+# We can see here that some of the tests, specially the ones based in chi2 have
+# very low p-values, but our F-tests never get below 0,13, which strongly indicates
+# there's no addition of predictive power when adding the usd time series.
+
+# In[3.5]: Testing VIF for EUR and USD:
+
+eur_usd_constants = add_constant(df_eur_usd.dropna())
+
+eur_usd_vif = pd.DataFrame()
+
+eur_usd_vif['vif'] = [variance_inflation_factor(eur_usd_constants.values, i) for i in range(eur_usd_constants.shape[1])]
+
+eur_usd_vif['variable'] = eur_usd_constants.columns
+
+eur_usd_vif
+
+"""
+        vif variable
+0  1.007058    const
+1  2.830555      eur
+2  2.830555      usd
+"""
+
+# The low VIFs (< 10) indicate no multicolinearity between these two time series
+
+# In[4.0]: Cross-testing the series to make sure they have causality between them
+
+tscv = TimeSeriesSplit(n_splits=5)
+
+ct_eur_usd = df_eur_usd.dropna()
+
+for train_index, test_index in tscv.split(ct_eur_usd):
+    train, test = ct_eur_usd.iloc[train_index], ct_eur_usd.iloc[test_index]
+    
+    X_train, y_train = train['usd'], train['eur']
+    X_test, y_test = test['usd'], test['eur']
+    
+    granger_result = grangercausalitytests(train[['eur', 'usd']], maxlag=4, verbose=False)
+    
+    for lag, result in granger_result.items():
+        f_test_pvalue = result[0]['ssr_ftest'][1]  # p-value from F-test
+        print(f"Lag: {lag}, P-value: {f_test_pvalue}")
+    
+    print(f"TRAIN indices: {train_index}")
+    print(f"TEST indices: {test_index}")
+
+"""
+Lag: 1, P-value: 0.032899608460114325
+Lag: 2, P-value: 0.053909745727470926
+Lag: 3, P-value: 0.07467439307919739
+Lag: 4, P-value: 0.09717629125776463
+
+Lag: 1, P-value: 0.746040205028232
+Lag: 2, P-value: 0.7302350722479102
+Lag: 3, P-value: 0.8959632729276952
+Lag: 4, P-value: 0.8004691624497777
+
+Lag: 1, P-value: 0.8780035341257023
+Lag: 2, P-value: 0.8299119949223216
+Lag: 3, P-value: 0.9434554515108172
+Lag: 4, P-value: 0.8991973872113583
+
+Lag: 1, P-value: 0.7927351036819501
+Lag: 2, P-value: 0.9019776178229749
+Lag: 3, P-value: 0.9644520501824317
+Lag: 4, P-value: 0.9347486772913017
+
+Lag: 1, P-value: 0.24768796659655679
+Lag: 2, P-value: 0.5001622095397216
+Lag: 3, P-value: 0.7884718315877377
+Lag: 4, P-value: 0.45363713798092054
+"""
+
+# We can see that p-values for the lags across train/test sections is not consistent
+# So we can confidently assume that there's no causality between these two time series
+# USD doesn't explain EUR or the relantionship between the two time series is sensitive
+# to specific time windows or suffer influence from external factors
