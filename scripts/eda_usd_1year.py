@@ -622,4 +622,101 @@ Lag: 4, P-value: 0.008439935726456398
 # (higher indices) have more impact on the predictions than older values.
 # This indicated that "lag 6" and "diffLogUSD" have causality between them
 
-# In[3.2]: Cross testing with VAR:
+# In[3.2]: Testing Granger Causality with "diffLogUSD" and "eur"
+
+df_wg_eur_1year = pd.read_csv("./datasets/wrangled/df_eur_1year.csv", float_precision="high", parse_dates=([0]))
+
+df_wg_eur_1year['diffLogEUR'] = df_wg_eur_1year['logEUR'].diff()
+
+df_usd_eur = pd.DataFrame({"usd": df_wg_usd_1year['diffLogUSD'], "eur": df_wg_eur_1year["diffLogEUR"]})
+
+usd_eur_granger = grangercausalitytests(df_usd_eur[['usd', 'eur']].dropna(), maxlag=40)
+
+"""
+Granger Causality
+number of lags (no zero) 14
+ssr based F test:         F=1.6378  , p=0.0702  , df_denom=236, df_num=14
+ssr based chi2 test:   chi2=25.7466 , p=0.0279  , df=14
+likelihood ratio test: chi2=24.5714 , p=0.0390  , df=14
+parameter F test:         F=1.6378  , p=0.0702  , df_denom=236, df_num=14
+
+Granger Causality
+number of lags (no zero) 15
+ssr based F test:         F=1.5503  , p=0.0890  , df_denom=233, df_num=15
+ssr based chi2 test:   chi2=26.3483 , p=0.0345  , df=15
+likelihood ratio test: chi2=25.1149 , p=0.0484  , df=15
+parameter F test:         F=1.5503  , p=0.0890  , df_denom=233, df_num=15
+
+Granger Causality
+number of lags (no zero) 16
+ssr based F test:         F=1.5063  , p=0.0984  , df_denom=230, df_num=16
+ssr based chi2 test:   chi2=27.5587 , p=0.0357  , df=16
+likelihood ratio test: chi2=26.2084 , p=0.0512  , df=16
+parameter F test:         F=1.5063  , p=0.0984  , df_denom=230, df_num=16
+
+Granger Causality
+number of lags (no zero) 17
+ssr based F test:         F=1.4988  , p=0.0962  , df_denom=227, df_num=17
+ssr based chi2 test:   chi2=29.4081 , p=0.0309  , df=17
+likelihood ratio test: chi2=27.8716 , p=0.0465  , df=17
+parameter F test:         F=1.4988  , p=0.0962  , df_denom=227, df_num=17
+
+Granger Causality
+number of lags (no zero) 18
+ssr based F test:         F=1.5140  , p=0.0864  , df_denom=224, df_num=18
+ssr based chi2 test:   chi2=31.7538 , p=0.0235  , df=18
+likelihood ratio test: chi2=29.9658 , p=0.0378  , df=18
+parameter F test:         F=1.5140  , p=0.0864  , df_denom=224, df_num=18
+"""
+
+"""
+Granger Causality
+number of lags (no zero) 28
+ssr based F test:         F=1.5283  , p=0.0516  , df_denom=194, df_num=28
+ssr based chi2 test:   chi2=55.3650 , p=0.0015  , df=28
+likelihood ratio test: chi2=50.0304 , p=0.0064  , df=28
+parameter F test:         F=1.5283  , p=0.0516  , df_denom=194, df_num=28
+
+Granger Causality
+number of lags (no zero) 29
+ssr based F test:         F=1.4926  , p=0.0599  , df_denom=191, df_num=29
+ssr based chi2 test:   chi2=56.6550 , p=0.0016  , df=29
+likelihood ratio test: chi2=51.0656 , p=0.0069  , df=29
+parameter F test:         F=1.4926  , p=0.0599  , df_denom=191, df_num=29
+"""
+
+"""
+Granger Causality
+number of lags (no zero) 32
+ssr based F test:         F=1.3960  , p=0.0904  , df_denom=182, df_num=32
+ssr based chi2 test:   chi2=60.6262 , p=0.0016  , df=32
+likelihood ratio test: chi2=54.2158 , p=0.0084  , df=32
+parameter F test:         F=1.3960  , p=0.0904  , df_denom=182, df_num=32
+
+Granger Causality
+number of lags (no zero) 33
+ssr based F test:         F=1.4446  , p=0.0684  , df_denom=179, df_num=33
+ssr based chi2 test:   chi2=65.5163 , p=0.0006  , df=33
+likelihood ratio test: chi2=58.0855 , p=0.0045  , df=33
+parameter F test:         F=1.4446  , p=0.0684  , df_denom=179, df_num=33
+
+Granger Causality
+number of lags (no zero) 34
+ssr based F test:         F=1.3912  , p=0.0888  , df_denom=176, df_num=34
+ssr based chi2 test:   chi2=65.8466 , p=0.0009  , df=34
+likelihood ratio test: chi2=58.3202 , p=0.0058  , df=34
+parameter F test:         F=1.3912  , p=0.0888  , df_denom=176, df_num=34
+
+Granger Causality
+number of lags (no zero) 35
+ssr based F test:         F=1.3264  , p=0.1218  , df_denom=173, df_num=35
+ssr based chi2 test:   chi2=65.4777 , p=0.0013  , df=35
+likelihood ratio test: chi2=58.0032 , p=0.0086  , df=35
+parameter F test:         F=1.3264  , p=0.1218  , df_denom=173, df_num=35
+"""
+
+# Similar results from the eur one, but this time a lot more significant p-values
+# Or close to significant. Closes values on lags close to 30 days.
+# Again, long-term predictions are not necessarily the primary focus of this study
+# so these will be left alone. Maybe in the future a new model can be created with
+# a more "long term" prediction model
