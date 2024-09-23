@@ -363,7 +363,7 @@ plt.show()
 # Both tests seem to show normal stationary plots with no significant lags after zero.
 # Also, no significant negative first lag;
 
-# In[3.0]: Running Granger Causality tests to analyse the lags
+# In[3.0]: Running Granger Causality tests
 
 # In[3.1]: Create the the lagged dataframe:
 
@@ -401,7 +401,7 @@ eur_vif
 
 # We can see the low VIFs indicate no multicolinearity for this dataframe
 
-# In[3.3]: Runnning the actual Causality test
+# In[3.3]: Runnning the actual Causality test on the lagged data
 
 eur_granger = grangercausalitytests(eur_1year_lagged[["diffLogEUR", "lag 1"]].dropna(), maxlag=4)
 
@@ -552,7 +552,7 @@ parameter F test:         F=1.1499  , p=0.2799  , df_denom=71, df_num=69
 # very low p-values, but our F-tests never get below 0,13, which strongly indicates
 # there's no addition of predictive power when adding the usd time series. Although
 # we could make a case for the low p-values of the likelihood tests, specially
-# at higher lags. For the purpose of this work it doesn't matter though because
+# at higher lags (30-60). For the purpose of this work it doesn't matter though because
 # we're trying to predict values to a max of 2 weeks ahead, and the granger test
 # shows us that the prediction power of the usd time series will work best in the
 # long range and not in the short one, like we intend.
