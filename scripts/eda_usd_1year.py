@@ -11,11 +11,11 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from statsmodels.tsa.stattools import adfuller
+from statsmodels.tsa.stattools import adfuller, kpss, grangercausalitytests
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
-from statsmodels.tsa.stattools import kpss
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.tools.tools import add_constant
+from sklearn.model_selection import TimeSeriesSplit
 
 
 # In[0.2]: Import dataframes
@@ -349,6 +349,7 @@ usd_1year_lagged['lag 3'] = usd_1year_lagged["diffLogUSD"].shift(3)
 usd_1year_lagged['lag 4'] = usd_1year_lagged["diffLogUSD"].shift(4)
 usd_1year_lagged['lag 5'] = usd_1year_lagged["diffLogUSD"].shift(5)
 usd_1year_lagged['lag 6'] = usd_1year_lagged["diffLogUSD"].shift(6)
+usd_1year_lagged['lag 7'] = usd_1year_lagged["diffLogUSD"].shift(7)
 
 usd_1year_lagged
 
@@ -372,6 +373,7 @@ usd_vif
 5  1.057849       lag 4
 6  1.038389       lag 5
 7  1.038986       lag 6
+8  1.068193       lag 7
 """
 
 # We can see here there are no high VIFs, which means this is not necessarily a problem
@@ -467,3 +469,157 @@ plt.show()
 
 # Both tests seem to show normal stationary plots with no significant lags after zero.
 # Also, no significant negative first lag;
+
+# In[3.0]: Running Granger Causality tests to analyse the lags
+
+# In[3.0]: Runnning the actual Causality test on the lagged data
+
+usd_granger_1 = grangercausalitytests(usd_1year_lagged[["diffLogUSD", "lag 7"]].dropna(), maxlag=15)
+
+usd_granger_1
+
+"""
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=7.9524  , p=0.0052  , df_denom=274, df_num=1
+ssr based chi2 test:   chi2=8.0395  , p=0.0046  , df=1
+likelihood ratio test: chi2=7.9250  , p=0.0049  , df=1
+parameter F test:         F=7.9524  , p=0.0052  , df_denom=274, df_num=1
+"""
+
+# We have a definite confirmation on lag 1 for "lag 1" as you can see the p-value
+# for all the tests are lower than the 0.05 critical value. Other than that, we do
+# have a "lower" p-value on lag 6, but not enough (around 0.2), while other lags
+# (2-30) are very close to p-value = 1, completely discarding them.
+# This result suggests that, changes in the time series only affect values short-term,
+# in this case, a day and then loose influence power, which means, this might be
+# a good time series to use to predict values for usd for the next day, but only
+# "lag 1". 
+
+usd_granger_3 = grangercausalitytests(usd_1year_lagged[["diffLogUSD", "lag 3"]].dropna(), maxlag=15)
+
+"""
+Granger Causality
+number of lags (no zero) 4
+ssr based F test:         F=2.4935  , p=0.0434  , df_denom=264, df_num=4
+ssr based chi2 test:   chi2=10.2761 , p=0.0360  , df=4
+likelihood ratio test: chi2=10.0868 , p=0.0390  , df=4
+parameter F test:         F=2.5425  , p=0.0402  , df_denom=264, df_num=4
+"""
+
+# "lag 3" seems to have meaningful p-values for lag 4.
+
+usd_granger_4 = grangercausalitytests(usd_1year_lagged[["diffLogUSD", "lag 4"]].dropna(), maxlag=15)
+
+"""
+Granger Causality
+number of lags (no zero) 3
+ssr based F test:         F=3.3517  , p=0.0195  , df_denom=265, df_num=3
+ssr based chi2 test:   chi2=10.3207 , p=0.0160  , df=3
+likelihood ratio test: chi2=10.1297 , p=0.0175  , df=3
+parameter F test:         F=3.3517  , p=0.0195  , df_denom=265, df_num=3
+"""
+
+# "lag 4" seems to have meaningful p-values for lag 3.
+
+usd_granger_5 = grangercausalitytests(usd_1year_lagged[["diffLogUSD", "lag 5"]].dropna(), maxlag=15)
+
+"""
+Granger Causality
+number of lags (no zero) 2
+ssr based F test:         F=4.7181  , p=0.0097  , df_denom=267, df_num=2
+ssr based chi2 test:   chi2=9.6129  , p=0.0082  , df=2
+likelihood ratio test: chi2=9.4469  , p=0.0089  , df=2
+parameter F test:         F=4.7181  , p=0.0097  , df_denom=267, df_num=2
+"""
+
+# "lag 5" seems to have meaningful p-values for lag 2.
+
+usd_granger_6 = grangercausalitytests(usd_1year_lagged[["diffLogUSD", "lag 6"]].dropna(), maxlag=15)
+
+"""
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=10.5406 , p=0.0013  , df_denom=269, df_num=1
+ssr based chi2 test:   chi2=10.6582 , p=0.0011  , df=1
+likelihood ratio test: chi2=10.4546 , p=0.0012  , df=1
+parameter F test:         F=10.5406 , p=0.0013  , df_denom=269, df_num=1
+
+Granger Causality
+number of lags (no zero) 2
+ssr based F test:         F=4.5922  , p=0.0109  , df_denom=266, df_num=2
+ssr based chi2 test:   chi2=9.3570  , p=0.0093  , df=2
+likelihood ratio test: chi2=9.1991  , p=0.0101  , df=2
+parameter F test:         F=4.5922  , p=0.0109  , df_denom=266, df_num=2
+
+Granger Causality
+number of lags (no zero) 3
+ssr based F test:         F=3.0336  , p=0.0298  , df_denom=263, df_num=3
+ssr based chi2 test:   chi2=9.3432  , p=0.0251  , df=3
+likelihood ratio test: chi2=9.1851  , p=0.0269  , df=3
+parameter F test:         F=3.0336  , p=0.0298  , df_denom=263, df_num=3
+"""
+
+# I ran "lag 7" but it had no meaningful p-value
+# In this case, both for lowest p-value and more influence, we end up with "lag 6"
+# It is good in the short term, but it can also help predict 3 days ahead
+
+# In[3.1]: Cross-testing "diffLogUSD" and "lag 6"
+# to make sure they have causality between them
+
+usd_diff_lag6 = pd.DataFrame({"usd": df_wg_usd_1year["diffLogUSD"], "lag_6": usd_1year_lagged["lag 6"]})
+
+tscv = TimeSeriesSplit(n_splits=5)
+
+ct_usd_diff_lag6 = usd_diff_lag6.dropna()
+
+for train_index, test_index in tscv.split(ct_usd_diff_lag6):
+    train, test = ct_usd_diff_lag6.iloc[train_index], ct_usd_diff_lag6.iloc[test_index]
+
+    X_train, y_train = train['lag_6'], train['usd']
+    X_test, y_test = test['lag_6'], test['usd']
+
+    granger_result = grangercausalitytests(train[['usd', 'lag_6']], maxlag=4, verbose=False)
+
+    for lag, result in granger_result.items():
+        f_test_pvalue = result[0]['ssr_ftest'][1]  # p-value from F-test
+        print(f"Lag: {lag}, P-value: {f_test_pvalue}")
+
+    print(f"TRAIN indices: {train_index}")
+    print(f"TEST indices: {test_index}")
+
+"""
+Lag: 1, P-value: 0.03713425878383928
+Lag: 2, P-value: 0.084291225205113
+Lag: 3, P-value: 0.18924473982609968
+Lag: 4, P-value: 0.3170353061542444
+
+Lag: 1, P-value: 0.011896272230289547
+Lag: 2, P-value: 0.007372819653804537
+Lag: 3, P-value: 0.02459954634833422
+Lag: 4, P-value: 0.07120700687269937
+
+Lag: 1, P-value: 0.03357621187008599
+Lag: 2, P-value: 0.042508109361530384
+Lag: 3, P-value: 0.09365416832053626
+Lag: 4, P-value: 0.16296626922795013
+
+Lag: 1, P-value: 0.02249066181083836
+Lag: 2, P-value: 0.03787921253070802
+Lag: 3, P-value: 0.09357061012152754
+Lag: 4, P-value: 0.1665320124084191
+
+Lag: 1, P-value: 8.651104482384201e-05
+Lag: 2, P-value: 0.0008640392575765902
+Lag: 3, P-value: 0.0034883237613834717
+Lag: 4, P-value: 0.008439935726456398
+"""
+
+# These values show that "lag 6" is a good predictor for both lag 1 and lag 2,
+# loosing significance as we advance through lags. It is better in the short
+# term than long term, although for lag 3 and 4, it shows that the p-value becomes
+# significant as we approach the end of the data, which might mean, newer values
+# (higher indices) have more impact on the predictions than older values.
+# This indicated that "lag 6" and "diffLogUSD" have causality between them
+
+# In[3.2]: Cross testing with VAR:
