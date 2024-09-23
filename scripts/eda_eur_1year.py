@@ -85,6 +85,8 @@ plt.ylabel("Câmbio EUR ↔ BRL", fontsize="18")
 plt.legend(fontsize=18, loc="upper left", bbox_to_anchor=(0.02, 0, 0, 0.93))
 plt.show()
 
+# In[0.6]: Plot the log dataset for visual assessment
+
 plt.figure(figsize=(15, 10))
 sns.scatterplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["eur"], color="limegreen", label="Câmbio EUR")
 plt.axhline(y=np.mean(df_wg_eur_1year["eur"]), color="black", linestyle="--", label="Média") # mean for euro
@@ -101,7 +103,7 @@ plt.ylabel("Câmbio EUR ↔ BRL", fontsize="18")
 plt.legend(fontsize=18, loc="upper left", bbox_to_anchor=(0.02, 0, 0, 0.93))
 plt.show()
 
-# In[0.5]: Plot the log dataset for visual assessment
+# In[0.7]: Plot the log dataset for visual assessment
 
 plt.figure(figsize=(15, 10))
 sns.lineplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["logEUR"], color="limegreen", label="log(Câmbio EUR)")
@@ -419,9 +421,7 @@ eur_vif
 
 # In[3.3]: Runnning the actual Causality test on the lagged data
 
-eur_granger = grangercausalitytests(eur_1year_lagged[["diffLogEUR", "lag 1"]].dropna(), maxlag=4)
-
-eur_granger
+eur_granger_lag1 = grangercausalitytests(eur_1year_lagged[["diffLogEUR", "lag 1"]].dropna(), maxlag=4)
 
 """
 Granger Causality
@@ -430,27 +430,6 @@ ssr based F test:         F=3.5121  , p=0.0620  , df_denom=274, df_num=1
 ssr based chi2 test:   chi2=3.5505  , p=0.0595  , df=1
 likelihood ratio test: chi2=3.5279  , p=0.0603  , df=1
 parameter F test:         F=3.5121  , p=0.0620  , df_denom=274, df_num=1
-
-Granger Causality
-number of lags (no zero) 2
-ssr based F test:         F=0.7026  , p=0.4962  , df_denom=272, df_num=2
-ssr based chi2 test:   chi2=1.4258  , p=0.4902  , df=2
-likelihood ratio test: chi2=1.4221  , p=0.4911  , df=2
-parameter F test:         F=2.4611  , p=0.0872  , df_denom=272, df_num=2
-
-Granger Causality
-number of lags (no zero) 3
-ssr based F test:         F=0.4023  , p=0.7515  , df_denom=270, df_num=3
-ssr based chi2 test:   chi2=1.2292  , p=0.7460  , df=3
-likelihood ratio test: chi2=1.2264  , p=0.7467  , df=3
-parameter F test:         F=2.0329  , p=0.1096  , df_denom=270, df_num=3
-
-Granger Causality
-number of lags (no zero) 4
-ssr based F test:         F=0.0096  , p=0.9998  , df_denom=268, df_num=4
-ssr based chi2 test:   chi2=0.0393  , p=0.9998  , df=4
-likelihood ratio test: chi2=0.0393  , p=0.9998  , df=4
-parameter F test:         F=1.5203  , p=0.1965  , df_denom=268, df_num=4
 """
 
 # I also ran the diffLogEUR against other lags in the dataframe and they all had
@@ -461,8 +440,25 @@ parameter F test:         F=1.5203  , p=0.1965  , df_denom=268, df_num=4
 # turn means, "lag 1" doesn't have significant predictive power over "diffLogEUR".
 # Considering the f-test get's to a maximum of 0.06, there's a chance that "lag 1"
 # could help improve the predictive power, but that improvement could be insignificant
-# I think the way here would be to test both models, with and without "lag 1" by
-# running a VARIMA or ARIMAX model and comparing the statistics against a normal ARIMA.
+# we could discard "lag 1" from the start, but for studies purposes, I might want
+# to test both models, with and without "lag 1" by running a VARIMA or ARIMAX
+# model and comparing the statistics against a normal ARIMA without "lag 1".
+
+eur_granger_lag6 = grangercausalitytests(eur_1year_lagged[["diffLogEUR", "lag 6"]].dropna(), maxlag=4)
+
+"""
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=3.4363  , p=0.0649  , df_denom=269, df_num=1
+ssr based chi2 test:   chi2=3.4746  , p=0.0623  , df=1
+likelihood ratio test: chi2=3.4526  , p=0.0632  , df=1
+parameter F test:         F=3.4363  , p=0.0649  , df_denom=269, df_num=1
+"""
+
+# "lag 6" also showed promissing values on lag 1 but unfortunately all other lags
+# were very insignificant rapidly reaching numbers over 0.3 after lag 3.
+# I also ran a higher number of lags for both datasets, but they didn't show
+# any long term significance either, being close to 1 through most of the lags.
 
 # In[3.4]: As an experiment, running the EUR against USD:
 
@@ -568,11 +564,11 @@ parameter F test:         F=1.1499  , p=0.2799  , df_denom=71, df_num=69
 # very low p-values, but our F-tests never get below 0,13, which strongly indicates
 # there's no addition of predictive power when adding the usd time series. Although
 # we could make a case for the low p-values of the likelihood tests, specially
-# at higher lags (30-60). For the purpose of this work it doesn't matter though because
+# at higher lags (30-60). For the purpose of this work it doesn't make sense because
 # we're trying to predict values to a max of 2 weeks ahead, and the granger test
-# shows us that the prediction power of the usd time series will work best in the
-# long range and not in the short one, like we intend.
-# The first lags in these case are very high for all tests, ranging from 0.08 on
+# shows us that the prediction power of the usd time series would work best in the
+# long term and not in the short term, like we intend.
+# The first lags in these are very high for all tests, ranging from 0.08 on
 # lag 14 for likelihood to 0.7 on lag 3 for the f-test
 
 # In[3.5]: Testing VIF for EUR and USD:
@@ -645,6 +641,17 @@ Lag: 4, P-value: 0.45363713798092054
 """
 
 # We can see that p-values for the lags across train/test sections is not consistent
-# So we can confidently assume that there's no causality between these two time series
-# USD doesn't explain EUR or the relantionship between the two time series is sensitive
-# to specific time windows or suffer influence from external factors
+# mostly losing any potential influencial power in later splits whem compared to the
+# first one. So we can confidently assume that there's no causality between these two
+# time series USD doesn't explain EUR or the relantionship between the two time series
+# is sensitive to specific time windows or suffer influence from external factors
+
+# In[4.0]: Save final dataset for testing ARIMA
+
+eur_arima_1year = pd.DataFrame({
+    "date": df_wg_eur_1year["dateTime"],
+    "eur": df_wg_eur_1year["diffLogEUR"]
+    }).dropna()
+
+# save to csv
+eur_arima_1year.to_csv("./datasets/arima_ready/eur_arima_1year.csv", index=False)

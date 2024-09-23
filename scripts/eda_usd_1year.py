@@ -734,7 +734,18 @@ parameter F test:         F=1.3264  , p=0.1218  , df_denom=173, df_num=35
 """
 
 # Similar results from the eur one, but this time a lot more significant p-values
-# Or close to significant. Closes values on lags close to 30 days.
+# Or close to significant. Closes values on lags around 30 days.
 # Again, long-term predictions are not necessarily the primary focus of this study
 # so these will be left alone. Maybe in the future a new model can be created with
 # a more "long term" prediction model
+
+# In[4.0]: Save final dataset for testing ARIMA
+
+usd_arima_1year = pd.DataFrame({
+    "date": df_wg_usd_1year["dateTime"],
+    "usd": df_wg_usd_1year["diffLogUSD"],
+    "lag": usd_1year_lagged["lag 6"]
+    }).dropna()
+
+# save to csv
+usd_arima_1year.to_csv("./datasets/arima_ready/usd_arima_1year.csv", index=False)
