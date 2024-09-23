@@ -85,6 +85,22 @@ plt.ylabel("Câmbio EUR ↔ BRL", fontsize="18")
 plt.legend(fontsize=18, loc="upper left", bbox_to_anchor=(0.02, 0, 0, 0.93))
 plt.show()
 
+plt.figure(figsize=(15, 10))
+sns.scatterplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["eur"], color="limegreen", label="Câmbio EUR")
+plt.axhline(y=np.mean(df_wg_eur_1year["eur"]), color="black", linestyle="--", label="Média") # mean for euro
+plt.axhline(y=np.max(df_wg_eur_1year["eur"]), color="magenta", label="Máxima") # máxima for euro
+plt.axhline(y=np.min(df_wg_eur_1year["eur"]), color="magenta", linestyle="--", label="Mínima") # máxima for euro
+plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_1year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_1year["dateTime"][279].strftime(dt_format)})', fontsize="18")
+plt.yticks(np.arange(round(df_wg_eur_1year["eur"].min(), 1), round(df_wg_eur_1year["eur"].max() + 0.1, 1), 0.1), fontsize="14")
+plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
+plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29))
+plt.gca().xaxis.set_tick_params(rotation = -30)
+plt.xticks(fontsize="14")
+plt.xlabel("Data", fontsize="18")
+plt.ylabel("Câmbio EUR ↔ BRL", fontsize="18")
+plt.legend(fontsize=18, loc="upper left", bbox_to_anchor=(0.02, 0, 0, 0.93))
+plt.show()
+
 # In[0.5]: Plot the log dataset for visual assessment
 
 plt.figure(figsize=(15, 10))
