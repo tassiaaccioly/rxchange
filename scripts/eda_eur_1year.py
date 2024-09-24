@@ -30,7 +30,7 @@ df_wg_eur_5year
 
 dt_format = "%d/%m/%Y"
 
-# Plot the 5 year dataset
+# In[0.3]: Plot the 5 year dataset
 
 plt.figure(figsize=(15, 10))
 sns.lineplot(x=df_wg_eur_5year["dateTime"], y=df_wg_eur_5year["eur"], color="limegreen", label="Câmbio EUR")
@@ -48,7 +48,7 @@ plt.ylabel("Câmbio EUR ↔ BRL", fontsize="18")
 plt.legend(fontsize=18, loc="upper right", bbox_to_anchor=(0.98, 0, 0, 0.93))
 plt.show()
 
-# In[0.3]: Calculate Statistics for datasets
+# In[0.4]: Calculate Statistics for datasets
 
 var_eur_1year = np.var(df_wg_eur_1year['eur'])
 var_eur_1year
@@ -258,14 +258,80 @@ plt.show()
 
 # PACF plot shows an AR(2) order for the dataset showing a high statistical significance spike 
 # at the first lag in PACF. ACF shows slow decay towards 0 -> exponentially decaying or sinusoidal
+
+# In[1.4]: Defining the order of differencing we need:
+
+plt.rcParams.update({'figure.figsize':(9,7), 'figure.dpi':120}) 
+
+# Original Series
+fig, (ax1, ax2, ax3) = plt.subplots(3)
+ax1.plot(df_wg_eur_1year["logEUR"]);
+ax1.set_title('Série Original log(EUR)');
+ax1.axes.xaxis.set_visible(False)
+
+# 1st Differencing
+ax2.plot(df_wg_eur_1year["logEUR"].diff());
+ax2.set_title('1ª Ordem de Diferenciação');
+ax2.axes.xaxis.set_visible(False)
+
+# 2nd Differencing
+ax3.plot(df_wg_eur_1year["logEUR"].diff().diff());
+ax3.set_title('2ª Ordem de Diferenciação') 
+plt.show()
+
+
+# Plotting the ACF for each order
+
+plt.rcParams.update({'figure.figsize':(11,10), 'figure.dpi':120})
+
+fig, (ax1, ax2, ax3) = plt.subplots(3)
+plot_acf(df_wg_eur_1year["logEUR"], ax=ax1)
+plot_acf(df_wg_eur_1year["logEUR"].diff().dropna(), ax=ax2)
+plot_acf(df_wg_eur_1year["logEUR"].diff().diff().dropna(), ax=ax3)
+
+# We can see a pretty good visually STATIONARY plot on the first differenciation,
+# We can also see, after the first lag in the first diff ACF we have a pretty good
+# white noise plot, and although we can see that the second lag goes into negative,
+# meaning we could have a little overdifferentiation, we can deal with that in the
+# final model by adding a number of MA terms at the final ARIMA. while in the
+# second differentiation (second ACF) plot we can see that the second lag it goes
+# straight and significantly into negative values, indicating a lot of over
+# differentiation. I'll be going on with a single differenciation and I'll be
+# looking for a number of MAs in the PACF plots next
+
+# Plotting the ACf for the first order diff:
+plt.rcParams.update({'figure.figsize':(9,5), 'figure.dpi':120})
+    
+plot_pacf(df_wg_eur_1year['logEUR'].diff().dropna())
+plt.show()
+
+# Plotting ACF and PACF together:
+
+plt.rcParams.update({'figure.figsize':(11,8), 'figure.dpi':120})
+
+fig, (ax1, ax2) = plt.subplots(2)
+plot_acf(df_wg_eur_1year["logEUR"].diff().dropna(), ax=ax1)
+plot_pacf(df_wg_eur_1year["logEUR"].diff().dropna(), ax=ax2)
+
+# These plots show a sharp cut off at ACF lag 2, which indicates sligh overdifferencing
+# and also an MA parameter of 2. The stationarized series display an "MA signature"
+# Meaning we can explain the autocorrelation pattern my adding MA terms rather than
+# AR terms. PACF is related to AR (orders while ACF is related to MA (lags of the forecast
+# errors)
+
+# These signatures need to be addressed after a series has been stationarized. So
+# AR or MA signatures only should be addressed after stationarizing the series.
+# This series showed an AR signature before being stationarized which implicated
+# an AR(2) term, but after stationarizing, it now shows an MA(2) signature, which
+# will indeed be added to the final model, while AR 
  
-# In[1.4]: Differencing the data to achieve stationarity
+# In[1.5]: Differencing the data to achieve stationarity
 
 df_wg_eur_1year['diffLogEUR'] = df_wg_eur_1year['logEUR'].diff()
 
 df_wg_eur_1year
 
-# In[1.5]: Plotting the differenced data for visual assessment:
+# In[1.6]: Plotting the differenced data for visual assessment:
 
 plt.figure(figsize=(15, 10))
 sns.lineplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["diffLogEUR"], color="limegreen", label="Log(EUR) - Diff")
@@ -342,7 +408,8 @@ Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 """
 
-# AIC, BIC and Loglike prove this model is even better than the second one.
+# AIC, BIC and Loglike prove this model is even better than the second one, so
+# I SHOULD USE D = 1 IN THE ARIMA MODEL
 
 # In[2.2]: Kwiatkowski-Phillips-Schmidt-Shin (KPSS) test post differencing
 
@@ -385,14 +452,14 @@ plt.show()
 
 # In[3.1]: Create the the lagged dataframe:
 
-eur_1year_lagged = pd.DataFrame({"diffLogEUR": df_wg_eur_1year["diffLogEUR"]})
+eur_1year_lagged = pd.DataFrame({"logEUR": df_wg_eur_1year["logEUR"]})
 
-eur_1year_lagged['lag 1'] = eur_1year_lagged["diffLogEUR"].shift(1)
-eur_1year_lagged['lag 2'] = eur_1year_lagged["diffLogEUR"].shift(2)
-eur_1year_lagged['lag 3'] = eur_1year_lagged["diffLogEUR"].shift(3)
-eur_1year_lagged['lag 4'] = eur_1year_lagged["diffLogEUR"].shift(4)
-eur_1year_lagged['lag 5'] = eur_1year_lagged["diffLogEUR"].shift(5)
-eur_1year_lagged['lag 6'] = eur_1year_lagged["diffLogEUR"].shift(6)
+eur_1year_lagged['lag 1'] = eur_1year_lagged["logEUR"].shift(1)
+eur_1year_lagged['lag 2'] = eur_1year_lagged["logEUR"].shift(2)
+eur_1year_lagged['lag 3'] = eur_1year_lagged["logEUR"].shift(3)
+eur_1year_lagged['lag 4'] = eur_1year_lagged["logEUR"].shift(4)
+eur_1year_lagged['lag 5'] = eur_1year_lagged["logEUR"].shift(5)
+eur_1year_lagged['lag 6'] = eur_1year_lagged["logEUR"].shift(6)
 
 eur_1year_lagged
 
@@ -411,165 +478,153 @@ eur_vif['variable'] = eur_constants.columns
 eur_vif
 
 """
-        vif    variable
-0  1.013739       const
-1  1.004497  diffLogEUR
-2  1.004497       lag 1
+           vif variable
+0  4966.815867    const
+1    27.743165   logEUR
+2    49.482221    lag 1
+3    48.138446    lag 2
+4    47.919188    lag 3
+5    46.892520    lag 4
+6    45.948085    lag 5
+7    25.236549    lag 6
 """
 
-# We can see the low VIFs indicate no multicolinearity for this dataframe
+# We can see very high VIFs between the lags; Which means there's multicolinearity
 
 # In[3.3]: Runnning the actual Causality test on the lagged data
 
-eur_granger_lag1 = grangercausalitytests(eur_1year_lagged[["diffLogEUR", "lag 1"]].dropna(), maxlag=4)
+eur_granger_lag2 = grangercausalitytests(eur_1year_lagged[["logEUR", "lag 2"]].dropna(), maxlag=4)
 
 """
 Granger Causality
 number of lags (no zero) 1
-ssr based F test:         F=3.5121  , p=0.0620  , df_denom=274, df_num=1
-ssr based chi2 test:   chi2=3.5505  , p=0.0595  , df=1
-likelihood ratio test: chi2=3.5279  , p=0.0603  , df=1
-parameter F test:         F=3.5121  , p=0.0620  , df_denom=274, df_num=1
+ssr based F test:         F=4.5780  , p=0.0333  , df_denom=274, df_num=1
+ssr based chi2 test:   chi2=4.6282  , p=0.0315  , df=1
+likelihood ratio test: chi2=4.5899  , p=0.0322  , df=1
+parameter F test:         F=4.5780  , p=0.0333  , df_denom=274, df_num=1
 """
 
-# I also ran the diffLogEUR against other lags in the dataframe and they all had
-# high p-values ranging from 0,2 - 1, so, not statistically meaningful.
-# This is almost an inconclusive result. Although p-values for the first lag are 
-# noticeably lower than the other lags and very close to 0.05, they don't trully
-# reach 0.05 or surpass it, meaning I cannot reject the null hypothesis, which in
-# turn means, "lag 1" doesn't have significant predictive power over "diffLogEUR".
-# Considering the f-test get's to a maximum of 0.06, there's a chance that "lag 1"
-# could help improve the predictive power, but that improvement could be insignificant
-# we could discard "lag 1" from the start, but for studies purposes, I might want
-# to test both models, with and without "lag 1" by running a VARIMA or ARIMAX
-# model and comparing the statistics against a normal ARIMA without "lag 1".
-
-eur_granger_lag6 = grangercausalitytests(eur_1year_lagged[["diffLogEUR", "lag 6"]].dropna(), maxlag=4)
+eur_granger_lag3 = grangercausalitytests(eur_1year_lagged[["logEUR", "lag 3"]].dropna(), maxlag=4)
 
 """
 Granger Causality
 number of lags (no zero) 1
-ssr based F test:         F=3.4363  , p=0.0649  , df_denom=269, df_num=1
-ssr based chi2 test:   chi2=3.4746  , p=0.0623  , df=1
-likelihood ratio test: chi2=3.4526  , p=0.0632  , df=1
-parameter F test:         F=3.4363  , p=0.0649  , df_denom=269, df_num=1
+ssr based F test:         F=5.9640  , p=0.0152  , df_denom=273, df_num=1
+ssr based chi2 test:   chi2=6.0295  , p=0.0141  , df=1
+likelihood ratio test: chi2=5.9646  , p=0.0146  , df=1
+parameter F test:         F=5.9640  , p=0.0152  , df_denom=273, df_num=1
+
+Granger Causality
+number of lags (no zero) 2
+ssr based F test:         F=3.0560  , p=0.0487  , df_denom=270, df_num=2
+ssr based chi2 test:   chi2=6.2252  , p=0.0445  , df=2
+likelihood ratio test: chi2=6.1558  , p=0.0461  , df=2
+parameter F test:         F=3.0560  , p=0.0487  , df_denom=270, df_num=2
 """
 
-# "lag 6" also showed promissing values on lag 1 but unfortunately all other lags
-# were very insignificant rapidly reaching numbers over 0.3 after lag 3.
-# I also ran a higher number of lags for both datasets, but they didn't show
-# any long term significance either, being close to 1 through most of the lags.
+eur_granger_lag4 = grangercausalitytests(eur_1year_lagged[["logEUR", "lag 4"]].dropna(), maxlag=4)
+
+"""
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=7.0953  , p=0.0082  , df_denom=272, df_num=1
+ssr based chi2 test:   chi2=7.1735  , p=0.0074  , df=1
+likelihood ratio test: chi2=7.0816  , p=0.0078  , df=1
+parameter F test:         F=7.0953  , p=0.0082  , df_denom=272, df_num=1
+"""
+
+eur_granger_lag5 = grangercausalitytests(eur_1year_lagged[["logEUR", "lag 5"]].dropna(), maxlag=4)
+
+"""
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=4.6650  , p=0.0317  , df_denom=271, df_num=1
+ssr based chi2 test:   chi2=4.7167  , p=0.0299  , df=1
+likelihood ratio test: chi2=4.6765  , p=0.0306  , df=1
+parameter F test:         F=4.6650  , p=0.0317  , df_denom=271, df_num=1
+"""
+
+eur_granger_lag6 = grangercausalitytests(eur_1year_lagged[["logEUR", "lag 6"]].dropna(), maxlag=4)
+
+"""
+Granger Causality
+number of lags (no zero) 1
+ssr based F test:         F=5.2169  , p=0.0231  , df_denom=270, df_num=1
+ssr based chi2 test:   chi2=5.2748  , p=0.0216  , df=1
+likelihood ratio test: chi2=5.2245  , p=0.0223  , df=1
+parameter F test:         F=5.2169  , p=0.0231  , df_denom=270, df_num=1
+
+Granger Causality
+number of lags (no zero) 2
+ssr based F test:         F=4.7454  , p=0.0094  , df_denom=267, df_num=2
+ssr based chi2 test:   chi2=9.6685  , p=0.0080  , df=2
+likelihood ratio test: chi2=9.5006  , p=0.0086  , df=2
+parameter F test:         F=4.7454  , p=0.0094  , df_denom=267, df_num=2
+"""
+
+# Although both "lag 3" and "lag 6" have significant values for both lag 1 and 2
+# "lag 6" has lower p-values. There's could be a discussion that "lag 4" has lower
+# values than "lag 6". I'd have to test models with these two lags to see what 
+# happens 
+
+# I've run other amount of lags for all of these, but mostly have p-values close
+# to 1. 
+
+
 
 # In[3.4]: As an experiment, running the EUR against USD:
 
 df_wg_usd_1year = pd.read_csv("./datasets/wrangled/df_usd_1year.csv", float_precision="high", parse_dates=([0]))
 
-df_wg_usd_1year['diffLogUSD'] = df_wg_usd_1year['logUSD'].diff()
-
-df_eur_usd = pd.DataFrame({"eur": df_wg_eur_1year['diffLogEUR'], "usd": df_wg_usd_1year["diffLogUSD"]})
+df_eur_usd = pd.DataFrame({"eur": df_wg_eur_1year['logEUR'], "usd": df_wg_usd_1year["logUSD"]})
 
 eur_usd_granger = grangercausalitytests(df_eur_usd[['eur', 'usd']].dropna(), maxlag=40)
 
 """
 Granger Causality
-number of lags (no zero) 1
-ssr based F test:         F=1.1155  , p=0.2918  , df_denom=275, df_num=1
-ssr based chi2 test:   chi2=1.1277  , p=0.2883  , df=1
-likelihood ratio test: chi2=1.1254  , p=0.2888  , df=1
-parameter F test:         F=1.1155  , p=0.2918  , df_denom=275, df_num=1
+number of lags (no zero) 28
+ssr based F test:         F=1.1714  , p=0.2630  , df_denom=195, df_num=28
+ssr based chi2 test:   chi2=42.3881 , p=0.0398  , df=28
+likelihood ratio test: chi2=39.1784 , p=0.0781  , df=28
+parameter F test:         F=1.1714  , p=0.2630  , df_denom=195, df_num=28
 
-Granger Causality
-number of lags (no zero) 2
-ssr based F test:         F=0.5894  , p=0.5554  , df_denom=272, df_num=2
-ssr based chi2 test:   chi2=1.2005  , p=0.5487  , df=2
-likelihood ratio test: chi2=1.1979  , p=0.5494  , df=2
-parameter F test:         F=0.5894  , p=0.5554  , df_denom=272, df_num=2
-
-Granger Causality
-number of lags (no zero) 3
-ssr based F test:         F=0.4765  , p=0.6989  , df_denom=269, df_num=3
-ssr based chi2 test:   chi2=1.4667  , p=0.6900  , df=3
-likelihood ratio test: chi2=1.4628  , p=0.6909  , df=3
-parameter F test:         F=0.4765  , p=0.6989  , df_denom=269, df_num=3
-
-Granger Causality
-number of lags (no zero) 4
-ssr based F test:         F=0.9612  , p=0.4293  , df_denom=266, df_num=4
-ssr based chi2 test:   chi2=3.9748  , p=0.4094  , df=4
-likelihood ratio test: chi2=3.9463  , p=0.4133  , df=4
-parameter F test:         F=0.9612  , p=0.4293  , df_denom=266, df_num=4
-"""
-
-"""
 Granger Causality
 number of lags (no zero) 29
-ssr based F test:         F=1.3245  , p=0.1362  , df_denom=191, df_num=29
-ssr based chi2 test:   chi2=50.2767 , p=0.0084  , df=29
-likelihood ratio test: chi2=45.8109 , p=0.0245  , df=29
-parameter F test:         F=1.3245  , p=0.1362  , df_denom=191, df_num=29
+ssr based F test:         F=1.2607  , p=0.1808  , df_denom=192, df_num=29
+ssr based chi2 test:   chi2=47.7945 , p=0.0154  , df=29
+likelihood ratio test: chi2=43.7501 , p=0.0388  , df=29
+parameter F test:         F=1.2607  , p=0.1808  , df_denom=192, df_num=29
 
 Granger Causality
 number of lags (no zero) 30
-ssr based F test:         F=1.2946  , p=0.1534  , df_denom=188, df_num=30
-ssr based chi2 test:   chi2=51.4411 , p=0.0087  , df=30
-likelihood ratio test: chi2=46.7619 , p=0.0262  , df=30
-parameter F test:         F=1.2946  , p=0.1534  , df_denom=188, df_num=30
+ssr based F test:         F=1.3380  , p=0.1253  , df_denom=189, df_num=30
+ssr based chi2 test:   chi2=53.0970 , p=0.0058  , df=30
+likelihood ratio test: chi2=48.1480 , p=0.0192  , df=30
+parameter F test:         F=1.3380  , p=0.1253  , df_denom=189, df_num=30
 
 Granger Causality
 number of lags (no zero) 31
-ssr based F test:         F=1.2480  , p=0.1864  , df_denom=185, df_num=31
-ssr based chi2 test:   chi2=51.8631 , p=0.0108  , df=31
-likelihood ratio test: chi2=47.0945 , p=0.0321  , df=31
-parameter F test:         F=1.2480  , p=0.1864  , df_denom=185, df_num=31
+ssr based F test:         F=1.3115  , p=0.1395  , df_denom=186, df_num=31
+ssr based chi2 test:   chi2=54.4292 , p=0.0058  , df=31
+likelihood ratio test: chi2=49.2262 , p=0.0200  , df=31
+parameter F test:         F=1.3115  , p=0.1395  , df_denom=186, df_num=31
 
 Granger Causality
 number of lags (no zero) 32
-ssr based F test:         F=1.2467  , p=0.1853  , df_denom=182, df_num=32
-ssr based chi2 test:   chi2=54.1439 , p=0.0085  , df=32
-likelihood ratio test: chi2=48.9554 , p=0.0280  , df=32
-parameter F test:         F=1.2467  , p=0.1853  , df_denom=182, df_num=32
-
-Granger Causality
-number of lags (no zero) 33
-ssr based F test:         F=1.2354  , p=0.1929  , df_denom=179, df_num=33
-ssr based chi2 test:   chi2=56.0272 , p=0.0074  , df=33
-likelihood ratio test: chi2=50.4757 , p=0.0264  , df=33
-parameter F test:         F=1.2354  , p=0.1929  , df_denom=179, df_num=33
-
-Granger Causality
-number of lags (no zero) 34
-ssr based F test:         F=1.1933  , p=0.2303  , df_denom=176, df_num=34
-ssr based chi2 test:   chi2=56.4770 , p=0.0091  , df=34
-likelihood ratio test: chi2=50.8217 , p=0.0318  , df=34
-parameter F test:         F=1.1933  , p=0.2303  , df_denom=176, df_num=34
-"""
-
-"""
-Granger Causality
-number of lags (no zero) 68
-ssr based F test:         F=1.1837  , p=0.2385  , df_denom=74, df_num=68
-ssr based chi2 test:   chi2=229.5071, p=0.0000  , df=68
-likelihood ratio test: chi2=155.3104, p=0.0000  , df=68
-parameter F test:         F=1.1837  , p=0.2385  , df_denom=74, df_num=68
-
-Granger Causality
-number of lags (no zero) 69
-ssr based F test:         F=1.1499  , p=0.2799  , df_denom=71, df_num=69
-ssr based chi2 test:   chi2=234.6711, p=0.0000  , df=69
-likelihood ratio test: chi2=157.5477, p=0.0000  , df=69
-parameter F test:         F=1.1499  , p=0.2799  , df_denom=71, df_num=69
+ssr based F test:         F=1.2668  , p=0.1692  , df_denom=183, df_num=32
+ssr based chi2 test:   chi2=54.9350 , p=0.0071  , df=32
+likelihood ratio test: chi2=49.6222 , p=0.0242  , df=32
+parameter F test:         F=1.2668  , p=0.1692  , df_denom=183, df_num=32
 """
 
 # We can see here that some of the tests, specially the ones based on chi2 have
-# very low p-values, but our F-tests never get below 0,13, which strongly indicates
+# very low p-values, but our F-tests never get below 0,12, which strongly indicates
 # there's no addition of predictive power when adding the usd time series. Although
 # we could make a case for the low p-values of the likelihood tests, specially
-# at higher lags (30-60). For the purpose of this work it doesn't make sense because
+# at higher lags (28-32). For the purpose of this work it doesn't make sense because
 # we're trying to predict values to a max of 2 weeks ahead, and the granger test
 # shows us that the prediction power of the usd time series would work best in the
 # long term and not in the short term, like we intend.
-# The first lags in these are very high for all tests, ranging from 0.08 on
-# lag 14 for likelihood to 0.7 on lag 3 for the f-test
 
 # In[3.5]: Testing VIF for EUR and USD:
 
@@ -584,10 +639,10 @@ eur_usd_vif['variable'] = eur_usd_constants.columns
 eur_usd_vif
 
 """
-        vif variable
-0  1.007058    const
-1  2.830555      eur
-2  2.830555      usd
+           vif variable
+0  4262.280578    const
+1     5.606104      eur
+2     5.606104      usd
 """
 
 # The low VIFs (< 10) indicate no multicolinearity between these two time series
@@ -614,30 +669,30 @@ for train_index, test_index in tscv.split(ct_eur_usd):
     print(f"TEST indices: {test_index}")
 
 """
-Lag: 1, P-value: 0.032899608460114325
-Lag: 2, P-value: 0.053909745727470926
-Lag: 3, P-value: 0.07467439307919739
-Lag: 4, P-value: 0.09717629125776463
+Lag: 1, P-value: 0.0004388260806742836
+Lag: 2, P-value: 0.0030948639495272266
+Lag: 3, P-value: 0.013025469160051002
+Lag: 4, P-value: 0.04017990214602802
 
-Lag: 1, P-value: 0.746040205028232
-Lag: 2, P-value: 0.7302350722479102
-Lag: 3, P-value: 0.8959632729276952
-Lag: 4, P-value: 0.8004691624497777
+Lag: 1, P-value: 0.9448232487942886
+Lag: 2, P-value: 0.9856853944964964
+Lag: 3, P-value: 0.9428525632414568
+Lag: 4, P-value: 0.9830950891931117
 
-Lag: 1, P-value: 0.8780035341257023
-Lag: 2, P-value: 0.8299119949223216
-Lag: 3, P-value: 0.9434554515108172
-Lag: 4, P-value: 0.8991973872113583
+Lag: 1, P-value: 0.6446178408457518
+Lag: 2, P-value: 0.9066326044178759
+Lag: 3, P-value: 0.9078149102390983
+Lag: 4, P-value: 0.9700173234563689
 
-Lag: 1, P-value: 0.7927351036819501
-Lag: 2, P-value: 0.9019776178229749
-Lag: 3, P-value: 0.9644520501824317
-Lag: 4, P-value: 0.9347486772913017
+Lag: 1, P-value: 0.48895033921407816
+Lag: 2, P-value: 0.7688838072846469
+Lag: 3, P-value: 0.8780647953483983
+Lag: 4, P-value: 0.9553963265831401
 
-Lag: 1, P-value: 0.24768796659655679
-Lag: 2, P-value: 0.5001622095397216
-Lag: 3, P-value: 0.7884718315877377
-Lag: 4, P-value: 0.45363713798092054
+Lag: 1, P-value: 0.5235761299888084
+Lag: 2, P-value: 0.4484979929950651
+Lag: 3, P-value: 0.6288329617100512
+Lag: 4, P-value: 0.8302239452202447
 """
 
 # We can see that p-values for the lags across train/test sections is not consistent
@@ -650,7 +705,10 @@ Lag: 4, P-value: 0.45363713798092054
 
 eur_arima_1year = pd.DataFrame({
     "date": df_wg_eur_1year["dateTime"],
-    "eur": df_wg_eur_1year["diffLogEUR"]
+    "eur": df_wg_eur_1year["logEUR"],
+    "diff": df_wg_eur_1year["diffLogEUR"],
+    "lag4": eur_1year_lagged["lag 4"],
+    "lag6": eur_1year_lagged["lag 6"]
     }).dropna()
 
 # save to csv
