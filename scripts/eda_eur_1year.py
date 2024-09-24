@@ -574,9 +574,9 @@ parameter F test:         F=4.7454  , p=0.0094  , df_denom=267, df_num=2
 
 # In[3.4]: As an experiment, running the EUR against USD:
 
-df_wg_usd_1year = pd.read_csv("./datasets/wrangled/df_usd_1year.csv", float_precision="high", parse_dates=([0]))
+usd_1year_granger = pd.read_csv("./datasets/wrangled/df_usd_1year.csv", float_precision="high", parse_dates=([0]))
 
-df_eur_usd = pd.DataFrame({"eur": df_wg_eur_1year['logEUR'], "usd": df_wg_usd_1year["logUSD"]})
+df_eur_usd = pd.DataFrame({"eur": df_wg_eur_1year['logEUR'], "usd": usd_1year_granger["logUSD"]})
 
 eur_usd_granger = grangercausalitytests(df_eur_usd[['eur', 'usd']].dropna(), maxlag=40)
 

@@ -548,9 +548,9 @@ usd_vif
 """
 
 # We can see here a lot of high VIFs, but this is expected, since these values
-# como from just lagged datasets they are bound to have multicolinearity, which
+# come from just lagged datasets they are bound to have multicolinearity, which
 # is not necessarily a problem, we just need to be cautions to the amount of
-# lagged exogs we add at the end
+# lagged exogs we add at the end and check AIC and BIC
 
 # In[3.0]: Running Granger Causality tests to analyse the lags
 
@@ -655,7 +655,7 @@ likelihood ratio test: chi2=9.9267  , p=0.0417  , df=4
 parameter F test:         F=2.4436  , p=0.0471  , df_denom=261, df_num=4
 """
 
-# The one with the lowest values is lag 6. We'll use that.
+# The one with the lowest values and higher impact is lag 6. We'll use that.
 
 # In[3.1]: Cross-testing "diffLogUSD" and "lag 6"
 # to make sure they have causality between them
@@ -672,7 +672,7 @@ for train_index, test_index in tscv.split(ct_usd_diff_lag6):
     X_train, y_train = train['lag_6'], train['usd']
     X_test, y_test = test['lag_6'], test['usd']
 
-    granger_result = grangercausalitytests(train[['usd', 'lag_6']], maxlag=6, verbose=False)
+    granger_result = grangercausalitytests(train[['usd', 'lag_6']], maxlag=4, verbose=False)
 
     for lag, result in granger_result.items():
         f_test_pvalue = result[0]['ssr_ftest'][1]  # p-value from F-test
@@ -708,18 +708,44 @@ Lag: 3, P-value: 0.0038570309030882054
 Lag: 4, P-value: 0.008418990918427283
 """
 
-# These show that lag 6 actually is not good at predicting values for this dataframe
+# These show that lag 6 actually is not very good at predicting values for lower
+# lags in this dataframe.
 # We might still take it to test in the arima model, but it seems like it won't
 # give a good outcome.
 
 # In[3.2]: Testing Granger Causality with "diffLogUSD" and "eur"
 
-df_wg_eur_1year = pd.read_csv("./datasets/wrangled/df_eur_1year.csv", float_precision="high", parse_dates=([0]))
+eur_1year_granger = pd.read_csv("./datasets/wrangled/df_eur_1year.csv", float_precision="high", parse_dates=([0]))
 
-df_usd_eur = pd.DataFrame({"usd": df_wg_usd_1year['logUSD'], "eur": df_wg_eur_1year["logEUR"]})
+df_usd_eur = pd.DataFrame({"usd": df_wg_usd_1year['logUSD'], "eur": eur_1year_granger["logEUR"]})
 
 usd_eur_granger = grangercausalitytests(df_usd_eur[['usd', 'eur']].dropna(), maxlag=40)
 
+"""
+Granger Causality
+number of lags (no zero) 7
+ssr based F test:         F=2.4955  , p=0.0170  , df_denom=258, df_num=7
+ssr based chi2 test:   chi2=18.4844 , p=0.0100  , df=7
+likelihood ratio test: chi2=17.8855 , p=0.0125  , df=7
+parameter F test:         F=2.4955  , p=0.0170  , df_denom=258, df_num=7
+"""
+
+
+"""
+Granger Causality
+number of lags (no zero) 15
+ssr based F test:         F=2.5329  , p=0.0017  , df_denom=234, df_num=15
+ssr based chi2 test:   chi2=43.0260 , p=0.0002  , df=15
+likelihood ratio test: chi2=39.8704 , p=0.0005  , df=15
+parameter F test:         F=2.5329  , p=0.0017  , df_denom=234, df_num=15
+
+Granger Causality
+number of lags (no zero) 16
+ssr based F test:         F=2.3086  , p=0.0036  , df_denom=231, df_num=16
+ssr based chi2 test:   chi2=42.2144 , p=0.0004  , df=16
+likelihood ratio test: chi2=39.1608 , p=0.0010  , df=16
+parameter F test:         F=2.3086  , p=0.0036  , df_denom=231, df_num=16
+"""
 
 # It looks like Euro could be a great predictor for USD. There are significant
 # predictor values from lag 7 to lag 37. This sounds insane. I'll check these
@@ -727,7 +753,7 @@ usd_eur_granger = grangercausalitytests(df_usd_eur[['usd', 'eur']].dropna(), max
 
 # In[2.5]: Testing the eur and usd data for multicolinearity:
 
-usd_eur_vif_test = pd.DataFrame({"logUSD": df_wg_usd_1year["logUSD"], "logEUR": df_wg_eur_1year["logEUR"]})
+usd_eur_vif_test = pd.DataFrame({"logUSD": df_wg_usd_1year["logUSD"], "logEUR": eur_1year_granger["logEUR"]})
 
 usd_eur_vif_test
 
@@ -758,8 +784,8 @@ usd_arima_1year = pd.DataFrame({
     "usd": df_wg_usd_1year["logUSD"],
     "diff": df_wg_usd_1year["diffLogUSD"],
     "lag": usd_1year_lagged["lag 6"],
-    "eur": df_wg_eur_1year["logEUR"],
-    "eurDiff": df_wg_eur_1year["logEUR"].diff()
+    "eur": eur_1year_granger["logEUR"],
+    "eurDiff": eur_1year_granger["logEUR"].diff()
     }).dropna()
 
 # save to csv
