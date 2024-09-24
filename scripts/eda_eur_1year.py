@@ -491,7 +491,7 @@ eur_vif
 
 # We can see very high VIFs between the lags; Which means there's multicolinearity
 
-# In[3.3]: Runnning the actual Causality test on the lagged data
+# In[3.3]: Running the actual Causality test on the lagged data
 
 eur_granger_lag2 = grangercausalitytests(eur_1year_lagged[["logEUR", "lag 2"]].dropna(), maxlag=4)
 
