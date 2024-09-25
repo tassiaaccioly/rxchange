@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # # # # # # # # # # # # # # # # # # # # # #
-# Running the ARIMA model = EURO - 1 year #
+# Finding the ARIMA model = EURO - 1 year #
 # # # # # # # # # # # # # # # # # # # # # #
 
 # In[0.1]: Importação dos pacotes
@@ -111,36 +111,6 @@ Differencing before the ARIMA model: (d = 0)
 | AIC              -2123.749 |
 | BIC              -2116.522 |
 ==============================
-"""
-
-# Chosen Model 5 - ARIMA(0,0,2) + Intercept:
-
-"""
-                               SARIMAX Results                                
-==============================================================================
-Dep. Variable:                   diff   No. Observations:                  274
-Model:                 ARIMA(0, 0, 2)   Log Likelihood                1066.934
-Date:                Tue, 24 Sep 2024   AIC                          -2125.868
-Time:                        01:31:21   BIC                          -2111.416
-Sample:                             0   HQIC                         -2120.067
-                                - 274                                         
-Covariance Type:                  opg                                         
-==============================================================================
-                 coef    std err          z      P>|z|      [0.025      0.975]
-------------------------------------------------------------------------------
-const          0.0004      0.000      1.625      0.104   -8.08e-05       0.001
-ma.L1         -0.0937      0.058     -1.610      0.107      -0.208       0.020
-ma.L2         -0.1235      0.063     -1.975      0.048      -0.246      -0.001
-sigma2      2.427e-05   1.48e-06     16.357      0.000    2.14e-05    2.72e-05
-===================================================================================
-Ljung-Box (L1) (Q):                   0.00   Jarque-Bera (JB):                62.43
-Prob(Q):                              0.94   Prob(JB):                         0.00
-Heteroskedasticity (H):               1.09   Skew:                             0.41
-Prob(H) (two-sided):                  0.68   Kurtosis:                         5.19
-===================================================================================
-
-Warnings:
-[1] Covariance matrix calculated using the outer product of gradients (complex-step).
 """
 
 # In[1.3]: Confirming AIC and BIC for other (p,d,q) values with automated ARIMA
@@ -286,15 +256,38 @@ Basing on BIC
 ==========================================================
 """
 
+# Chosen Model 5 - ARIMA(0,0,2) + Intercept:
+    
+# Trying AR(0), d = 1, MA(2)
 
-# In[1.1]: Plotting and testing the residuals
-
-eurdiff_fit_1year_AIC.resid()
-
-plt.figure(figsize=(15, 10))
-sns.histplot(x=eurdiff_fit_1year_AIC.resid(), color="limegreen", label="Resíduos")
-plt.title("Resíduos do Modelo - ARIMA(0,0,2) + intercepto", fontsize="18")
-plt.legend(fontsize=18, loc="upper right")
-plt.show()
+eur_fit_1year_002 = ARIMA(df_eur_arima_1year['diff'], exog=None, order=(0,0,2), enforce_stationarity=True).fit()
 
 eur_fit_1year_002.summary()
+
+"""
+                               SARIMAX Results                                
+==============================================================================
+Dep. Variable:                   diff   No. Observations:                  274
+Model:                 ARIMA(0, 0, 2)   Log Likelihood                1066.934
+Date:                Tue, 24 Sep 2024   AIC                          -2125.868
+Time:                        01:31:21   BIC                          -2111.416
+Sample:                             0   HQIC                         -2120.067
+                                - 274                                         
+Covariance Type:                  opg                                         
+==============================================================================
+                 coef    std err          z      P>|z|      [0.025      0.975]
+------------------------------------------------------------------------------
+const          0.0004      0.000      1.625      0.104   -8.08e-05       0.001
+ma.L1         -0.0937      0.058     -1.610      0.107      -0.208       0.020
+ma.L2         -0.1235      0.063     -1.975      0.048      -0.246      -0.001
+sigma2      2.427e-05   1.48e-06     16.357      0.000    2.14e-05    2.72e-05
+===================================================================================
+Ljung-Box (L1) (Q):                   0.00   Jarque-Bera (JB):                62.43
+Prob(Q):                              0.94   Prob(JB):                         0.00
+Heteroskedasticity (H):               1.09   Skew:                             0.41
+Prob(H) (two-sided):                  0.68   Kurtosis:                         5.19
+===================================================================================
+
+Warnings:
+[1] Covariance matrix calculated using the outer product of gradients (complex-step).
+"""

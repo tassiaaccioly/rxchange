@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # # # # # # # # # # # # # # # # # # # # # # #
-# Running the ARIMA model = DOLLAR - 1 year #
+# Finding the ARIMA model = DOLLAR - 1 year #
 # # # # # # # # # # # # # # # # # # # # # # #
 
 # In[0.1]: Importação dos pacotes
