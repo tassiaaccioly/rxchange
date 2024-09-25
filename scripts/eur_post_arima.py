@@ -61,11 +61,16 @@ eur_arima_results = ARIMAResults(eur_arima_final)
 
 # testing the model
 
-eur_arima_final.apply(df_eur_arima_test[""])
+eur_arima_final.apply(df_eur_arima_test["diff"])
 
 # Fazendo previsões:
 
 eur_arima_predict = eur_arima_final.predict()
+
+# Function to invert the value
+def diff_inv(series_diff, first_value):
+    series_inverted = np.r_[first_value, series_diff].cumsum().astype('float64')
+    return series_inverted
 
 
 # In[1.1]: Saving and plotting the residuals
