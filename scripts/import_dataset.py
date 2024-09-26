@@ -33,11 +33,21 @@ for index, row in df_eur_1year.loc[:,['dateTime']].iterrows():
 # transform dateTime back into date type
 df_eur_1year['dateTime'] = pd.to_datetime(df_eur_1year['dateTime'])
 
+# Add a column of the weekday (so we can drop sundays as they are skewing the data)
+for index, row in df_eur_1year.loc[:,['dateTime']].iterrows():
+    df_eur_1year.at[index, 'weekday'] = row['dateTime'].strftime("%A")
+
+# Remove all "Sundays" from the dataframe
+df_eur_1year = df_eur_1year.drop(df_eur_1year[df_eur_1year["weekday"] == "Sunday"].index)
+
 # add a log of "eur" column
-df_eur_1year['logEUR'] = np.log(df_eur_1year['eur'])
+df_eur_1year['log'] = np.log(df_eur_1year['eur'])
+
+# add a "diff" column
+df_eur_1year["diff"] = df_eur_1year["log"].diff()
 
 #re-order columns
-df_eur_1year = df_eur_1year.reindex(["dateTime", "eur", "logEUR"], axis=1)
+df_eur_1year = df_eur_1year.reindex(["dateTime", "eur", "log", "diff", "weekday"], axis=1)
 
 # save to csv
 df_eur_1year.to_csv("./datasets/wrangled/df_eur_1year.csv", index=False)
@@ -65,11 +75,21 @@ for index, row in df_eur_5year.loc[:,['dateTime']].iterrows():
 # transform dateTime back into date type
 df_eur_5year['dateTime'] = pd.to_datetime(df_eur_5year['dateTime'])
 
+# Add a column of the weekday (so we can drop sundays as they are skewing the data)
+for index, row in df_eur_5year.loc[:,['dateTime']].iterrows():
+    df_eur_5year.at[index, 'weekday'] = row['dateTime'].strftime("%A")
+
+# Remove all "Sundays" from the dataframe
+df_eur_5year = df_eur_5year.drop(df_eur_5year[df_eur_5year["weekday"] == "Sunday"].index)
+
 # add a log of "eur" column
-df_eur_5year['logEUR'] = np.log(df_eur_5year['eur'])
+df_eur_5year['log'] = np.log(df_eur_5year['eur'])
+
+# add a "diff" column
+df_eur_5year["diff"] = df_eur_5year["log"].diff()
 
 #re-order columns
-df_eur_5year = df_eur_5year.reindex(["dateTime", "eur", "logEUR"], axis=1)
+df_eur_5year = df_eur_5year.reindex(["dateTime", "eur", "log", "diff", "weekday"], axis=1)
 
 # save to csv
 df_eur_5year.to_csv("./datasets/wrangled/df_eur_5year.csv", index=False)
@@ -96,17 +116,21 @@ for index, row in df_eur_3months.loc[:,['dateTime']].iterrows():
 # transform dateTime back into date type
 df_eur_3months['dateTime'] = pd.to_datetime(df_eur_3months['dateTime'])
 
-# add a log of "usd" column
-df_eur_3months['logEUR'] = np.log(df_eur_3months['eur'])
+# Add a column of the weekday (so we can drop sundays as they are skewing the data)
+for index, row in df_eur_3months.loc[:,['dateTime']].iterrows():
+    df_eur_3months.at[index, 'weekday'] = row['dateTime'].strftime("%A")
 
-# add a differenced column
-df_eur_3months["diff"] = df_eur_3months["logEUR"].diff()
+# Remove all "Sundays" from the dataframe
+df_eur_3months = df_eur_3months.drop(df_eur_3months[df_eur_3months["weekday"] == "Sunday"].index)
 
-# remove NA columns
-df_eur_3months = df_eur_3months.dropna()
+# add a log of "eur" column
+df_eur_3months['log'] = np.log(df_eur_3months['eur'])
+
+# add a "diff" column
+df_eur_3months["diff"] = df_eur_3months["log"].diff()
 
 #re-order columns
-df_eur_3months = df_eur_3months.reindex(["dateTime", "eur", "logEUR", "diff"], axis=1)
+df_eur_3months = df_eur_3months.reindex(["dateTime", "eur", "log", "diff", "weekday"], axis=1)
 
 # save to csv
 df_eur_3months.to_csv("./datasets/arima_ready/eur_arima_3months.csv", index=False)
@@ -134,11 +158,21 @@ for index, row in df_usd_1year.loc[:,['dateTime']].iterrows():
 # transform dateTime back into date type
 df_usd_1year['dateTime'] = pd.to_datetime(df_usd_1year['dateTime'])
 
+# Add a column of the weekday (so we can drop sundays as they are skewing the data)
+for index, row in df_usd_1year.loc[:,['dateTime']].iterrows():
+    df_usd_1year.at[index, 'weekday'] = row['dateTime'].strftime("%A")
+
+# Remove all "Sundays" from the dataframe
+df_usd_1year = df_usd_1year.drop(df_usd_1year[df_usd_1year["weekday"] == "Sunday"].index)
+
 # add a log of "eur" column
-df_usd_1year['logUSD'] = np.log(df_usd_1year['usd'])
+df_usd_1year['log'] = np.log(df_usd_1year['usd'])
+
+# add a "diff" column
+df_usd_1year["diff"] = df_usd_1year["log"].diff()
 
 #re-order columns
-df_usd_1year = df_usd_1year.reindex(["dateTime", "usd", "logUSD"], axis=1)
+df_usd_1year = df_usd_1year.reindex(["dateTime", "usd", "log", "diff", "weekday"], axis=1)
 
 # save to csv
 df_usd_1year.to_csv("./datasets/wrangled/df_usd_1year.csv", index=False)
@@ -165,11 +199,21 @@ for index, row in df_usd_5year.loc[:,['dateTime']].iterrows():
 # transform dateTime back into date type
 df_usd_5year['dateTime'] = pd.to_datetime(df_usd_5year['dateTime'])
 
-# add a log of "usd" column
-df_usd_5year['logUSD'] = np.log(df_usd_5year['usd'])
+# Add a column of the weekday (so we can drop sundays as they are skewing the data)
+for index, row in df_usd_5year.loc[:,['dateTime']].iterrows():
+    df_usd_5year.at[index, 'weekday'] = row['dateTime'].strftime("%A")
+
+# Remove all "Sundays" from the dataframe
+df_usd_5year = df_usd_5year.drop(df_usd_5year[df_usd_5year["weekday"] == "Sunday"].index)
+
+# add a log of "eur" column
+df_usd_5year['log'] = np.log(df_usd_5year['usd'])
+
+# add a "diff" column
+df_usd_5year["diff"] = df_usd_5year["log"].diff()
 
 #re-order columns
-df_usd_5year = df_usd_5year.reindex(["dateTime", "usd", "logUSD"], axis=1)
+df_usd_5year = df_usd_5year.reindex(["dateTime", "usd", "log", "diff", "weekday"], axis=1)
 
 # save to csv
 df_usd_5year.to_csv("./datasets/wrangled/df_usd_5year.csv", index=False)
@@ -196,17 +240,21 @@ for index, row in df_usd_3months.loc[:,['dateTime']].iterrows():
 # transform dateTime back into date type
 df_usd_3months['dateTime'] = pd.to_datetime(df_usd_3months['dateTime'])
 
-# add a log of "usd" column
-df_usd_3months['logUSD'] = np.log(df_usd_3months['usd'])
+# Add a column of the weekday (so we can drop sundays as they are skewing the data)
+for index, row in df_usd_3months.loc[:,['dateTime']].iterrows():
+    df_usd_3months.at[index, 'weekday'] = row['dateTime'].strftime("%A")
 
-# add a differenced column
-df_usd_3months["diff"] = df_usd_3months["logUSD"].diff()
+# Remove all "Sundays" from the dataframe
+df_eur_3months = df_eur_3months.drop(df_eur_3months[df_eur_3months["weekday"] == "Sunday"].index)
 
-# remove NA columns
-df_usd_3months = df_usd_3months.dropna()
+# add a log of "eur" column
+df_eur_3months['log'] = np.log(df_eur_3months['eur'])
+
+# add a "diff" column
+df_eur_3months["diff"] = df_eur_3months["log"].diff()
 
 #re-order columns
-df_usd_3months = df_usd_3months.reindex(["dateTime", "usd", "logUSD", "diff"], axis=1)
+df_eur_3months = df_eur_3months.reindex(["dateTime", "eur", "log", "diff", "weekday"], axis=1)
 
 # save to csv
 df_usd_3months.to_csv("./datasets/arima_ready/usd_arima_3months.csv", index=False)
