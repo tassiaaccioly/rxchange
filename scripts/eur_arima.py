@@ -9,8 +9,7 @@
 import pandas as pd
 from pmdarima import auto_arima
 from statsmodels.tsa.arima.model import ARIMA
-import seaborn as sns
-import matplotlib.pyplot as plt
+from statsmodels.tsa.api import SARIMAX
 
 
 # In[0.2]: Import dataframes
@@ -26,10 +25,15 @@ df_eur_arima_1year.info()
 # d = 1
 # MA - Up to 2
 
-eur_exog1 = pd.concat([df_eur_arima_1year['lag4'].shift(1), df_eur_arima_1year["lag6"].shift(1), df_eur_arima_1year["lag6"].shift(2)], axis=1).dropna()
-eur_exog2 = pd.concat([df_eur_arima_1year["lag6"].shift(1), df_eur_arima_1year["lag6"].shift(2)], axis=1).dropna()
-eur_exog3 = pd.concat([df_eur_arima_1year["lag4"].shift(1)], axis=1).dropna()
-eur_exog4 = pd.concat([df_eur_arima_1year["lag6"].shift(1)], axis=1).dropna()
+eur_exog1 = pd.concat([df_eur_arima_1year["lag6"].shift(1), df_eur_arima_1year["lag6"].shift(2)], axis=1).dropna()
+eur_exog2 = pd.concat([df_eur_arima_1year["lag6"].shift(1)], axis=1).dropna()
+
+len_eur_original = len(df_eur_arima_1year)
+len_eur_exog1 = len_eur_original - len(eur_exog1) - 1
+len_eur_exog2 = len_eur_original - len(eur_exog2) - 1
+
+df_eur_exog1 = df_eur_arima_1year['eur'].drop(df_eur_arima_1year['eur'].loc[0:len_eur_exog1].index)
+df_eur_exog2 = df_eur_arima_1year['eur'].drop(df_eur_arima_1year['eur'].loc[0:len_eur_exog2].index)
 
 # After running tests with all exog combinations, it's clear that none of them add to the model.
 
@@ -37,9 +41,9 @@ eur_exog4 = pd.concat([df_eur_arima_1year["lag6"].shift(1)], axis=1).dropna()
 
 # Trying AR(2), d = 1, MA(2)
 
-eur_fit_1year_212 = ARIMA(df_eur_arima_1year['eur'], exog=None, order=(2,1,2), enforce_stationarity=True).fit()
+eur_fit_1year_000 = SARIMAX(df_eur_arima_1year["diff"], exog=None, order=(0,0,0), enforce_stationarity=True).fit()
 
-eur_fit_1year_212.summary()
+eur_fit_1year_000.summary()
 
 
 # Trying AR(0), d = 1, MA(2)
@@ -118,8 +122,7 @@ Differencing before the ARIMA model: (d = 0)
 # we will be using the max parameters for p and q removed from the ACF and PACF
 # plots: AR(2), MA(2)
 
-eur_fit_1year_AIC = auto_arima(y = df_eur_arima_1year['eur'], 
-                               d=1,
+eur_fit_1year_AIC = auto_arima(y = df_eur_arima_1year['eur'],
                                test="adf",
                                m=1,
                                seasonal = False,
@@ -131,29 +134,23 @@ eur_fit_1year_AIC.summary()
 
 """
 Performing stepwise search to minimize aic
- ARIMA(2,1,2)(0,0,0)[0] intercept   : AIC=-2117.102, Time=0.33 sec
- ARIMA(0,1,0)(0,0,0)[0] intercept   : AIC=-2115.981, Time=0.04 sec
- ARIMA(1,1,0)(0,0,0)[0] intercept   : AIC=-2115.326, Time=0.02 sec
- ARIMA(0,1,1)(0,0,0)[0] intercept   : AIC=-2115.738, Time=0.04 sec
- ARIMA(0,1,0)(0,0,0)[0]             : AIC=-2116.286, Time=0.02 sec
- ARIMA(1,1,2)(0,0,0)[0] intercept   : AIC=-2118.417, Time=0.22 sec
- ARIMA(0,1,2)(0,0,0)[0] intercept   : AIC=-2118.209, Time=0.13 sec
- ARIMA(1,1,1)(0,0,0)[0] intercept   : AIC=-2115.686, Time=0.09 sec
- ARIMA(1,1,3)(0,0,0)[0] intercept   : AIC=-2114.575, Time=0.30 sec
- ARIMA(0,1,3)(0,0,0)[0] intercept   : AIC=-2117.539, Time=0.15 sec
--> ARIMA(2,1,1)(0,0,0)[0] intercept   : AIC=-2118.535, Time=0.28 sec <-
- ARIMA(2,1,0)(0,0,0)[0] intercept   : AIC=-2116.978, Time=0.08 sec
- ARIMA(3,1,1)(0,0,0)[0] intercept   : AIC=-2114.551, Time=0.17 sec
- ARIMA(3,1,0)(0,0,0)[0] intercept   : AIC=-2116.417, Time=0.09 sec
- ARIMA(3,1,2)(0,0,0)[0] intercept   : AIC=-2112.778, Time=0.33 sec
- ARIMA(2,1,1)(0,0,0)[0]             : AIC=-2116.873, Time=0.11 sec
+ ARIMA(2,1,2)(0,0,0)[0] intercept   : AIC=-1007.144, Time=0.27 sec
+ ARIMA(0,1,0)(0,0,0)[0] intercept   : AIC=-1006.863, Time=0.03 sec
+ ARIMA(1,1,0)(0,0,0)[0] intercept   : AIC=-1006.798, Time=0.03 sec
+ ARIMA(0,1,1)(0,0,0)[0] intercept   : AIC=-1007.226, Time=0.05 sec
+ ARIMA(0,1,0)(0,0,0)[0]             : AIC=-1006.879, Time=0.01 sec
+-> ARIMA(1,1,1)(0,0,0)[0] intercept   : AIC=-1010.815, Time=0.21 sec <-
+ ARIMA(2,1,1)(0,0,0)[0] intercept   : AIC=-1009.049, Time=0.24 sec
+ ARIMA(1,1,2)(0,0,0)[0] intercept   : AIC=-1009.014, Time=0.28 sec
+ ARIMA(0,1,2)(0,0,0)[0] intercept   : AIC=-1007.640, Time=0.16 sec
+ ARIMA(2,1,0)(0,0,0)[0] intercept   : AIC=-1006.254, Time=0.03 sec
+ ARIMA(1,1,1)(0,0,0)[0]             : AIC=-1008.312, Time=0.07 sec
 
-Best model:  ARIMA(2,1,1)(0,0,0)[0] intercept
-Total fit time: 2.422 seconds
+Best model:  ARIMA(1,1,1)(0,0,0)[0] intercept
+Total fit time: 1.372 seconds
 """
 
-eur_fit_1year_BIC = auto_arima(y = df_eur_arima_1year['eur'], 
-                               d=1,
+eur_fit_1year_BIC = auto_arima(y = df_eur_arima_1year['eur'],
                                information_criterion="bic",
                                test="adf",
                                m=1,
@@ -166,128 +163,124 @@ eur_fit_1year_BIC.summary()
 
 """
 Performing stepwise search to minimize bic
- ARIMA(2,1,2)(0,0,0)[0] intercept   : BIC=-2095.445, Time=0.32 sec
- ARIMA(0,1,0)(0,0,0)[0] intercept   : BIC=-2108.762, Time=0.04 sec
- ARIMA(1,1,0)(0,0,0)[0] intercept   : BIC=-2104.497, Time=0.02 sec
- ARIMA(0,1,1)(0,0,0)[0] intercept   : BIC=-2104.910, Time=0.03 sec
--> ARIMA(0,1,0)(0,0,0)[0]             : BIC=-2112.676, Time=0.02 sec <-
- ARIMA(1,1,1)(0,0,0)[0] intercept   : BIC=-2101.248, Time=0.07 sec
+ ARIMA(2,1,2)(0,0,0)[0] intercept   : BIC=-986.285, Time=0.26 sec
+ ARIMA(0,1,0)(0,0,0)[0] intercept   : BIC=-999.910, Time=0.03 sec
+ ARIMA(1,1,0)(0,0,0)[0] intercept   : BIC=-996.369, Time=0.03 sec
+ ARIMA(0,1,1)(0,0,0)[0] intercept   : BIC=-996.797, Time=0.04 sec
+-> ARIMA(0,1,0)(0,0,0)[0]             : BIC=-1003.403, Time=0.01 sec <-
+ ARIMA(1,1,1)(0,0,0)[0] intercept   : BIC=-996.909, Time=0.16 sec
 
 Best model:  ARIMA(0,1,0)(0,0,0)[0]          
-Total fit time: 0.493 seconds
+Total fit time: 0.536 seconds
 """
 
-eurdiff_fit_1year_AIC = auto_arima(y = df_eur_arima_1year['diff'],
-                                   max_p = 2,
-                                   max_q = 2,
+eurdiff_fit_1year_AIC = auto_arima(y = df_eur_arima_1year['diff'].dropna(),
                                    test = "adf",
                                    m = 1,
                                    seasonal = False,
                                    stepwise = True,
                                    trace = True
-                                   ).fit(y = df_eur_arima_1year['diff'])
+                                   ).fit(y = df_eur_arima_1year['diff'].dropna())
 
 eurdiff_fit_1year_AIC.summary()
 
 """
 Performing stepwise search to minimize aic
- ARIMA(2,0,2)(0,0,0)[0]             : AIC=-2122.115, Time=0.15 sec
- ARIMA(0,0,0)(0,0,0)[0]             : AIC=-2123.888, Time=0.02 sec
- ARIMA(1,0,0)(0,0,0)[0]             : AIC=-2122.923, Time=0.03 sec
- ARIMA(0,0,1)(0,0,0)[0]             : AIC=-2123.217, Time=0.03 sec
- ARIMA(1,0,1)(0,0,0)[0]             : AIC=-2124.583, Time=0.04 sec
- ARIMA(2,0,1)(0,0,0)[0]             : AIC=-2124.179, Time=0.08 sec
- ARIMA(1,0,2)(0,0,0)[0]             : AIC=-2123.947, Time=0.05 sec
--> ARIMA(0,0,2)(0,0,0)[0]             : AIC=-2125.016, Time=0.03 sec <-
- ARIMA(0,0,3)(0,0,0)[0]             : AIC=-2123.740, Time=0.06 sec
- ARIMA(1,0,3)(0,0,0)[0]             : AIC=-2122.047, Time=0.15 sec
--> ARIMA(0,0,2)(0,0,0)[0] intercept   : AIC=-2125.869, Time=0.08 sec <-
--> ARIMA(0,0,1)(0,0,0)[0] intercept   : AIC=-2123.395, Time=0.06 sec
- ARIMA(1,0,2)(0,0,0)[0] intercept   : AIC=-2125.664, Time=0.09 sec
- ARIMA(0,0,3)(0,0,0)[0] intercept   : AIC=-2125.062, Time=0.09 sec
- ARIMA(1,0,1)(0,0,0)[0] intercept   : AIC=-2120.839, Time=0.15 sec
- ARIMA(1,0,3)(0,0,0)[0] intercept   : AIC=-2123.817, Time=0.10 sec
+ ARIMA(2,0,2)(0,0,0)[0]             : AIC=-1815.404, Time=0.10 sec
+-> ARIMA(0,0,0)(0,0,0)[0]             : AIC=-1819.456, Time=0.02 sec <-
+ ARIMA(1,0,0)(0,0,0)[0]             : AIC=-1818.958, Time=0.03 sec
+ ARIMA(0,0,1)(0,0,0)[0]             : AIC=-1819.264, Time=0.03 sec
+ ARIMA(1,0,1)(0,0,0)[0]             : AIC=-1815.456, Time=0.08 sec
+ ARIMA(0,0,0)(0,0,0)[0] intercept   : AIC=-1819.367, Time=0.03 sec
 
-Best model:  ARIMA(0,0,2)(0,0,0)[0] intercept
-Total fit time: 1.217 seconds
+Best model:  ARIMA(0,0,0)(0,0,0)[0]          
+Total fit time: 0.291 seconds
 """
 
-eurdiff_fit_1year_BIC = auto_arima(y = df_eur_arima_1year['diff'], 
+eurdiff_fit_1year_BIC = auto_arima(y = df_eur_arima_1year['diff'].dropna(), 
                                information_criterion="bic",
                                test="adf",
                                m=1,
                                seasonal = False,
                                stepwise = True,
                                trace = True
-                               ).fit(y = df_eur_arima_1year['diff'])
+                               ).fit(y = df_eur_arima_1year['diff'].dropna())
 
 eurdiff_fit_1year_BIC.summary()
 
 """
 Performing stepwise search to minimize bic
- ARIMA(2,0,2)(0,0,0)[0]             : BIC=-2104.050, Time=0.16 sec
--> ARIMA(0,0,0)(0,0,0)[0]             : BIC=-2120.275, Time=0.02 sec <-
- ARIMA(1,0,0)(0,0,0)[0]             : BIC=-2115.697, Time=0.03 sec
--> ARIMA(0,0,1)(0,0,0)[0]             : BIC=-2115.990, Time=0.03 sec <-
- ARIMA(1,0,1)(0,0,0)[0]             : BIC=-2113.743, Time=0.04 sec
- ARIMA(0,0,0)(0,0,0)[0] intercept   : BIC=-2116.523, Time=0.03 sec
+ ARIMA(2,0,2)(0,0,0)[0]             : BIC=-1798.021, Time=0.10 sec
+ ARIMA(0,0,0)(0,0,0)[0]             : BIC=-1815.979, Time=0.02 sec
+ ARIMA(1,0,0)(0,0,0)[0]             : BIC=-1812.005, Time=0.03 sec
+ ARIMA(0,0,1)(0,0,0)[0]             : BIC=-1812.311, Time=0.03 sec
+ ARIMA(1,0,1)(0,0,0)[0]             : BIC=-1805.026, Time=0.07 sec
+ ARIMA(0,0,0)(0,0,0)[0] intercept   : BIC=-1812.414, Time=0.03 sec
 
 Best model:  ARIMA(0,0,0)(0,0,0)[0]          
-Total fit time: 0.305 seconds
+Total fit time: 0.283 seconds
 """
 
 """
-Basing on AIC
+Basing on normal data order 1 differenced data in the auto_arima
 
-|  AIC ARIMA(2,1,1) + int.   | AIC_diff ARIMA(0,0,2) + int. |
-=============================================================
-| Log Likelihood    1064.268 | Log Likelihood      1066.934 |
-| AIC              -2118.535 | AIC                -2125.869 |
-| BIC              -2100.488 | BIC                -2111.416 |
-=============================================================
+|  AIC SARIMAX(1,1,1) + int. |    BIC SARIMAX(0,1,0)      |
+===========================================================
+| Log Likelihood     509.407 | Log Likelihood     504.440 |
+| AIC              -1010.815 | AIC              -1006.879 |
+| BIC               -996.909 | BIC              -1003.403 |
+| intercept           0.0008 | intercept               NA |
+| sigma2              0.0008 | sigma2              0.0009 |
+===========================================================
 
-Basing on BIC
+Basing on order 0 differenced data
 
-|     BIC ARIMA(0,1,0)      |   BIC_diff ARIMA(0,0,0)    |
+|  AIC_diff SARIMAX(0,0,0)  |  BIC_diff SARIMAX(0,0,0)   |
 ==========================================================
-| Log Likelihood   1059.143 | Log Likelihood    1062.944 |
-| AIC             -2116.286 | AIC              -2123.888 |
-| BIC             -2112.676 | BIC              -2120.275 |
+| Log Likelihood    910.728 | Log Likelihood     910.728 |
+| AIC             -1819.456 | AIC              -1819.456 |
+| BIC             -1815.979 | BIC              -1815.979 |
+| sigma2          2.869e-05 | sigma2           2.869e-05 |
 ==========================================================
 """
 
-# Chosen Model 5 - ARIMA(0,0,2) + Intercept:
-    
-# Trying AR(0), d = 1, MA(2)
+# Chosen Model BIC_AIC SARIMAX(0,0,0)
 
-eur_fit_1year_002 = ARIMA(df_eur_arima_1year['diff'], exog=None, order=(0,0,2), enforce_stationarity=True).fit()
+eurdiff_fit_1year_BIC = auto_arima(y = df_eur_arima_1year['diff'].dropna(), 
+                               information_criterion="bic",
+                               test="adf",
+                               m=1,
+                               seasonal = False,2
+                               stepwise = True,
+                               trace = True
+                               ).fit(y = df_eur_arima_1year['diff'].dropna())
 
-eur_fit_1year_002.summary()
+eurdiff_fit_1year_BIC.summary()
 
 """
                                SARIMAX Results                                
 ==============================================================================
-Dep. Variable:                   diff   No. Observations:                  274
-Model:                 ARIMA(0, 0, 2)   Log Likelihood                1066.934
-Date:                Tue, 24 Sep 2024   AIC                          -2125.868
-Time:                        01:31:21   BIC                          -2111.416
-Sample:                             0   HQIC                         -2120.067
-                                - 274                                         
+Dep. Variable:                      y   No. Observations:                  239
+Model:                        SARIMAX   Log Likelihood                 910.728
+Date:                Thu, 26 Sep 2024   AIC                          -1819.456
+Time:                        19:54:55   BIC                          -1815.979
+Sample:                             0   HQIC                         -1818.055
+                                - 239                                         
 Covariance Type:                  opg                                         
 ==============================================================================
                  coef    std err          z      P>|z|      [0.025      0.975]
 ------------------------------------------------------------------------------
-const          0.0004      0.000      1.625      0.104   -8.08e-05       0.001
-ma.L1         -0.0937      0.058     -1.610      0.107      -0.208       0.020
-ma.L2         -0.1235      0.063     -1.975      0.048      -0.246      -0.001
-sigma2      2.427e-05   1.48e-06     16.357      0.000    2.14e-05    2.72e-05
+sigma2      2.869e-05   1.96e-06     14.624      0.000    2.48e-05    3.25e-05
 ===================================================================================
-Ljung-Box (L1) (Q):                   0.00   Jarque-Bera (JB):                62.43
-Prob(Q):                              0.94   Prob(JB):                         0.00
-Heteroskedasticity (H):               1.09   Skew:                             0.41
-Prob(H) (two-sided):                  0.68   Kurtosis:                         5.19
+Ljung-Box (L1) (Q):                   1.82   Jarque-Bera (JB):                25.42
+Prob(Q):                              0.18   Prob(JB):                         0.00
+Heteroskedasticity (H):               1.14   Skew:                             0.26
+Prob(H) (two-sided):                  0.56   Kurtosis:                         4.51
 ===================================================================================
 
 Warnings:
 [1] Covariance matrix calculated using the outer product of gradients (complex-step).
 """
+
+# Models were tested with exog, but all models with exog showed to have less BIC
+# AIC and log-like than the ones without.

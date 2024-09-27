@@ -288,7 +288,7 @@ usd_fit_1year_BIC_exog3.summary()
 """
 Differencing before the ARIMA model: (d = 1) + EXOGS (AIC)
 
-|   Exog1A SARIMAX(0,1,2)    |    Exog2A ARIMA(0,0,2)     |   Exog3A SARIMAX(0,1,2)    |
+|   Exog1A SARIMAX(0,1,2)    |   Exog2A SARIMAX(0,0,2)    |   Exog3A SARIMAX(0,1,2)    |
 ========================================================================================
 | Log Likelihood    1034.049 | Log Likelihood    1021.324 | Log Likelihood     988.978 |
 | AIC              -2062.099 | AIC              -2036.648 | AIC              -1971.956 |
