@@ -11,25 +11,30 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
-from scipy.stats import boxcox
+from scipy.stats import boxcox, norm
 from statsmodels.tsa.stattools import adfuller, kpss, grangercausalitytests
 from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.tools.tools import add_constant
 from sklearn.model_selection import TimeSeriesSplit
+from datetime import datetime
 
 
 # In[0.2]: Import dataframes
 
-df_wg_eur_1year = pd.read_csv("./datasets/wrangled/df_eur_1year.csv", float_precision="high", parse_dates=([0]))
+df_wg_eur_1year = pd.read_csv("./datasets/wrangled/df_eur_1year.csv", float_precision="high", parse_dates=([1]))
 
 df_wg_eur_1year.info()
 
-df_wg_eur_5year = pd.read_csv("./datasets/wrangled/df_eur_5year.csv", float_precision="high", parse_dates=([0]))
+df_wg_eur_5year = pd.read_csv("./datasets/wrangled/df_eur_5year.csv", float_precision="high", parse_dates=([1]))
 
 df_wg_eur_5year
 
 dt_format = "%d/%m/%Y"
+
+df_wg_eur_1year["sqrt"] = np.sqrt(df_wg_eur_1year["eur"])
+
+df_wg_eur_1year = df_wg_eur_1year.drop(df_wg_eur_1year[df_wg_eur_1year["weekday"] == "Sunday"].index)
 
 # In[0.3]: Plot the 5 year dataset
 
@@ -38,7 +43,7 @@ sns.lineplot(x=df_wg_eur_5year["dateTime"], y=df_wg_eur_5year["eur"], color="lim
 plt.axhline(y=np.mean(df_wg_eur_5year["eur"]), color="black", linestyle="--", label="Média", linewidth=2) # mean for euro
 plt.axhline(y=np.max(df_wg_eur_5year["eur"]), color="magenta", label="Máxima", linewidth=2) # máxima for euro
 plt.axhline(y=np.min(df_wg_eur_5year["eur"]), color="magenta", linestyle="--", label="Mínima", linewidth=2) # máxima for euro
-plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_5year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_5year["dateTime"][1491].strftime(dt_format)})', fontsize="18")
+plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_5year["dateTime"][0]} - {df_wg_eur_5year["dateTime"][1740]})', fontsize="18")
 plt.yticks(np.arange(round(df_wg_eur_5year["eur"].min(), 1), round(df_wg_eur_5year["eur"].max() + 0.1, 1), 0.1), fontsize="14")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=90))
@@ -77,7 +82,7 @@ sns.lineplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["eur"], color="lim
 plt.axhline(y=np.mean(df_wg_eur_1year["eur"]), color="black", linestyle="--", label="Média", linewidth=2) # mean for euro
 plt.axhline(y=np.max(df_wg_eur_1year["eur"]), color="magenta", label="Máxima", linewidth=2) # máxima for euro
 plt.axhline(y=np.min(df_wg_eur_1year["eur"]), color="magenta", linestyle="--", label="Mínima", linewidth=2) # máxima for euro
-plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_1year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_1year["dateTime"][239].strftime(dt_format)})', fontsize="18")
+plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_1year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_1year["dateTime"][279].strftime(dt_format)})', fontsize="18")
 plt.yticks(np.arange(round(df_wg_eur_1year["eur"].min(), 1), round(df_wg_eur_1year["eur"].max() + 0.1, 1), 0.1), fontsize="14")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29))
@@ -95,7 +100,7 @@ sns.scatterplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["eur"], color="
 plt.axhline(y=np.mean(df_wg_eur_1year["eur"]), color="black", linestyle="--", label="Média") # mean for euro
 plt.axhline(y=np.max(df_wg_eur_1year["eur"]), color="magenta", label="Máxima") # máxima for euro
 plt.axhline(y=np.min(df_wg_eur_1year["eur"]), color="magenta", linestyle="--", label="Mínima") # máxima for euro
-plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_1year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_1year["dateTime"][239].strftime(dt_format)})', fontsize="18")
+plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_1year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_1year["dateTime"][279].strftime(dt_format)})', fontsize="18")
 plt.yticks(np.arange(round(df_wg_eur_1year["eur"].min(), 1), round(df_wg_eur_1year["eur"].max() + 0.1, 1), 0.1), fontsize="14")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29))
@@ -113,7 +118,7 @@ sns.lineplot(x=df_wg_eur_1year["dateTime"], y=df_wg_eur_1year["log"], color="lim
 plt.axhline(y=np.mean(df_wg_eur_1year["log"]), color="black", linestyle="--", label="Média") # mean for euro
 plt.axhline(y=np.max(df_wg_eur_1year["log"]), color="magenta", label="Máxima") # máxima for euro
 plt.axhline(y=np.min(df_wg_eur_1year["log"]), color="magenta", linestyle="--", label="Mínima") # máxima for euro
-plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_1year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_1year["dateTime"][239].strftime(dt_format)})', fontsize="18")
+plt.title(f'Cotação do Euro - Série histórica ({df_wg_eur_1year["dateTime"][0].strftime(dt_format)} - {df_wg_eur_1year["dateTime"][279].strftime(dt_format)})', fontsize="18")
 plt.yticks(np.arange(round(df_wg_eur_1year["log"].min(), 2), round(df_wg_eur_1year["log"].max() + 0.01, 2), 0.01), fontsize="14")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29))
@@ -129,7 +134,87 @@ plt.show()
 
 # Doing a box-cox transformation in the logarithmic data:
 
-eur_1year_boxcox, eur_bc_lambda = boxcox(df_wg_eur_1year["log"])
+# this lamba value comes from R. guerrero method gave lambda -0.9999
+# and method loglik gave lamba -1 (chose -1 because of easier interpretation)
+# Why R was used: https://github.com/scipy/scipy/issues/6873
+
+eur_boxcox_lambda = -1
+
+eur_1year_boxcox = boxcox(df_wg_eur_1year["log"], eur_boxcox_lambda)
+
+df_wg_eur_1year["boxcox"] = pd.DataFrame(eur_1year_boxcox)
+
+# Plot box-cox:
+
+fig, axs = plt.subplots(nrows=2, ncols=1, figsize=(11,9), dpi=300)
+df_wg_eur_1year["log"].plot(ax=axs[0], label="Log")
+axs[0].set_title("Série Original")
+df_wg_eur_1year["boxcox"].plot(ax=axs[1], label="Box-cox", color="orange")
+axs[1].set_title("Box-Cox")
+plt.suptitle("Série Original x Série Boxcox")
+plt.tight_layout()
+plt.show()
+
+# Plot the histogram
+
+mu, std = norm.fit(df_wg_eur_1year["boxcox"])
+
+plt.style.use("grayscale")
+plt.figure(figsize=(15, 10), dpi=300)
+sns.histplot(x=df_wg_eur_1year["boxcox"], alpha=0.4,
+             edgecolor=None, kde=True, line_kws={
+                 "linewidth": 3, "linestyle": "dashed", "color": "m",
+                 "label": "KDE"}, 
+             )
+xmin, xmax = plt.xlim()
+x = np.linspace(xmin, xmax, len(df_wg_eur_1year["boxcox"]))
+p = norm.pdf(x, mu, std)
+plt.plot(x, p, linewidth=3, label="Distribuição Normal")
+plt.title("Transformação de Box-Cox nos dados com Log", fontsize="18")
+plt.legend(fontsize=18, loc="upper right")
+plt.show()
+
+# Plot scatter of the Box-cox values
+plt.figure(figsize=(15, 10), dpi=300)
+sns.scatterplot(df_wg_eur_1year["boxcox"], color="green")
+plt.title("Transformação de Box-Cox nos dados com Log", fontsize="18")
+plt.xlabel("")
+plt.ylabel("")
+plt.legend(fontsize=18, loc="upper right")
+plt.show()
+
+# Plotting the boxplot to see outliers in the boxcox dataset
+
+plt.figure(figsize=(15,10), dpi=300)
+sns.boxplot(x=df_wg_eur_1year["eur"], palette="viridis")
+plt.title("Boxplot do Dataset Eur", fontsize="18")
+plt.legend(fontsize="16")
+plt.show()
+
+plt.figure(figsize=(15,10), dpi=300)
+sns.boxplot(x=df_wg_eur_1year["log"], palette="viridis")
+plt.title("Boxplot do Dataset com Log", fontsize="18")
+plt.legend(fontsize="16")
+plt.show()
+
+plt.figure(figsize=(15,10), dpi=300)
+sns.boxplot(x=df_wg_eur_1year["boxcox"], palette="viridis")
+plt.title("Boxplot do Dataset com BoxCox", fontsize="18")
+plt.legend(fontsize="16")
+plt.show()
+
+plt.figure(figsize=(15,10), dpi=300)
+sns.boxplot(x=np.sqrt(df_wg_eur_1year["boxcox"]), palette="viridis")
+plt.title("Boxplot do Dataset com Raiz de BoxCox", fontsize="18")
+plt.legend(fontsize="16")
+plt.show()
+
+plt.figure(figsize=(15,10), dpi=300)
+sns.boxplot(x=df_wg_eur_1year["sqrt"], palette="viridis")
+plt.title("Boxplot do Dataset com Raiz", fontsize="18")
+plt.legend(fontsize="16")
+plt.show()
+
 
 # In[1.1]: Augmented Dickey-Fuller Test with eur and log
 
@@ -211,41 +296,81 @@ Notes:
 [1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
 """
 
-# We can notice that in the second model, both AIC and BIC are lower than the first one
-# and also that the loglike is higher on the second model than the first one, proving
-# that a logarthmic version of the data is a better fit for the model so far.
+# Doing the same for the box-cox transformed database
+
+log_1year_adf_ols = adfuller(df_wg_eur_1year['boxcox'], maxlag=None, autolag="AIC", store=True, regresults=True)[-1].resols.summary()
+log_1year_adf_ols
+
+"""
+                            OLS Regression Results                            
+==============================================================================
+Dep. Variable:                      y   R-squared:                       0.047
+Model:                            OLS   Adj. R-squared:                  0.018
+Method:                 Least Squares   F-statistic:                     1.613
+Date:                Fri, 27 Sep 2024   Prob (F-statistic):              0.121
+Time:                        16:27:24   Log-Likelihood:                 1350.2
+No. Observations:                 272   AIC:                            -2682.
+Df Residuals:                     263   BIC:                            -2650.
+Df Model:                           8                                         
+Covariance Type:            nonrobust                                         
+==============================================================================
+                 coef    std err          t      P>|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+x1             0.0135      0.013      1.040      0.299      -0.012       0.039
+x2            -0.1088      0.063     -1.726      0.085      -0.233       0.015
+x3            -0.1432      0.063     -2.272      0.024      -0.267      -0.019
+x4            -0.1016      0.064     -1.594      0.112      -0.227       0.024
+x5            -0.0862      0.064     -1.353      0.177      -0.212       0.039
+x6            -0.0226      0.063     -0.357      0.722      -0.148       0.102
+x7            -0.0546      0.063     -0.866      0.387      -0.179       0.070
+x8            -0.1359      0.063     -2.170      0.031      -0.259      -0.013
+const         -0.0053      0.005     -1.002      0.317      -0.016       0.005
+==============================================================================
+Omnibus:                       23.751   Durbin-Watson:                   1.991
+Prob(Omnibus):                  0.000   Jarque-Bera (JB):               60.663
+Skew:                           0.365   Prob(JB):                     6.72e-14
+Kurtosis:                       5.196   Cond. No.                         863.
+==============================================================================
+
+Notes:
+[1] Standard Errors assume that the covariance matrix of the errors is correctly specified.
+"""
+
+# We can notice that in the third model, both AIC and BIC are lower than the first one
+# and also that the loglike is higher on the third model than the others, proving
+# that the boxcox version of the data is a better fit for the model so far.
 
 # Getting values from the second model:
 
-log_1year_adf = adfuller(df_wg_eur_1year["log"], maxlag=None, autolag="AIC")
+log_1year_adf = adfuller(df_wg_eur_1year["boxcox"], maxlag=None, autolag="AIC")
 log_1year_adf
 
 # p-value is > 0.05 (0.99), DO NOT REJECT the null hypothesis and suggests the presence of a unit root (NON-STATIONARY)
-# adf stats > 10% (1.20), DO NOT REJECT the null hypothesis and suggests the presence of a unit root (NON-STATIONARY)
+# adf stats > 10% (1.03), DO NOT REJECT the null hypothesis and suggests the presence of a unit root (NON-STATIONARY)
 # lags = 7 good amount of lags
 
 """
-(1.2539075005340565,
- 0.9963379686592074,
- 6,
- 233,
- {'1%': -3.458731141928624,
-  '5%': -2.8740258764297293,
-  '10%': -2.5734243167124093},
- -1713.389862295891)
+(1.039857714950727,
+ 0.9946691892139733,
+ 7,
+ 272,
+ {'1%': -3.4546223782586534,
+  '5%': -2.8722253212300277,
+  '10%': -2.5724638500216264},
+ -2605.836821321932)
 """
 
 # In[1.2]: Running KPSS test to determine stationarity for eur
 
-log_1year_kpss = kpss(df_wg_eur_1year['log'], regression="c", nlags="auto")
+log_1year_kpss = kpss(df_wg_eur_1year['boxcox'], regression="c", nlags="auto")
 log_1year_kpss
 
 # p-value < 0.05 (0.01) REJECTS the null hypothesis, suggesting data is NON-STATIONARY
-# kpss stat of 2.00 is > than 1% (0.739), REJECTS the null hypothesis, suggesting data is NON-STATIONARY
+# kpss stat of 2.02 is > than 1% (0.739), REJECTS the null hypothesis, suggesting data is NON-STATIONARY
 # lags = 10 good amount of lags
 
 """
-(1.746840614367145,
+(2.024630025053029,
  0.01,
  10,
  {'10%': 0.347, '5%': 0.463, '2.5%': 0.574, '1%': 0.739})
@@ -253,43 +378,40 @@ log_1year_kpss
 
 # In[1.3]: Plotting ACF and PACF to examine autocorrelations in data:
 
-plt.figure(figsize=(15, 10), dpi=300)
-fig, (ax1, ax2) = plt.subplots(2)
-plot_acf(df_wg_eur_1year["log"], ax=ax1)
-plot_pacf(df_wg_eur_1year["log"], ax=ax2)
+plt.style.use("seaborn-v0_8-colorblind")
+fig, (ax1, ax2) = plt.subplots(2, figsize=(11, 7), dpi=300, sharex=True)
+plot_acf(df_wg_eur_1year["boxcox"], ax=ax1)
+plot_pacf(df_wg_eur_1year["boxcox"], ax=ax2)
+plt.show()
 
 # PACF plot shows an AR(2) order for the dataset showing a high statistical significance spike 
 # at the first lag in PACF. ACF shows slow decay towards 0 -> exponentially decaying or sinusoidal
 
 # In[1.4]: Defining the order of differencing we need:
 
-plt.figure(figsize=(9, 7), dpi=300)
-
 # Original Series
-fig, (ax1, ax2, ax3) = plt.subplots(3)
-ax1.plot(df_wg_eur_1year["log"]);
+sns.reset_defaults()
+fig, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, figsize=(11,8), dpi=300)
+ax1.plot(df_wg_eur_1year["boxcox"]);
 ax1.set_title('Série Original log(EUR)');
-ax1.axes.xaxis.set_visible(False)
 
 # 1st Differencing
-ax2.plot(df_wg_eur_1year["log"].diff());
+ax2.plot(df_wg_eur_1year["boxcox"].diff());
 ax2.set_title('1ª Ordem de Diferenciação');
-ax2.axes.xaxis.set_visible(False)
 
 # 2nd Differencing
-ax3.plot(df_wg_eur_1year["log"].diff().diff());
+ax3.plot(df_wg_eur_1year["boxcox"].diff().diff());
 ax3.set_title('2ª Ordem de Diferenciação') 
 plt.show()
 
 
 # Plotting the ACF for each order
 
-plt.figure(figsize=(11, 10), dpi=300)
-
-fig, (ax1, ax2, ax3) = plt.subplots(3)
-plot_acf(df_wg_eur_1year["log"], ax=ax1)
-plot_acf(df_wg_eur_1year["diff"].dropna(), ax=ax2)
-plot_acf(df_wg_eur_1year["diff"].diff().dropna(), ax=ax3)
+fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(11, 10), dpi=300)
+plot_acf(df_wg_eur_1year["boxcox"], ax=ax1)
+plot_acf(df_wg_eur_1year["boxcox"].diff().dropna(), ax=ax2)
+plot_acf(df_wg_eur_1year["boxcox"].diff().diff().dropna(), ax=ax3)
+plt.show()
 
 # We can see a pretty good visually STATIONARY plot on the first differenciation,
 # We can also see, after the first lag in the first diff ACF we have a pretty good
@@ -302,17 +424,16 @@ plot_acf(df_wg_eur_1year["diff"].diff().dropna(), ax=ax3)
 # looking for a number of MAs in the PACF plots next
 
 # Plotting the PACf for the first order diff:
-
-plt.figure(figsize=(11, 10), dpi=300)
-
-fig, (ax1, ax2, ax3) = plt.subplots(3)
+    
+fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(11, 10), dpi=300)
 plot_pacf(df_wg_eur_1year["log"], ax=ax1)
-plot_pacf(df_wg_eur_1year["diff"].dropna(), ax=ax2, color="green")
+plot_pacf(df_wg_eur_1year["diff"].diff().dropna(), ax=ax2, color="green")
 plot_pacf(df_wg_eur_1year["diff"].diff().dropna(), ax=ax3)
+plt.show()
 
 # Plotting ACF and PACF together:
 
-plt.figure(figsize=(11, 8), dpi=300)
+plt.figure(figsize=(11,10), dpi=300)
 fig, (ax1, ax2) = plt.subplots(2)
 plot_acf(df_wg_eur_1year["diff"].dropna(), ax=ax1)
 plot_pacf(df_wg_eur_1year["diff"].dropna(), ax=ax2)

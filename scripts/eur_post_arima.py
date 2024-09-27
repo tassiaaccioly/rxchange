@@ -54,7 +54,7 @@ test_diff = df_eur_arima_test["log"]
 
 # In[1.0]: Training the model SARIMAX(0,0,0)
 
-eur_arima_final_000 = ARIMA(y, exog=None, order=(1,0,0), enforce_stationarity=True, trend="c").fit()
+eur_arima_final_000 = SARIMAX(y, exog=None, order=(0,0,0), seasonal_order=(0,0,0,0), enforce_stationarity=True, trend="c").fit()
 
 eur_arima_final_000.summary()
 
