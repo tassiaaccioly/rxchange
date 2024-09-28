@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# # # # # # # # # # # # # # # # # # # # # # #
-# Exploratory Data Analysis = EURO - 1 year #
-# # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # #
+# Exploratory Data Analysis = EURO - 280 days #
+# # # # # # # # # # # # # # # # # # # # # # # #
 
 # In[0.1]: Importação dos pacotes
 
@@ -390,27 +390,30 @@ plt.show()
 # In[1.4]: Defining the order of differencing we need:
 
 # Original Series
-sns.reset_defaults()
-fig, (ax1, ax2, ax3) = plt.subplots(3, sharex=True, figsize=(11,8), dpi=300)
-ax1.plot(df_wg_eur_1year["boxcox"]);
-ax1.set_title('Série Original log(EUR)');
 
-# 1st Differencing
-ax2.plot(df_wg_eur_1year["boxcox"].diff());
-ax2.set_title('1ª Ordem de Diferenciação');
-
-# 2nd Differencing
-ax3.plot(df_wg_eur_1year["boxcox"].diff().diff());
-ax3.set_title('2ª Ordem de Diferenciação') 
+plt.style.use("seaborn-v0_8-colorblind")
+fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(11, 8), dpi=300, sharex=True)
+ax1.plot(df_wg_eur_1year["boxcox"])
+ax1.set_title("Com Boxcox")
+ax2.plot(df_wg_eur_1year["boxcox"].diff().dropna(), color="green")
+ax2.set_title("Com Boxcox e Diferenciação de 1ª ordem")
+ax3.plot(df_wg_eur_1year["boxcox"].diff().dropna())
+ax3.set_title("Com Boxcox e Diferenciação de 2ª ordem")
+plt.suptitle("Comparação dos gráficos de Box-cox com e sem diferenciação", fontsize="18")
 plt.show()
 
 
 # Plotting the ACF for each order
 
-fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(11, 10), dpi=300)
+plt.style.use("seaborn-v0_8-colorblind")
+fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(11, 8), dpi=300, sharex=True)
 plot_acf(df_wg_eur_1year["boxcox"], ax=ax1)
-plot_acf(df_wg_eur_1year["boxcox"].diff().dropna(), ax=ax2)
-plot_acf(df_wg_eur_1year["boxcox"].diff().diff().dropna(), ax=ax3)
+ax1.set_title("Com Boxcox")
+plot_acf(df_wg_eur_1year["boxcox"].diff().dropna(), ax=ax2, color="green")
+ax2.set_title("Com Boxcox e Diferenciação de 1ª ordem")
+plot_acf(df_wg_eur_1year["boxcox"].diff().dropna(), ax=ax3)
+ax3.set_title("Com Boxcox e Diferenciação de 2ª ordem")
+plt.suptitle("Comparação da diferenciação na Autocorrelação (ACF)", fontsize="18")
 plt.show()
 
 # We can see a pretty good visually STATIONARY plot on the first differenciation,
@@ -424,19 +427,24 @@ plt.show()
 # looking for a number of MAs in the PACF plots next
 
 # Plotting the PACf for the first order diff:
-    
-fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(11, 10), dpi=300)
-plot_pacf(df_wg_eur_1year["log"], ax=ax1)
-plot_pacf(df_wg_eur_1year["diff"].diff().dropna(), ax=ax2, color="green")
-plot_pacf(df_wg_eur_1year["diff"].diff().dropna(), ax=ax3)
+
+plt.style.use("seaborn-v0_8-colorblind")
+fig, (ax1, ax2, ax3) = plt.subplots(3, figsize=(11, 8), dpi=300, sharex=True)
+plot_pacf(df_wg_eur_1year["boxcox"], ax=ax1)
+ax1.set_title("Com Boxcox")
+plot_pacf(df_wg_eur_1year["boxcox"].diff().dropna(), ax=ax2, color="green")
+ax2.set_title("Com Boxcox e Diferenciação de 1ª ordem")
+plot_pacf(df_wg_eur_1year["boxcox"].diff().dropna(), ax=ax3)
+ax3.set_title("Com Boxcox e Diferenciação de 2ª ordem")
+plt.suptitle("Comparação da diferenciação na Autocorrelação Parcial (PACF)", fontsize="18")
 plt.show()
 
 # Plotting ACF and PACF together:
 
-plt.figure(figsize=(11,10), dpi=300)
-fig, (ax1, ax2) = plt.subplots(2)
-plot_acf(df_wg_eur_1year["diff"].dropna(), ax=ax1)
-plot_pacf(df_wg_eur_1year["diff"].dropna(), ax=ax2)
+fig, (ax1, ax2) = plt.subplots(2, figsize=(11,7), dpi=300)
+plot_acf(df_wg_eur_1year["boxcox"].diff().dropna(), ax=ax1)
+plot_pacf(df_wg_eur_1year["boxcox"].diff().dropna(), ax=ax2)
+plt.show()
 
 # These plots show a sharp cut off at ACF lag 2, which indicates sligh overdifferencing
 # and also an MA parameter of 2. The stationarized series display an "MA signature"
