@@ -8,8 +8,8 @@
 
 import pandas as pd
 from pmdarima import auto_arima
-from statsmodels.tsa.arima.model import ARIMA
-from statsmodels.tsa.api import SARIMAX
+# from statsmodels.tsa.arima.model import ARIMA
+# from statsmodels.tsa.api import SARIMAX
 
 
 # In[0.2]: Import dataframes
@@ -34,11 +34,14 @@ eur_arima_test.info()
 # MA - Up to 2
 
 eur_exog1 = pd.concat([eur_arima_train["lag7"].shift(1), eur_arima_train["lag7"].shift(3)], axis=1).dropna()
+eur_exog2 = pd.concat([eur_arima_train["lag7"].diff().shift(1), eur_arima_train["lag7"].diff().shift(3)], axis=1).dropna()
 
 len_eur_original = len(eur_arima_train)
 len_eur_exog1 = len_eur_original - len(eur_exog1) - 1
+len_eur_exog2 = len_eur_original - len(eur_exog2) - 1
 
 df_eur_exog1 = eur_arima_train['eur'].drop(eur_arima_train['eur'].loc[0:len_eur_exog1].index)
+df_eur_exog2 = eur_arima_train['diff'].drop(eur_arima_train['diff'].loc[0:len_eur_exog2].index)
 
 # In[1.0]: Run automated ARIMA
 
@@ -165,6 +168,102 @@ Best model:  ARIMA(0,0,0)(0,0,0)[0]
 Total fit time: 0.499 seconds
 """
 
+eur_train_AIClag_fit = auto_arima(y = df_eur_exog1,
+                                   test="adf",
+                                   m=1,
+                                   seasonal = False,
+                                   stepwise = True,
+                                   trace = True
+                                   ).fit(y = df_eur_exog1, exog=eur_exog1)
+
+eur_train_AIClag_fit.summary()
+
+"""
+Performing stepwise search to minimize aic
+ ARIMA(2,1,2)(0,0,0)[0] intercept   : AIC=-1127.508, Time=0.40 sec
+-> ARIMA(0,1,0)(0,0,0)[0] intercept   : AIC=-1131.597, Time=0.02 sec <-
+ ARIMA(1,1,0)(0,0,0)[0] intercept   : AIC=-1129.752, Time=0.01 sec
+ ARIMA(0,1,1)(0,0,0)[0] intercept   : AIC=-1129.744, Time=0.04 sec
+ ARIMA(0,1,0)(0,0,0)[0]             : AIC=-1131.582, Time=0.01 sec
+ ARIMA(1,1,1)(0,0,0)[0] intercept   : AIC=-1127.748, Time=0.07 sec
+
+Best model:  ARIMA(0,1,0)(0,0,0)[0] intercept
+Total fit time: 0.559 seconds
+"""
+
+eur_train_AICdifflag_fit = auto_arima(y = df_eur_exog2,
+                                   test="adf",
+                                   m=1,
+                                   seasonal = False,
+                                   stepwise = True,
+                                   trace = True
+                                   ).fit(y = df_eur_exog2, exog=eur_exog2)
+
+eur_train_AICdifflag_fit.summary()
+
+"""
+Performing stepwise search to minimize aic
+ ARIMA(2,0,2)(0,0,0)[0]             : AIC=-1128.227, Time=0.29 sec
+ ARIMA(0,0,0)(0,0,0)[0]             : AIC=-1131.582, Time=0.01 sec
+ ARIMA(1,0,0)(0,0,0)[0]             : AIC=-1129.658, Time=0.02 sec
+ ARIMA(0,0,1)(0,0,0)[0]             : AIC=-1129.653, Time=0.05 sec
+ ARIMA(1,0,1)(0,0,0)[0]             : AIC=-1127.655, Time=0.02 sec
+-> ARIMA(0,0,0)(0,0,0)[0] intercept   : AIC=-1131.597, Time=0.02 sec <-
+ ARIMA(1,0,0)(0,0,0)[0] intercept   : AIC=-1129.752, Time=0.01 sec
+ ARIMA(0,0,1)(0,0,0)[0] intercept   : AIC=-1129.744, Time=0.06 sec
+ ARIMA(1,0,1)(0,0,0)[0] intercept   : AIC=-1127.748, Time=0.04 sec
+
+Best model:  ARIMA(0,0,0)(0,0,0)[0] intercept
+Total fit time: 0.532 seconds
+"""
+
+eur_train_BIClag_fit = auto_arima(y = df_eur_exog1,
+                                  information_criterion="bic",
+                                  test="adf",
+                                  m=1,
+                                  seasonal = False,
+                                  stepwise = True,
+                                  trace = True
+                                  ).fit(y = df_eur_exog1, exog=eur_exog1)
+
+eur_train_BIClag_fit.summary()
+
+"""
+Performing stepwise search to minimize bic
+ ARIMA(2,1,2)(0,0,0)[0] intercept   : BIC=-1105.551, Time=0.40 sec
+-> ARIMA(0,1,0)(0,0,0)[0] intercept   : BIC=-1124.278, Time=0.02 sec <-
+ ARIMA(1,1,0)(0,0,0)[0] intercept   : BIC=-1118.774, Time=0.01 sec
+ ARIMA(0,1,1)(0,0,0)[0] intercept   : BIC=-1118.766, Time=0.05 sec
+ ARIMA(0,1,0)(0,0,0)[0]             : BIC=-1127.922, Time=0.01 sec
+ ARIMA(1,1,1)(0,0,0)[0] intercept   : BIC=-1113.110, Time=0.05 sec
+
+Best model:  ARIMA(0,1,0)(0,0,0)[0]          
+Total fit time: 0.546 seconds
+"""
+
+eur_train_AICdifflag_fit = auto_arima(y = df_eur_exog2,
+                                      information_criterion="bic",
+                                      test="adf",
+                                      m=1,
+                                      seasonal = False,
+                                      stepwise = True,
+                                      trace = True
+                                      ).fit(y = df_eur_exog2, exog=eur_exog2)
+
+eur_train_AICdifflag_fit.summary()
+
+"""
+Performing stepwise search to minimize bic
+ ARIMA(2,0,2)(0,0,0)[0]             : BIC=-1109.930, Time=0.31 sec
+-> ARIMA(0,0,0)(0,0,0)[0]             : BIC=-1127.922, Time=0.01 sec <-
+ ARIMA(1,0,0)(0,0,0)[0]             : BIC=-1122.339, Time=0.02 sec
+ ARIMA(0,0,1)(0,0,0)[0]             : BIC=-1122.334, Time=0.05 sec
+ ARIMA(1,0,1)(0,0,0)[0]             : BIC=-1116.677, Time=0.02 sec
+ ARIMA(0,0,0)(0,0,0)[0] intercept   : BIC=-1124.278, Time=0.02 sec
+
+Best model:  ARIMA(0,0,0)(0,0,0)[0] 
+"""
+
 # In[]: Results from the automated arima:
 
 """
@@ -188,4 +287,25 @@ Basing on BIC
 | BIC             -1166.601 | BIC              -1166.601 |
 | sigma2             0.0011 | sigma2              0.0011 |
 ==========================================================
+
+Basing on AIC with exog
+
+|   Exog1 SARIMAX(0,1,0)    | Exog2 SARIMAX(0,0,0) + int |
+==========================================================
+| Log Likelihood    567.798 | Log Likelihood     567.798 |
+| AIC             -1131.597 | AIC              -1131.597 |
+| BIC             -1124.278 | BIC              -1124.278 |
+| intercept          0.0028 | intercept           0.0028 |
+| sigma2             0.0011 | sigma2              0.0011 |
+==========================================================
+
+Basing on BIC with exog
+
+| Exog1 SARIMAX(0,1,0) + int |   Exog2 SARIMAX(0,0,0)     |
+===========================================================
+| Log Likelihood     566.791 | Log Likelihood     566.791 |
+| AIC              -1131.582 | AIC              -1131.582 |
+| BIC              -1127.922 | BIC              -1127.922 |
+| sigma2              0.0011 | sigma2              0.0011 |
+===========================================================
 """
