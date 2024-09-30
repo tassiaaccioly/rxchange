@@ -98,7 +98,7 @@ df_eur_5year.to_csv("../datasets/wrangled/df_eur_5year.csv", index=False)
 
 # In[1.4]: Import usd 3 months
 
-with open('../datasets/wise_eur_3months.json') as file:
+with open('./datasets/wise_eur_3months.json') as file:
     data = json.load(file)
 
 df_eur_3months = pd.json_normalize(data)
@@ -136,7 +136,7 @@ df_eur_3months["diff"] = df_eur_3months["eur"].diff()
 df_eur_3months = df_eur_3months.reindex(["date", "dateTime", "eur", "log", "diff", "weekday"], axis=1)
 
 # save to csv
-df_eur_3months.to_csv("../datasets/arima_ready/eur_arima_3months.csv", index=False)
+df_eur_3months.to_csv("./datasets/wrangled/df_eur_3months.csv", index=False)
 
 # In[1.3]: Import usd 1year:
 
@@ -225,7 +225,7 @@ df_usd_5year.to_csv("../datasets/wrangled/df_usd_5year.csv", index=False)
 
 # In[1.4]: Import usd 3 months
 
-with open('../datasets/wise_usd_3months.json') as file:
+with open('./datasets/wise_usd_3months.json') as file:
     data = json.load(file)
 
 df_usd_3months = pd.json_normalize(data)
@@ -263,4 +263,4 @@ df_usd_3months["diff"] = df_usd_3months["usd"].diff()
 df_usd_3months = df_usd_3months.reindex(["date", "dateTime", "usd", "log", "diff", "weekday"], axis=1)
 
 # save to csv
-df_usd_3months.to_csv("../datasets/arima_ready/usd_arima_3months.csv", index=False)
+df_usd_3months.to_csv("./datasets/wrangled/df_usd_3months.csv", index=False)
