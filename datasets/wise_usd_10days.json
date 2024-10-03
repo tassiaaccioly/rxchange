@@ -2,12 +2,6 @@
   {
     "source": "USD",
     "target": "BRL",
-    "value": 5.4254,
-    "time": 1726790400000
-  },
-  {
-    "source": "USD",
-    "target": "BRL",
     "value": 5.5107,
     "time": 1726876800000
   },
@@ -40,5 +34,29 @@
     "target": "BRL",
     "value": 5.4751,
     "time": 1727308800000
+  },
+  {
+    "source": "USD",
+    "target": "BRL",
+    "value": 5.4385,
+    "time": 1727395200000
+  },
+  {
+    "source": "USD",
+    "target": "BRL",
+    "value": 5.4342,
+    "time": 1727481600000
+  },
+  {
+    "source": "USD",
+    "target": "BRL",
+    "value": 5.4342,
+    "time": 1727568000000
+  },
+  {
+    "source": "USD",
+    "target": "BRL",
+    "value": 5.43435,
+    "time": 1727654400000
   }
 ]
