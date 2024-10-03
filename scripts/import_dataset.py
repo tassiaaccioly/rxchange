@@ -138,6 +138,48 @@ df_eur_3months = df_eur_3months.reindex(["date", "dateTime", "eur", "log", "diff
 # save to csv
 df_eur_3months.to_csv("./datasets/wrangled/df_eur_3months.csv", index=False)
 
+# In[1.4]: Import usd 10 days
+
+with open('./datasets/wise_eur_10days.json') as file:
+    data = json.load(file)
+
+df_eur_10days = pd.json_normalize(data)
+
+df_eur_10days.drop(['source', 'target'], axis=1, inplace=True)
+
+# rename columns
+df_eur_10days.columns = ["eur", "dateTime"]
+
+# transform dateTime into strings to not upset pandas
+df_eur_10days['dateTime'] = df_eur_10days['dateTime'].astype(str)
+
+# iterate over dateTime timestamps and turn them into actual dates.
+for index, row in df_eur_10days.loc[:,['dateTime']].iterrows():
+    df_eur_10days.at[index, 'dateTime'] = datetime.fromtimestamp(pd.to_numeric(row['dateTime']) / 1000, tz=utc_tz)
+
+# transform dateTime back into date type
+df_eur_10days['dateTime'] = pd.to_datetime(df_eur_10days['dateTime'])
+
+# Add a column of the weekday (so we can drop sundays as they are skewing the data)
+for index, row in df_eur_10days.loc[:,['dateTime']].iterrows():
+    df_eur_10days.at[index, 'weekday'] = row['dateTime'].strftime("%A")
+    df_eur_10days.at[index, 'date'] = row['dateTime'].strftime('%Y-%m-%d')
+
+# Remove all "Sundays" from the dataframe
+#df_usd_3months = df_eur_3months.drop(df_usd_3months[df_usd_3months["weekday"] == "Sunday"].index)
+
+# add a log of "eur" column
+df_eur_10days['log'] = np.log(df_eur_10days['eur'])
+
+# add a "diff" column
+df_eur_10days["diff"] = df_eur_10days["eur"].diff()
+
+#re-order columns
+df_eur_10days = df_eur_10days.reindex(["date", "dateTime", "eur", "log", "diff", "weekday"], axis=1)
+
+# save to csv
+df_eur_10days.to_csv("./datasets/wrangled/df_eur_10days.csv", index=False)
+
 # In[1.3]: Import usd 1year:
 
 with open('../datasets/wise_usd_1year.json') as file:
@@ -264,3 +306,45 @@ df_usd_3months = df_usd_3months.reindex(["date", "dateTime", "usd", "log", "diff
 
 # save to csv
 df_usd_3months.to_csv("./datasets/wrangled/df_usd_3months.csv", index=False)
+
+# In[1.4]: Import usd 10 days
+
+with open('./datasets/wise_usd_10days.json') as file:
+    data = json.load(file)
+
+df_usd_10days = pd.json_normalize(data)
+
+df_usd_10days.drop(['source', 'target'], axis=1, inplace=True)
+
+# rename columns
+df_usd_10days.columns = ["usd", "dateTime"]
+
+# transform dateTime into strings to not upset pandas
+df_usd_10days['dateTime'] = df_usd_10days['dateTime'].astype(str)
+
+# iterate over dateTime timestamps and turn them into actual dates.
+for index, row in df_usd_10days.loc[:,['dateTime']].iterrows():
+    df_usd_10days.at[index, 'dateTime'] = datetime.fromtimestamp(pd.to_numeric(row['dateTime']) / 1000, tz=utc_tz)
+
+# transform dateTime back into date type
+df_usd_10days['dateTime'] = pd.to_datetime(df_usd_10days['dateTime'])
+
+# Add a column of the weekday (so we can drop sundays as they are skewing the data)
+for index, row in df_usd_10days.loc[:,['dateTime']].iterrows():
+    df_usd_10days.at[index, 'weekday'] = row['dateTime'].strftime("%A")
+    df_usd_10days.at[index, 'date'] = row['dateTime'].strftime('%Y-%m-%d')
+
+# Remove all "Sundays" from the dataframe
+#df_usd_3months = df_eur_3months.drop(df_usd_3months[df_usd_3months["weekday"] == "Sunday"].index)
+
+# add a log of "eur" column
+df_usd_10days['log'] = np.log(df_usd_10days['usd'])
+
+# add a "diff" column
+df_usd_10days["diff"] = df_usd_10days["usd"].diff()
+
+#re-order columns
+df_usd_10days = df_usd_10days.reindex(["date", "dateTime", "usd", "log", "diff", "weekday"], axis=1)
+
+# save to csv
+df_usd_10days.to_csv("./datasets/wrangled/df_usd_10days.csv", index=False)
