@@ -1,8 +1,8 @@
 # -*- coding: utf-8 -*-
 
-# # # # # # # # # # # # # # # # # # # # # # # #
-# Exploratory Data Analysis = EURO - 365 days #
-# # # # # # # # # # # # # # # # # # # # # # # #
+# # # # # # # # # # # # # # # # # # # # # # # # #
+# Exploratory Data Analysis - DOLLAR - 3 months #
+# # # # # # # # # # # # # # # # # # # # # # # # #
 
 # In[0.1]: Importação dos pacotes
 

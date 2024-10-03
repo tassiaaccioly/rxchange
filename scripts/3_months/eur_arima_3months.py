@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 
 # # # # # # # # # # # # # # # # # # # # # # #
-# Finding the ARIMA model = EURO - 3 months #
+# Finding the ARIMA model = EURO - 6 months #
 # # # # # # # # # # # # # # # # # # # # # # #
 
 # In[0.1]: Importação dos pacotes
