@@ -40,6 +40,8 @@ usd_test_1year = pd.read_csv("./datasets/arima_ready/usd_test_1year_365.csv", fl
  
 usd_arima_test = usd_test_1year
 
+usd_arima_train_6 = pd.DataFrame(usd_train_1year["usd"].values, index=usd_train_1year["date"], columns=["usd"])[140:]
+
 usd_arima_test.info()
 
 y = usd_arima_train["usd"]
@@ -55,7 +57,7 @@ df_usd_exog = df_usd_exog1[1:]
 
 # In[]: Run models
 
-usd_365_010_fit = SARIMAX(usd_arima_train, exog=None, order=(0,1,0), seasonal_order=(0,0,0,0), enforce_stationarity=True).fit()
+usd_365_010_fit = ARIMA(usd_arima_train_6, order=(0,1,0), enforce_stationarity=True).fit()
 
 usd_365_010_fit.summary()
 
@@ -89,9 +91,27 @@ plt.show()
 
 # In[]: Residuals
 
-usd_arima_train["erros"] = usd_365_010_fit.resid
+usd_arima_train_6["erros"] = usd_365_010_fit.resid
 
-erros = usd_arima_train["erros"][1:]
+erros = usd_arima_train_6["erros"][1:]
+
+sns.set_palette("viridis")
+fig, ax = plt.subplots(1, figsize=(15,10), dpi=600)
+mn = mean(erros)
+strd = stdev(erros)
+# Get parameters for the normal curve
+x_pdf = np.linspace(-0.1, 0.1, 300)
+y_pdf = norm.pdf(x_pdf, mn, strd)
+ax.spines["left"].set(lw=3, color="black")
+ax.spines["bottom"].set(lw=3, color="black")
+sns.histplot(erros, stat="density", kde="true", label="Resíduos", line_kws={"label":"Est. de Densidade Kernel", "lw": 3})
+ax.plot(x_pdf, y_pdf, lw=3, ls="--", label="Curva Normal")
+plt.xticks(fontsize="22")
+plt.yticks(fontsize="22")
+plt.ylabel("Densidade", fontsize="22")
+plt.xlabel("Erros", fontsize="22")
+plt.legend(fontsize="22", loc="upper left")
+plt.show()
 
 erros.describe()
 
