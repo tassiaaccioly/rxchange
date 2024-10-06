@@ -11,6 +11,7 @@ import pandas as pd
 import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
+from itertools import repeat
 from scipy.stats import boxcox, norm, kruskal, mannwhitneyu, f_oneway
 from statsmodels.tsa.seasonal import seasonal_decompose
 from statsmodels.tsa.stattools import adfuller, kpss, grangercausalitytests
@@ -65,17 +66,17 @@ sns.set_palette("viridis")
 fig, ax = plt.subplots(1, figsize=(15, 10), dpi=600)
 ax.spines['bottom'].set(linewidth=3, color="black")
 ax.spines['left'].set(linewidth=3, color="black")
-sns.lineplot(usd_train["usd"], color="green", label="Câmbio USD", linewidth=3)
-plt.axhline(y=np.max(usd_train["usd"]), color="#440154",  linestyle="--", label="Máxima", linewidth=3) # máxima for usdo
-plt.axhline(y=np.mean(usd_train["usd"]), color="#22A384", linestyle="--", label="Média", linewidth=3) # mean for usdo
-plt.axhline(y=np.min(usd_train["usd"]), color="#FDE725", linestyle="--", label="Mínima", linewidth=3) # máxima for usdo
-plt.title(f'Cotação do Dólar - Série histórica ({usd_train.index[0].strftime(dt_format)} - {usd_train.index[-1].strftime(dt_format)})', fontsize="18")
+sns.lineplot(usd_train["usd"], label="Câmbio USD", linewidth=3)
+sns.lineplot(y=list(repeat(np.max(usd_train["usd"]), len(usd_train))), x=usd_train.index, lw=3, linestyle="--", label="Máxima") # max usd
+sns.lineplot(y=list(repeat(np.mean(usd_train["usd"]), len(usd_train))), x=usd_train.index, lw=3, linestyle="--", label="Média") # mean usd
+sns.lineplot(y=list(repeat(np.min(usd_train["usd"]), len(usd_train))), x=usd_train.index, lw=3, linestyle="--", label="Mínima") # min usd
+# plt.title(f'Cotação do Dólar - Série histórica ({usd_train.index[0].strftime(dt_format)} - {usd_train.index[-1].strftime(dt_format)})', fontsize="18")
 plt.yticks(np.arange(4.95, round(usd_train["usd"].max(), 1), 0.05), fontsize="22")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d, %b'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=15))
 plt.gca().xaxis.set_tick_params(rotation = -30)
 plt.xticks(fontsize="22")
-plt.xlabel("Data", fontsize="22")
+plt.xlabel("", fontsize="22")
 plt.ylabel("Câmbio USD ↔ BRL", fontsize="22")
 plt.legend(fontsize="22", loc="lower right", bbox_to_anchor=(0.98,0.05,0,0))
 plt.show()
