@@ -182,7 +182,7 @@ df_eur_10days.to_csv("./datasets/wrangled/df_eur_10days.csv", index=False)
 
 # In[1.3]: Import usd 1year:
 
-with open('../datasets/wise_usd_1year.json') as file:
+with open('./datasets/wise_usd_1year.json') as file:
     data = json.load(file)
 
 df_usd_1year = pd.json_normalize(data)
@@ -221,7 +221,7 @@ df_usd_1year["diff"] = df_usd_1year["usd"].diff()
 df_usd_1year = df_usd_1year.reindex(["date", "dateTime", "usd", "log", "diff", "weekday"], axis=1)
 
 # save to csv
-df_usd_1year.to_csv("../datasets/wrangled/df_usd_1year.csv", index=False)
+df_usd_1year.to_csv("./datasets/wrangled/df_usd_1year.csv", index=False)
 
 # In[1.4]: Import usd 5years
 

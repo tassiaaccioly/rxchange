@@ -29,7 +29,9 @@ df_usd_1year = pd.read_csv("./datasets/wrangled/df_usd_1year.csv", float_precisi
 
 df_usd_1year.info()
 
-df_wg_usd_6months = df_usd_1year
+df_wg_usd_6months = df_usd_1year[184:]
+
+df_wg_usd_6months.head()
 
 dt_format = "%d/%m/%Y"
 
