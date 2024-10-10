@@ -30,8 +30,6 @@ df_wg_usd_5year
 
 dt_format = "%d/%m/%Y"
 
-df_wg_usd_1year = df_wg_usd_1year.drop(df_wg_usd_1year[df_wg_usd_1year["weekday"] == "Sunday"].index)
-
 # In[0.3]: Separate data into train and test
 
 # remove last 15 days of data for test later
@@ -89,10 +87,15 @@ plt.show()
 
 # Boxplot for 1 year:
 
-plt.figure(figsize=(15,10), dpi=300)
-sns.boxplot(x=df_wg_usd_1year["usd"], palette="viridis")
-plt.title("Boxplot do Dataset - 1 ano (365 dias)", fontsize="18")
-plt.legend(fontsize="16")
+sns.set(palette="viridis")
+sns.set_style("whitegrid",  {"grid.linestyle": ":"})
+fig, (ax1, ax2) = plt.subplots(nrows=1, ncols=2, figsize=(15,12), dpi=600)
+ax1.set_title("Boxplot - Dados originais", fontsize="22")
+sns.boxplot(data=df_wg_usd_1year["usd"], ax=ax1, orient="v")
+sns.stripplot(data=df_wg_usd_1year["usd"], ax=ax1, jitter=0.1, size=12, alpha=0.5)
+ax2.set_title("Boxplot - Dados diferenciados - 1 Ordem", fontsize="22")
+sns.boxplot(data=df_wg_usd_1year["diff"].dropna(), ax=ax2, orient="v")
+sns.stripplot(data=df_wg_usd_1year["diff"].dropna(), ax=ax2, jitter=0.1, size=12, alpha=0.5)
 plt.show()
 
 # In[0.4]: Calculate Statistics for datasets
@@ -121,7 +124,7 @@ sns.scatterplot(x=usd_train["dateTime"], y=usd_train["usd"], color="limegreen", 
 plt.axhline(y=np.mean(usd_train["usd"]), color="black", linestyle="--", label="Média", linewidth=2) # mean for usd
 plt.axhline(y=np.max(usd_train["usd"]), color="magenta", label="Máxima", linewidth=2) # max for usd
 plt.axhline(y=np.min(usd_train["usd"]), color="magenta", linestyle="--", label="Mínima", linewidth=2) # min for usd
-plt.title(f'Cotação do Euro - Série histórica ({usd_train["dateTime"][0].strftime(dt_format)} - {usd_train["dateTime"][239].strftime(dt_format)})', fontsize="18")
+plt.title(f'Cotação do Dólar - Série histórica ({usd_train["dateTime"][0].strftime(dt_format)} - {usd_train["dateTime"][239].strftime(dt_format)})', fontsize="18")
 plt.yticks(np.arange(round(usd_train["usd"].min(), 1), round(usd_train["usd"].max() + 0.1, 1), 0.1), fontsize="14")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29))
@@ -139,7 +142,7 @@ sns.lineplot(x=usd_train["dateTime"], y=df_wg_usd_1year["log"], color="limegreen
 plt.axhline(y=np.mean(usd_train["log"]), color="black", linestyle="--", label="Média", linewidth=2) # mean for usd
 plt.axhline(y=np.max(usd_train["log"]), color="magenta", label="Máxima", linewidth=2) # max for usd
 plt.axhline(y=np.min(usd_train["log"]), color="magenta", linestyle="--", label="Mínima", linewidth=2) # min for usd
-plt.title(f'Cotação do Euro - Série histórica ({usd_train["dateTime"][0].strftime(dt_format)} - {usd_train["dateTime"][239].strftime(dt_format)})', fontsize="18")
+plt.title(f'Cotação do Dólar - Série histórica ({usd_train["dateTime"][0].strftime(dt_format)} - {usd_train["dateTime"][239].strftime(dt_format)})', fontsize="18")
 plt.yticks(np.arange(round(usd_train["log"].min(), 2), round(usd_train["log"].max() + 0.01, 2), 0.01), fontsize="14")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%b, %Y'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=29))

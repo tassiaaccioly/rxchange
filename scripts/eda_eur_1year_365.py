@@ -22,11 +22,11 @@ from datetime import datetime
 
 # In[0.2]: Import dataframes
 
-df_wg_eur_1year = pd.read_csv("../datasets/wrangled/df_eur_1year.csv", float_precision="high", parse_dates=([1]))
+df_wg_eur_1year = pd.read_csv("./datasets/wrangled/df_eur_1year.csv", float_precision="high", parse_dates=([1]))
 
 df_wg_eur_1year.info()
 
-df_wg_eur_5year = pd.read_csv("../datasets/wrangled/df_eur_5year.csv", float_precision="high", parse_dates=([1]))
+df_wg_eur_5year = pd.read_csv("./datasets/wrangled/df_eur_5year.csv", float_precision="high", parse_dates=([1]))
 
 df_wg_eur_5year
 

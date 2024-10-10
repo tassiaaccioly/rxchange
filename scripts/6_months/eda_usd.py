@@ -19,6 +19,8 @@ from statsmodels.graphics.tsaplots import plot_acf, plot_pacf
 from statsmodels.stats.outliers_influence import variance_inflation_factor
 from statsmodels.tools.tools import add_constant
 from sklearn.model_selection import TimeSeriesSplit
+from statistics import mean, stdev
+from scipy.stats import norm, shapiro, jarque_bera
 
 
 # In[0.2]: Import dataframes
@@ -96,6 +98,56 @@ plt.title("Boxplot do Dataset - 6 meses (130 dias)", fontsize="18")
 plt.legend(fontsize="16")
 plt.show()
 
+
+# Plot "normal" dos dados
+sns.set_palette("viridis")
+fig, ax = plt.subplots(1, figsize=(15,10), dpi=600)
+mn = mean(df_usd_1year["diff"].dropna())
+strd = stdev(df_usd_1year["diff"].dropna())
+# Get parameters for the normal curve
+x_pdf = np.linspace(-0.1, 0.1, 300)
+y_pdf = norm.pdf(x_pdf, mn, strd)
+ax.spines["left"].set(lw=3, color="black")
+ax.spines["bottom"].set(lw=3, color="black")
+sns.histplot(df_usd_1year["diff"].dropna(), stat="density", kde="true", label="Dados com log + d(1)", line_kws={"label":"Est. de Densidade Kernel", "lw": 3})
+ax.plot(x_pdf, y_pdf, lw=3, ls="--", label="Curva Normal")
+plt.xticks(fontsize="22")
+plt.yticks(fontsize="22")
+plt.ylabel("Densidade", fontsize="22")
+plt.xlabel("Dados", fontsize="22")
+plt.legend(fontsize="22", loc="upper left")
+plt.show()
+
+shapiro(df_wg_usd_6months["diff"].dropna())
+# ShapiroResult(statistic=0.9361729706977153, pvalue=2.191773719359413e-11)
+
+jarque_bera(df_wg_usd_6months["diff"].dropna())
+# SignificanceResult(statistic=64.15126089437189, pvalue=1.1741692247184742e-14)
+
+# Plot "normal" dos dados cruzados
+sns.set_palette("viridis")
+fig, ((ax1, ax3),(ax2, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(15,10), dpi=600)
+plt.rcParams.update({"font.size": 22})
+mn = mean(df_usd_1year["diff"].dropna())
+strd = stdev(df_usd_1year["diff"].dropna())
+# Get parameters for the normal curve
+x_pdf = np.linspace(-0.1, 0.1, 300)
+y_pdf = norm.pdf(x_pdf, mn, strd)
+sns.histplot(df_usd_1year["diff"].dropna(), stat="density", kde="true", label="Dados com log + d(1)", line_kws={"label":"Est. de Densidade Kernel", "lw": 3}, ax=ax1)
+ax1.plot(x_pdf, y_pdf, lw=3, ls="--", label="Curva Normal")
+
+for i, ax in enumerate([ax1, ax3, ax2, ax4]):
+    ax.set_ylabel("Densidade", fontsize="16")
+    ax.set_xlabel("")
+    ax.tick_params(axis="x", labelsize="16")
+    ax.tick_params(axis="y", labelsize="16")
+    ax.spines["left"].set(lw=3, color="black")
+    ax.spines["bottom"].set(lw=3, color="black")
+    ax.legend(fontsize="14", loc="upper left")
+    ax.set_title(f"Gráfico {i+1}:", fontsize="18", loc="left")
+
+plt.tight_layout()
+plt.show()
 # In[0.5]: Calculate Statistics for datasets
 
 var_usd_3months = np.var(usd_train['usd'])
