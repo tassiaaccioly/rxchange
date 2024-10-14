@@ -29,7 +29,7 @@ df_usd_1year = pd.read_csv("./datasets/wrangled/df_usd_1year.csv", float_precisi
 
 df_usd_1year.info()
 
-df_wg_usd_6months = df_usd_1year[184:]
+df_wg_usd_6months = df_usd_1year
 
 df_wg_usd_6months.head()
 
@@ -70,7 +70,7 @@ sns.set_palette("viridis")
 fig, ax = plt.subplots(1, figsize=(15, 10), dpi=600)
 ax.spines['bottom'].set(linewidth=3, color="black")
 ax.spines['left'].set(linewidth=3, color="black")
-sns.lineplot(usd_train["usd"], label="Câmbio USD", linewidth=3)
+sns.lineplot(usd_train["usd"], label="Câmbio USD - Treino", linewidth=3)
 sns.lineplot(y=list(repeat(np.max(usd_train["usd"]), len(usd_train))), x=usd_train.index, lw=3, linestyle="--", label="Máxima") # max usd
 sns.lineplot(y=list(repeat(np.mean(usd_train["usd"]), len(usd_train))), x=usd_train.index, lw=3, linestyle="--", label="Média") # mean usd
 sns.lineplot(y=list(repeat(np.min(usd_train["usd"]), len(usd_train))), x=usd_train.index, lw=3, linestyle="--", label="Mínima") # min usd
@@ -83,6 +83,7 @@ plt.xticks(fontsize="22")
 plt.xlabel("", fontsize="22")
 plt.ylabel("Câmbio USD ↔ BRL", fontsize="22")
 plt.legend(fontsize="22", loc="lower right", bbox_to_anchor=(0.98,0.05,0,0))
+plt.savefig('./plots/save/hist_usd_original.tiff')
 plt.show()
 
 # Boxplot for 3months:
@@ -118,6 +119,7 @@ plt.yticks(fontsize="22")
 plt.ylabel("Densidade", fontsize="22")
 plt.xlabel("Dados", fontsize="22")
 plt.legend(fontsize="22", loc="upper left")
+plt.savefig('./plots/save/figura1.tiff')
 plt.show()
 
 shapiro(df_wg_usd_6months["diff"].dropna())
@@ -126,17 +128,30 @@ shapiro(df_wg_usd_6months["diff"].dropna())
 jarque_bera(df_wg_usd_6months["diff"].dropna())
 # SignificanceResult(statistic=64.15126089437189, pvalue=1.1741692247184742e-14)
 
-# Plot "normal" dos dados cruzados
+# In[0.5]: Plot "normal" dos dados cruzados
+
+# Curva normal para os dados originais
+mn1 = mean(df_usd_1year["usd"].dropna())
+strd1 = stdev(df_usd_1year["usd"].dropna())
+# Get parameters for the normal curve
+x_pdf1 = np.linspace(4.7, 5.7, 300)
+y_pdf1 = norm.pdf(x_pdf1, mn1, strd1)
+
+# curva normal para os dados com log e diff
+mn2 = mean(df_usd_1year["diff"].dropna())
+strd2 = stdev(df_usd_1year["diff"].dropna())
+# Get parameters for the normal curve
+x_pdf2 = np.linspace(-0.1, 0.1, 300)
+y_pdf2 = norm.pdf(x_pdf2, mn2, strd2)
+
 sns.set_palette("viridis")
 fig, ((ax1, ax3),(ax2, ax4)) = plt.subplots(nrows=2, ncols=2, figsize=(15,10), dpi=600)
 plt.rcParams.update({"font.size": 22})
-mn = mean(df_usd_1year["diff"].dropna())
-strd = stdev(df_usd_1year["diff"].dropna())
-# Get parameters for the normal curve
-x_pdf = np.linspace(-0.1, 0.1, 300)
-y_pdf = norm.pdf(x_pdf, mn, strd)
-sns.histplot(df_usd_1year["diff"].dropna(), stat="density", kde="true", label="Dados com log + d(1)", line_kws={"label":"Est. de Densidade Kernel", "lw": 3}, ax=ax1)
-ax1.plot(x_pdf, y_pdf, lw=3, ls="--", label="Curva Normal")
+
+sns.histplot(df_usd_1year["usd"], stat="density", kde="true", label="Dados Originais", line_kws={"label":"Est. de Densidade Kernel", "lw": 3}, ax=ax1)
+ax1.plot(x_pdf1, y_pdf1, lw=3, ls="--", label="Curva Normal")
+sns.histplot(df_usd_1year["diff"].dropna(), stat="density", kde="true", label="Dados com log + d(1)", line_kws={"label":"Est. de Densidade Kernel", "lw": 3}, ax=ax3)
+ax3.plot(x_pdf2, y_pdf2, lw=3, ls="--", label="Curva Normal")
 
 for i, ax in enumerate([ax1, ax3, ax2, ax4]):
     ax.set_ylabel("Densidade", fontsize="16")
@@ -174,9 +189,9 @@ optimal_lags_usd_3months
 plt.figure(figsize=(15, 10), dpi=300)
 sns.lineplot(usd_train["log"], color="limegreen", label="train log(Câmbio USD)")
 sns.lineplot(usd_test["log"], color="magenta", label="test log(Câmbio USD)")
-sns.lineplot(y=np.mean(usd_train["log"]), color="black", linestyle="--", label="Média") # mean for usdo
-plt.axhline(y=np.max(usd_train["log"]), color="magenta", label="Máxima") # máxima for usdo
-plt.axhline(y=np.min(usd_train["log"]), color="magenta", linestyle="--", label="Mínima") # máxima for usdo
+sns.lineplot(y=np.mean(usd_train["log"]), x=, color="black", linestyle="--", label="Média") # mean for usdo
+sns.lineplot(y=np.max(usd_train["log"]), color="magenta", label="Máxima") # máxima for usdo
+sns.lineplot(y=np.min(usd_train["log"]), color="magenta", linestyle="--", label="Mínima") # máxima for usdo
 plt.title(f'Cotação do Euro - Série histórica ({usd_train.index[0].strftime(dt_format)} - {usd_test.index[-1].strftime(dt_format)})', fontsize="18")
 plt.yticks(np.arange(round(df_wg_usd_6months["log"].min(), 2), round(df_wg_usd_6months["log"].max() + 0.01, 2), 0.01), fontsize="14")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d, %b'))
@@ -277,6 +292,12 @@ plt.legend(loc="upper left")
 
 usd_3months_adf_ols = adfuller(usd_train['usd'], maxlag=None, autolag="AIC", store=True, regresults=True)[-1].resols.summary()
 usd_3months_adf_ols
+
+log_1year_adf = adfuller(usd_train["usd"], maxlag=None, autolag="AIC")
+log_1year_adf
+
+log_1year_kpss = kpss(usd_train["usd"], regression="c", nlags="auto")
+log_1year_kpss
 
 # Normal values results:
 """
@@ -480,33 +501,26 @@ plt.show()
 # Plotting all ACF and PACF plots together
 sns.set_palette("viridis")
 sns.set_style("whitegrid",  {"grid.linestyle": ":"})
-fig, axs = plt.subplots(3, 2, figsize=(11, 8), dpi=600, sharex=True)
+fig, axs = plt.subplots(3, 2, figsize=(11, 10), dpi=600, sharex=True)
 (ax1, ax4, ax2, ax5, ax3, ax6) = axs.flat
 plot_acf(usd_train["log"], ax=ax1)
-ax1.spines['bottom'].set(linewidth=1.5, color="black")
-ax1.spines['left'].set(linewidth=1.5, color="black")
-ax1.set_title("ACF - Log")
+ax1.set_title("ACF - Log", fontsize="14")
 plot_acf(usd_train["log"].diff().dropna(), ax=ax2)
-ax2.spines['bottom'].set(linewidth=1.5, color="black")
-ax2.spines['left'].set(linewidth=1.5, color="black")
-ax2.set_title("ACF - Log e Diferenciação de 1ª ordem")
+ax2.set_title("ACF - Log e Diferenciação de 1ª ordem", fontsize="14")
 plot_acf(usd_train["log"].diff().diff().dropna(), ax=ax3)
-ax3.spines['bottom'].set(linewidth=1.5, color="black")
-ax3.spines['left'].set(linewidth=1.5, color="black")
-ax3.set_title("ACF - Log e Diferenciação de 2ª ordem")
+ax3.set_title("ACF - Log e Diferenciação de 2ª ordem", fontsize="14")
 plot_pacf(usd_train["log"], ax=ax4)
-ax4.spines['bottom'].set(linewidth=1.5, color="black")
-ax4.spines['left'].set(linewidth=1.5, color="black")
-ax4.set_title("PACF - Log")
+ax4.set_title("PACF - Log", fontsize="14")
 plot_pacf(usd_train["log"].diff().dropna(), ax=ax5)
-ax5.spines['bottom'].set(linewidth=1.5, color="black")
-ax5.spines['left'].set(linewidth=1.5, color="black")
-ax5.set_title("PACF - Log e Diferenciação de 1ª ordem")
+ax5.set_title("PACF - Log e Diferenciação de 1ª ordem", fontsize="14")
 plot_pacf(usd_train["log"].diff().diff().dropna(), ax=ax6)
-ax6.spines['bottom'].set(linewidth=1.5, color="black")
-ax6.spines['left'].set(linewidth=1.5, color="black")
-ax6.set_title("PACF - Com Log e Diferenciação de 2ª ordem")
-# plt.suptitle("Comparação da diferenciação na Autocorrelação (ACF)", fontsize="18")
+ax6.set_title("PACF - Com Log e Diferenciação de 2ª ordem", fontsize="14")
+for ax in [ax1, ax2, ax3, ax4, ax5, ax6]:
+    ax.spines['bottom'].set(linewidth=1.5, color="black")
+    ax.spines['left'].set(linewidth=1.5, color="black")
+    ax.tick_params(axis="x", labelsize="12")
+    ax.tick_params(axis="y", labelsize="12")
+plt.savefig('./plots/save/acf_pacf_usd.tiff')
 plt.show()
 
 # These plots show a sharp cut off at ACF lag 2, which indicates sligh overdifferencing
@@ -650,15 +664,18 @@ plt.show()
 
 # In[3.1]: Create the the lagged dataframe:
 
-usd_6months_lagged = pd.DataFrame({"log": usd_train["log"]})
+usd_6months_lagged = pd.DataFrame({"diff": usd_train["diff"]})
 
-usd_6months_lagged['lag 1'] = usd_6months_lagged["log"].shift(1)
-usd_6months_lagged['lag 2'] = usd_6months_lagged["log"].shift(2)
-usd_6months_lagged['lag 3'] = usd_6months_lagged["log"].shift(3)
-usd_6months_lagged['lag 4'] = usd_6months_lagged["log"].shift(4)
-usd_6months_lagged['lag 5'] = usd_6months_lagged["log"].shift(5)
-usd_6months_lagged['lag 6'] = usd_6months_lagged["log"].shift(6)
-usd_6months_lagged['lag 7'] = usd_6months_lagged["log"].shift(7)
+usd_6months_lagged['lag 1'] = usd_6months_lagged["diff"].shift(1)
+usd_6months_lagged['lag 2'] = usd_6months_lagged["diff"].shift(2)
+usd_6months_lagged['lag 3'] = usd_6months_lagged["diff"].shift(3)
+usd_6months_lagged['lag 4'] = usd_6months_lagged["diff"].shift(4)
+usd_6months_lagged['lag 5'] = usd_6months_lagged["diff"].shift(5)
+usd_6months_lagged['lag 6'] = usd_6months_lagged["diff"].shift(6)
+usd_6months_lagged['lag 7'] = usd_6months_lagged["diff"].shift(7)
+usd_6months_lagged['lag 8'] = usd_6months_lagged["diff"].shift(8)
+usd_6months_lagged['lag 9'] = usd_6months_lagged["diff"].shift(9)
+usd_6months_lagged['lag 10'] = usd_6months_lagged["diff"].shift(10)
 
 usd_6months_lagged
 
@@ -677,23 +694,23 @@ usd_vif['variable'] = usd_constants.columns
 usd_vif
 
 """
-           vif variable
-0  1940.335757    const
-1    25.528556      log
-2    57.492082    lag 1
-3    59.165769    lag 2
-4    59.515810    lag 3
-5    61.533979    lag 4
-6    64.201235    lag 5
-7    64.613986    lag 6
-8    29.987144    lag 7
+        vif variable
+0  1.157827    const
+1  1.069202     diff
+2  1.082811    lag 1
+3  1.095767    lag 2
+4  1.068710    lag 3
+5  1.089207    lag 4
+6  1.112118    lag 5
+7  1.105063    lag 6
+8  1.095582    lag 7
 """
 
 # We can see very high VIFs between the lags; Which means there's multicolinearity
 
 # In[3.3]: Running the actual Causality test on the lagged data
 
-usd_granger_lag1 = grangercausalitytests(usd_6months_lagged[["log", "lag 1"]].dropna(), maxlag=4)
+usd_granger_lag1 = grangercausalitytests(usd_6months_lagged[["diff", "lag 5"]].dropna(), maxlag=5)
 
 # No significant lags for this data
 
@@ -703,15 +720,38 @@ usd_6months_granger = pd.read_csv("./datasets/arima_ready/eur_train_6months.csv"
 
 usd_6months_granger = pd.DataFrame(usd_6months_granger.drop("date", axis=1).values, index=pd.date_range(start="2024-03-25", periods=130 ,freq="B"), columns=["eur", "log", "diff"])
 
-df_usd_usd = pd.DataFrame({"usd": usd_train['log'], "eur": usd_6months_granger["log"]})
+df_usd_usd = pd.DataFrame({"usd": usd_train['diff'], "eur": usd_6months_granger["diff"]})
 
-usd_usd_granger = grangercausalitytests(df_usd_usd[['usd', 'eur']].dropna(), maxlag=14)
+usd_usd_granger = grangercausalitytests(df_usd_usd[['usd', 'eur']].dropna(), maxlag=30)
 
-# No statistical significant lags
+"""
+Granger Causality
+number of lags (no zero) 4
+ssr based F test:         F=2.6640  , p=0.0359  , df_denom=117, df_num=4
+ssr based chi2 test:   chi2=11.4759 , p=0.0217  , df=4
+likelihood ratio test: chi2=10.9830 , p=0.0268  , df=4
+parameter F test:         F=2.6640  , p=0.0359  , df_denom=117, df_num=4
+
+Granger Causality
+number of lags (no zero) 5
+ssr based F test:         F=2.5074  , p=0.0341  , df_denom=114, df_num=5
+ssr based chi2 test:   chi2=13.7465 , p=0.0173  , df=5
+likelihood ratio test: chi2=13.0418 , p=0.0230  , df=5
+parameter F test:         F=2.5074  , p=0.0341  , df_denom=114, df_num=5
+
+Granger Causality
+number of lags (no zero) 6
+ssr based F test:         F=2.1950  , p=0.0486  , df_denom=111, df_num=6
+ssr based chi2 test:   chi2=14.7127 , p=0.0226  , df=6
+likelihood ratio test: chi2=13.9033 , p=0.0307  , df=6
+parameter F test:         F=2.1950  , p=0.0486  , df_denom=111, df_num=6
+"""
+
+# Significant p-value on lags 4, 5 and 6.
 
 # In[3.6]: Cross-testing the series to make sure they have causality between them
 
-tscv = TimeSeriesSplit(n_splits=5)
+tscv = TimeSeriesSplit(n_splits=7)
 
 ct_usd_usd = df_usd_usd.dropna()
 
@@ -731,7 +771,34 @@ for train_index, test_index in tscv.split(ct_usd_usd):
     print(f"TEST indices: {test_index}")
 
 
-# No significant causality between the two datasets
+"""
+Lag: 1, P-value: 0.5768887777876386
+Lag: 2, P-value: 0.9236327585934487
+Lag: 3, P-value: 0.16196780582800277
+Lag: 4, P-value: 0.010457902442415911
+
+Lag: 1, P-value: 0.14555642952426098
+Lag: 2, P-value: 0.45205955832043
+Lag: 3, P-value: 0.04989799237837883
+Lag: 4, P-value: 0.010928439023283049
+
+Lag: 1, P-value: 0.18820089863757525
+Lag: 2, P-value: 0.5902284410457266
+Lag: 3, P-value: 0.2079536877957213
+Lag: 4, P-value: 0.03640727743426027
+
+Lag: 1, P-value: 0.4344305998655742
+Lag: 2, P-value: 0.8285452154161301
+Lag: 3, P-value: 0.06571138355133598
+Lag: 4, P-value: 0.006189136618057291
+
+Lag: 1, P-value: 0.6132502760026286
+Lag: 2, P-value: 0.6779396937563593
+Lag: 3, P-value: 0.02797476768277951
+Lag: 4, P-value: 0.005665738028894668
+"""
+
+# There is significant causality in lag 4
 
 # In[4.0]: Save final dataset for testing ARIMA
 
@@ -740,6 +807,7 @@ usd_train_6months = pd.DataFrame({
     "usd": usd_train["usd"],
     "log": usd_train["log"],
     "diff": usd_train["diff"],
+    "eur": usd_6months_granger["diff"]
     })
 
 usd_test_6months = pd.DataFrame({

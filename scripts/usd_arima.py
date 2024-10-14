@@ -31,9 +31,9 @@ usd_arima_test.info()
 
 # Normal dataset with normal exogs
 
-usd_exog1 = pd.concat([usd_train_1year["eur"].shift(1)], axis=1).dropna()
-usd_exog2 = pd.concat([usd_train_1year["eur"].shift(6)], axis=1).dropna()
-usd_exog3 = pd.concat([usd_train_1year["eur"].shift(6), usd_train_1year["eur"].shift(11)], axis=1).dropna()
+usd_exog1 = pd.concat([usd_train_1year["diff"].shift(4)], axis=1).dropna()
+usd_exog2 = pd.concat([usd_train_1year["diff"].shift(5)], axis=1).dropna()
+usd_exog3 = pd.concat([usd_train_1year["diff"].shift(6)], axis=1).dropna()
 
 len_usd_original = len(usd_train_1year)
 len_usd_exog1 = len_usd_original - len(usd_exog1) - 1
