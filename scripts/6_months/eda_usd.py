@@ -101,6 +101,7 @@ plt.title("Boxplot do Dataset - 6 meses (130 dias)", fontsize="18")
 plt.legend(fontsize="16")
 plt.show()
 
+###############################################################################
 
 # Plot "normal" dos dados
 sns.set_palette("viridis")
@@ -119,8 +120,10 @@ plt.yticks(fontsize="22")
 plt.ylabel("Densidade", fontsize="22")
 plt.xlabel("Dados", fontsize="22")
 plt.legend(fontsize="22", loc="upper left")
-plt.savefig('./plots/save/figura1.tiff')
+plt.savefig('./plots/save/figura1.tiff', dpi=600, format="tiff", bbox_inches="tight")
 plt.show()
+
+###############################################################################
 
 shapiro(df_wg_usd_6months["diff"].dropna())
 # ShapiroResult(statistic=0.9361729706977153, pvalue=2.191773719359413e-11)
@@ -497,6 +500,7 @@ plot_acf(usd_train["log"].diff().dropna(), ax=ax1)
 plot_pacf(usd_train["log"].diff().dropna(), ax=ax2)
 plt.show()
 
+###############################################################################
 
 # Plotting all ACF and PACF plots together
 sns.set_palette("viridis")
@@ -520,8 +524,10 @@ for ax in [ax1, ax2, ax3, ax4, ax5, ax6]:
     ax.spines['left'].set(linewidth=1.5, color="black")
     ax.tick_params(axis="x", labelsize="12")
     ax.tick_params(axis="y", labelsize="12")
-plt.savefig('./plots/save/acf_pacf_usd.tiff')
+plt.savefig('./plots/save/acf_pacf_usd.tiff', dpi=600, format="tiff", bbox_inches="tight")
 plt.show()
+
+###############################################################################
 
 # These plots show a sharp cut off at ACF lag 2, which indicates sligh overdifferencing
 # and also an MA parameter of 2. The stationarized series display an "MA signature"

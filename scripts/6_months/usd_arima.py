@@ -21,6 +21,7 @@ from scipy.stats import shapiro, jarque_bera
 from statsmodels.tsa.holtwinters import ExponentialSmoothing
 from statsmodels.stats.api import het_breuschpagan, het_arch
 from itertools import repeat
+from scipy.optimize import minimize
 
 
 # In[0.2]: Import dataframes
@@ -71,9 +72,9 @@ Performing stepwise search to minimize aic
 Best model:  ARIMA(0,1,0)(0,0,0)[0] - SARIMAX(0, 1, 0)
 """
 
-arima_6months_test_010 = ARIMA(y, exog=None, order=(0,1,0)).fit()
+arima_6months_test = ARIMA(y, exog=None, order=(0,1,0)).fit()
 
-arima_6months_test_010.summary()
+arima_6months_test.summary()
 
 
 # SARIMAX(0,1,0) LL 443 AIC -885 BIC -882
@@ -112,17 +113,23 @@ Warnings:
 [1] Covariance matrix calculated using the outer product of gradients (complex-step).
 """
 
+###############################################################################
+
+sns.set_palette("viridis")
 plt.figure(dpi=600)
-fig = arima_6months_test_010.plot_diagnostics(figsize=(15,10), lags=30)
-plt.suptitle("Diagnóstico dos Resíduos - ARIMA (0,1,0)", fontsize="18")
+arima_6months_test.plot_diagnostics(figsize=(15,10), lags=30)
+#plt.suptitle("Diagnóstico dos Resíduos - ARIMA (0,1,0)", fontsize="18")
+plt.savefig('./plots/save/resid_charts.tiff', dpi=600, format="tiff", bbox_inches="tight")
 plt.show()
+
+###############################################################################
 
 
 # In[1.1]: Saving and plotting the residuals for inspection
 
-usd_train_arima["erros"] = arima_6months_test_010.resid
+usd_train_arima["erros"] = arima_6months_test.resid
 
-usd_train_arima["fitted"] = arima_6months_test_010.fittedvalues
+usd_train_arima["fitted"] = arima_6months_test.fittedvalues
 
 erros = usd_train_arima["erros"][1:]
 
@@ -164,7 +171,7 @@ plot_acf(erros, ax=ax1)
 ax1.set_title("Autocorrelação dos resíduos (ACF)")
 plot_pacf(erros, ax=ax2)
 ax2.set_title("Autocorrelação Parcial dos resíduos (PACF)")
-for ax in [ax1, ax2, ax3]:
+for ax in [ax1, ax2]:
     ax.spines['bottom'].set(linewidth=1.5, color="black")
     ax.spines['left'].set(linewidth=1.5, color="black")
 
@@ -220,6 +227,7 @@ jarque_bera(erros)
 # FOLLOW A NORMAL DISTRIBUTION
 # The Jarque-Bera test comproves the residuals are NORMALLY DISTRIBUTED
 
+###############################################################################
 
 sns.set_palette("viridis")
 plt.figure(figsize=(15, 10), dpi=600)
@@ -234,8 +242,10 @@ plt.xticks(fontsize="14")
 plt.xlabel("Data", fontsize="18")
 plt.ylabel("Câmbio log(USD ↔ BRL)", fontsize="18")
 plt.legend(fontsize=18, loc="lower right", bbox_to_anchor=(0.99, 0.05, 0, 0))
-plt.savefig('./plots/save/valorrealxfittedvalues.tiff')
+plt.savefig('./plots/save/valorrealxfittedvalues.tiff', dpi=600, format="tiff", bbox_inches="tight")
 plt.show()
+
+###############################################################################
 
 # Revert Fitted Values:
 
@@ -272,7 +282,7 @@ sns.set_palette("viridis")
 fig, ax = plt.subplots(figsize=(15, 10), dpi=300)
 sns.lineplot(usd_train_arima["usd"][1:], label="Valores de Treino", linewidth=3)
 sns.lineplot(usd_test_arima["usd"], label="Valores de Teste", linewidth=3)
-sns.lineplot(usd_test_arima["mean"], label="Valores preditos", linewidth=3)
+sns.lineplot(usd_forecast_arima["mean"], label="Valores preditos", linewidth=3)
 plt.title("Valores reais x Fitted Values - USD - ARIMA(0,1,0)", fontsize="18")
 plt.yticks(np.arange(round(usd_train_arima["usd"].min() - 0.1, 2), round(usd_train_arima["usd"].max() + 0.1, 2), 0.1), fontsize="14")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d, %b'))
@@ -284,21 +294,26 @@ plt.ylabel("Câmbio USD ↔ BRL", fontsize="18")
 plt.legend(fontsize=18, loc="lower right", bbox_to_anchor=(0.99, 0.05, 0, 0))
 plt.show()
 
+###############################################################################
+
 sns.set_palette("viridis")
 fig, ax = plt.subplots(figsize=(15, 10), dpi=300)
-sns.lineplot(usd_test_arima["usd"], label="Valores de Teste", linewidth=3)
-sns.lineplot(usd_test_arima["mean"], label="Valores preditos", linewidth=3)
-ax.fill_between(usd_test_arima.index, usd_test_arima["mean_ci_lower"], usd_test_arima["mean_ci_upper"], alpha=0.15, label="Intervalo de confiança")
-plt.title("Valores reais x Fitted Values - USD - ARIMA(0,1,0)", fontsize="18")
-plt.yticks(np.arange(round(usd_test_arima["mean_ci_lower"].min() - 0.01, 2), round(usd_test_arima["mean_ci_upper"].max() + 0.01, 2), 0.03), fontsize="14")
+sns.lineplot(usd_test_arima["usd"], label="Valores reais", linewidth=3)
+sns.lineplot(usd_forecast_arima["mean"], label="Valores preditos", linewidth=3)
+ax.fill_between(usd_test_arima.index, usd_forecast_arima["mean_ci_lower"], usd_forecast_arima["mean_ci_upper"], alpha=0.15, label="Intervalo de confiança")
+# plt.title("Valores reais x Fitted Values - USD - ARIMA(0,1,0)", fontsize="18")
+plt.yticks(np.arange(round(usd_forecast_arima["mean_ci_lower"].min() - 0.01, 2), round(usd_forecast_arima["mean_ci_upper"].max() + 0.01, 2), 0.03), fontsize="20")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d, %b'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=1))
 plt.gca().xaxis.set_tick_params(rotation = -30)
-plt.xticks(fontsize="14")
+plt.xticks(fontsize="20")
 plt.xlabel("Data", fontsize="18")
-plt.ylabel("Câmbio USD ↔ BRL", fontsize="18")
+plt.ylabel("Câmbio USD ↔ BRL", fontsize="20")
 plt.legend(fontsize=18, loc="upper right")
+plt.savefig('./plots/save/valorrealxfittedvalues.tiff', dpi=600, format="tiff", bbox_inches="tight")
 plt.show()
+
+###############################################################################
 
 # In[3.0]: Testing other automated tests:
 
@@ -337,7 +352,7 @@ sns.set_palette("viridis")
 fig, ax = plt.subplots(1, figsize=(15, 10), dpi=600)
 sns.lineplot(usd_train_arima["usd"][1:], label="Valores de Treino", linewidth=3)
 sns.lineplot(usd_test_arima["usd"], label="Valores de Teste", linewidth=3)
-sns.lineplot(usd_test_arima["mean"], label="Valores preditos (manual)", linewidth=3)
+sns.lineplot(usd_forecast_arima["mean"], label="Valores preditos (manual)", linewidth=3)
 sns.lineplot(usd_arima_forecast_auto["mean"], label="Valores preditos (auto)", linewidth=3)
 plt.title("Valores reais x Previsões - USD -  ARIMA(1,1,1)", fontsize="18")
 plt.yticks(np.arange(round(usd_train_arima["usd"].min() - 0.05, 2), round(usd_train_arima["usd"].max() + 0.05, 2), 0.05), fontsize="14")
@@ -359,13 +374,13 @@ exponential_usd.summary()
 sns.set_palette("viridis")
 fig, ax = plt.subplots(figsize=(15, 10), dpi=600)
 sns.lineplot(usd_test_arima["usd"], label="Valores de Teste", linewidth=2)
-sns.lineplot(usd_test_arima["mean"], label="Valores preditos ARIMA(0,1,0)", lw=2)
+sns.lineplot(usd_forecast_arima["mean"], label="Valores preditos ARIMA(0,1,0)", lw=2)
 sns.lineplot(y=usd_train_arima[-5:]["usd"], x=usd_test_arima.index, label="Predição Naive Sazonal", lw=3, linestyle="--")
 sns.lineplot(y=list(repeat(np.mean(usd_train_arima[-5:]["usd"]), 5)), x=usd_test_arima.index, label="Predição de Janela Móvel(5)", lw=3, linestyle="--")
 sns.lineplot(y=exponential_usd.fittedvalues, x=usd_test_arima.index, label="Suavização exponencial simples", lw=3, linestyle="--")
-ax.fill_between(usd_test_arima.index, usd_test_arima["mean_ci_lower"], usd_test_arima["mean_ci_upper"], alpha=0.15, label="Intervalo de confiança ARIMA(0,1,0)")
+ax.fill_between(usd_test_arima.index, usd_forecast_arima["mean_ci_lower"], usd_forecast_arima["mean_ci_upper"], alpha=0.15, label="Intervalo de confiança ARIMA(0,1,0)")
 # plt.title("Valores reais x Fitted Values - USD - ARIMA(0,1,0)", fontsize="18")
-plt.yticks(np.arange(round(usd_test_arima["mean_ci_lower"].min() - 0.01, 2), round(usd_test_arima["mean_ci_upper"].max() + 0.01, 2), 0.03), fontsize="22")
+plt.yticks(np.arange(round(usd_forecast_arima["mean_ci_lower"].min() - 0.01, 2), round(usd_forecast_arima["mean_ci_upper"].max() + 0.01, 2), 0.03), fontsize="22")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d, %b'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=1))
 plt.gca().xaxis.set_tick_params(rotation = -30)
@@ -378,43 +393,48 @@ plt.show()
 # Plotting wiht the prediction average:
 
 predict_average = pd.DataFrame({
-    "arima": usd_test_arima["mean"],
+    "arima": usd_forecast_arima["mean"],
     "exponential": exponential_usd.fittedvalues.values,
-    "window_avg": list(repeat(np.mean(usd_train_arima["usd"][-5:]), 5)),
+    "window": list(repeat(np.mean(usd_train_arima["usd"][-5:]), 5)),
     "naive": usd_train_arima["usd"][-5:].values,
     }, index=usd_test_arima.index)
 
 predict_average["mean"] = predict_average.mean(axis=1)
 
+###############################################################################
+
 sns.set_palette("viridis")
-fig, ax = plt.subplots(figsize=(15, 10), dpi=600)
-sns.lineplot(usd_test_arima["usd"], label="Valores de Teste", linewidth=3)
-sns.lineplot(usd_test_arima["mean"], label="Valores preditos ARIMA(0,1,0)", lw=3)
-sns.lineplot(y=usd_train_arima[-5:]["usd"], x=usd_test_arima.index, label="Predição Naive Sazonal", lw=3)
-sns.lineplot(y=list(repeat(np.mean(usd_train_arima[-5:]["usd"]), 5)), x=usd_test_arima.index, label="Predição Média Móvel(5)", lw=3)
-sns.lineplot(y=exponential_usd.fittedvalues, x=usd_test_arima.index, label="Suavização exponencial simples", lw=3)
-sns.lineplot(predict_average["mean"], label="Média das previsões dos modelos", lw=4, linestyle="--", color="darkorchid")
-ax.fill_between(usd_test_arima.index, usd_test_arima["mean_ci_lower"], usd_test_arima["mean_ci_upper"], alpha=0.15, label="Intervalo de confiança ARIMA(0,1,0)")
+fig, ax = plt.subplots(figsize=(15, 9), dpi=900)
+sns.lineplot(usd_test_arima["usd"], label="Valores reais", linewidth=3)
+sns.lineplot(usd_forecast_arima["mean"], label="Modelo ARIMA(0,1,0)", lw=3)
+sns.lineplot(y=usd_train_arima[-5:]["usd"], x=usd_test_arima.index, label="Modelo Naive Sazonal", lw=3)
+sns.lineplot(y=list(repeat(np.mean(usd_train_arima[-5:]["usd"]), 5)), x=usd_test_arima.index, label="Modelo Média de Janela(5)", lw=3)
+sns.lineplot(y=exponential_usd.fittedvalues, x=usd_test_arima.index, label="Modelo SES", lw=3)
+sns.lineplot(predict_average["mean"], label="Média simples dos modelos", lw=4, linestyle="--")
+# ax.fill_between(usd_test_arima.index, usd_forecast_arima["mean_ci_lower"], usd_forecast_arima["mean_ci_upper"], alpha=0.15, label="Intervalo de confiança ARIMA(0,1,0)")
 # plt.title("Valores reais x Fitted Values - USD - ARIMA(0,1,0)", fontsize="18")
-plt.yticks(np.arange(round(usd_test_arima["mean_ci_lower"].min() - 0.01, 2), round(usd_test_arima["mean_ci_upper"].max() + 0.01, 2), 0.03), fontsize="22")
+plt.yticks(np.arange(5.41, 5.61, 0.02), fontsize="22")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d, %b'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=1))
 plt.gca().xaxis.set_tick_params(rotation = -30)
-plt.xticks(fontsize="18")
+plt.xticks(fontsize="22")
 plt.ylabel("Câmbio USD ↔ BRL", fontsize="22")
 plt.xlabel("")
-plt.legend(fontsize="22", loc="center", bbox_to_anchor=(0.5, 0.5,1.6,0) )
+plt.legend(fontsize="22", loc="upper right")
+plt.savefig("./plots/save/modelos.tiff", dpi=600, format="tiff", bbox_inches="tight")
 plt.show()
+
+###############################################################################
 
 
 sns.set_palette("viridis")
 fig, ax = plt.subplots(figsize=(15, 10), dpi=600)
 sns.lineplot(usd_test_arima["usd"], label="Valores de Teste", linewidth=3)
-sns.lineplot(usd_test_arima["mean"], label="Valores preditos ARIMA(0,1,0)", lw=3)
+sns.lineplot(usd_forecast_arima["mean"], label="Valores preditos ARIMA(0,1,0)", lw=3)
 sns.lineplot(predict_average["mean"], label="Média das previsões dos modelos", lw=4, linestyle="--", color="darkorchid")
-ax.fill_between(usd_test_arima.index, usd_test_arima["mean_ci_lower"], usd_test_arima["mean_ci_upper"], alpha=0.15, label="Intervalo de confiança ARIMA(0,1,0)")
+ax.fill_between(usd_forecast_arima.index, usd_forecast_arima["mean_ci_lower"], usd_forecast_arima["mean_ci_upper"], alpha=0.15, label="Intervalo de confiança ARIMA(0,1,0)")
 # plt.title("Valores reais x Fitted Values - USD - ARIMA(0,1,0)", fontsize="18")
-plt.yticks(np.arange(round(usd_test_arima["mean_ci_lower"].min() - 0.01, 2), round(usd_test_arima["mean_ci_upper"].max() + 0.01, 2), 0.03), fontsize="22")
+plt.yticks(np.arange(round(usd_forecast_arima["mean_ci_lower"].min() - 0.01, 2), round(usd_forecast_arima["mean_ci_upper"].max() + 0.01, 2), 0.03), fontsize="22")
 plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d, %b'))
 plt.gca().xaxis.set_major_locator(mdates.DayLocator(interval=1))
 plt.gca().xaxis.set_tick_params(rotation = -30)
@@ -424,14 +444,55 @@ plt.xlabel("")
 plt.legend(fontsize="22", loc="lower right")
 plt.show()
 
+# In[]: Minimize Function
+
+# Actual values (for optimization)
+y_true = usd_test_arima["usd"]
+
+# 
+models_predict = [predict_average["arima"], predict_average["naive"], predict_average["exponential"], predict_average["window"], predict_average["mean"]]
+
+# Define the error function (RMSE) to minimize
+def rmse_weights(weights):
+    combined_predictions = np.average(models_predict, axis=0, weights=weights)
+    return np.sqrt(np.mean((combined_predictions - y_true) ** 2))
+
+# Initial guess for the weights (equal distribution)
+initial_weights = [1/5, 1/5, 1/5, 1/5, 1/5]
+
+# Constraints: Weights must sum to 1
+constraints = {'type': 'eq', 'fun': lambda w: np.sum(w) - 1}
+
+# Bounds: Weights should be between 0 and 1
+bounds = [(0, 1)] * 5
+
+# Optimize the weights
+result = minimize(rmse_weights, initial_weights, bounds=bounds, constraints=constraints)
+
+# Optimal weights
+optimal_weights = result.x
+print("Optimal Weights:", optimal_weights)
+
+# Combined predictions with optimal weights
+predict_average["opt_mean"] = np.average(models_predict, axis=0, weights=optimal_weights)
+print("Optimally Weighted Predictions:", predict_average["opt_mean"])
+
 # In[]: Calculating the RMSE for each model:
 
-# Actual values (true data)
-y_true = np.array([1.5, 2.0, 3.5, 4.0, 5.5])
-
-# Predicted values from your model
-y_pred = np.array([1.4, 2.1, 3.6, 4.2, 5.4])
-
 # Calculate RMSE manually
-rmse = np.sqrt(np.mean((y_pred - y_true) ** 2))
-print("RMSE:", rmse)
+def rmse (y_pred):
+    val = np.sqrt(np.mean((y_pred - y_true)) ** 2)
+    print(f'Modelo {y_pred} RMSE:', val)
+    return val
+
+# 
+rmse_results = pd.DataFrame({"Modelo": ["ARIMA(0,1,0)", "Suavização Exponencial Simples", "Média de Janela","Naive Sazonal", "Média Simples", "Média Ponderada"]}, index=np.arange(1,len(models_predict)+2, 1))
+
+rmse_res = []
+
+for column in iter(predict_average):
+    rmse_value = rmse(predict_average[column])
+    rmse_res.append(rmse_value)
+    print(rmse_value)
+    
+rmse_results["EQRM"] = rmse_res
